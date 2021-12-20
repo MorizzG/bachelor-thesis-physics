@@ -1,0 +1,70 @@
+Start testing: Dec 16 21:25 CET
+----------------------------------------------------------
+1/619 Testing: script-test_analyze_callback-cpu
+1/619 Test: script-test_analyze_callback-cpu
+Command: "/usr/bin/mpiexec" "-n" "1" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/test-py/test_analyze_callback.py" "--mode=cpu" "--gpu_error_checking"
+Directory: /home/mg/Thesis/hoomd-v2.9.7/hoomd/test-py
+"script-test_analyze_callback-cpu" start time: Dec 16 21:25 CET
+Output:
+----------------------------------------------------------
+HOOMD-blue is built without MPI support, but seems to have been launched with mpirun
+exiting now to prevent many sequential jobs from starting
+Traceback (most recent call last):
+  File "/home/mg/Thesis/hoomd-v2.9.7/hoomd/test-py/test_analyze_callback.py", line 5, in <module>
+    hoomd.context.initialize()
+  File "/home/mg/Thesis/hoomd-v2.9.7/hoomd/context.py", line 234, in initialize
+    raise RuntimeError('Error launching hoomd')
+RuntimeError: Error launching hoomd
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpiexec detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[54341,1],0]
+  Exit code:    1
+--------------------------------------------------------------------------
+<end of output>
+Test time =   2.11 sec
+----------------------------------------------------------
+Test Failed.
+"script-test_analyze_callback-cpu" end time: Dec 16 21:25 CET
+"script-test_analyze_callback-cpu" time elapsed: 00:00:02
+----------------------------------------------------------
+
+2/619 Testing: script-test_analyze_callback-gpu
+2/619 Test: script-test_analyze_callback-gpu
+Command: "/usr/bin/mpiexec" "-n" "1" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/test-py/test_analyze_callback.py" "--mode=gpu" "--gpu_error_checking"
+Directory: /home/mg/Thesis/hoomd-v2.9.7/hoomd/test-py
+"script-test_analyze_callback-gpu" start time: Dec 16 21:25 CET
+Output:
+----------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mg/Thesis/hoomd-v2.9.7/hoomd/test-py/test_analyze_callback.py", line 5, in <module>
+HOOMD-blue is built without MPI support, but seems to have been launched with mpirun
+exiting now to prevent many sequential jobs from starting
+    hoomd.context.initialize()
+  File "/home/mg/Thesis/hoomd-v2.9.7/hoomd/context.py", line 234, in initialize
+    raise RuntimeError('Error launching hoomd')
+RuntimeError: Error launching hoomd
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpiexec detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[54462,1],0]
+  Exit code:    1
+--------------------------------------------------------------------------
+<end of output>
+Test time =   2.12 sec
+----------------------------------------------------------
+Test Failed.
+"script-test_analyze_callback-gpu" end time: Dec 16 21:25 CET
+"script-test_analyze_callback-gpu" time elapsed: 00:00:02
+----------------------------------------------------------
+

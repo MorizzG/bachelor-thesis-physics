@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -march=native -Wall -Wno-unknown-pragmas -Wno-deprecated-declarations -O3 -DNDEBUG -shared -Wl,-soname,libquickhull.so -o libquickhull.so CMakeFiles/quickhull.dir/extern/quickhull/QuickHull.cpp.o 

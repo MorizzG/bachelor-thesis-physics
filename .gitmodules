@@ -1,0 +1,3 @@
+[submodule "src/gsd-vmd"]
+	path = src/gsd-vmd
+	url = https://github.com/mphowardlab/gsd-vmd

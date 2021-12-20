@@ -1,0 +1,18 @@
+# CMake generated Testfile for 
+# Source directory: /home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py
+# Build directory: /home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(script-test_angle_cgcmm-cpu "/usr/bin/mpiexec" "-n" "1" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/test_angle_cgcmm.py" "--mode=cpu" "--gpu_error_checking")
+set_tests_properties(script-test_angle_cgcmm-cpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;12;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;105;add_hoomd_script_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;0;")
+add_test(script-test_angle_cgcmm-gpu "/usr/bin/mpiexec" "-n" "1" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/test_angle_cgcmm.py" "--mode=gpu" "--gpu_error_checking")
+set_tests_properties(script-test_angle_cgcmm-gpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;19;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;105;add_hoomd_script_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;0;")
+add_test(script-test_pair_cgcmm-cpu "/usr/bin/mpiexec" "-n" "1" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/test_pair_cgcmm.py" "--mode=cpu" "--gpu_error_checking")
+set_tests_properties(script-test_pair_cgcmm-cpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;12;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;105;add_hoomd_script_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;0;")
+add_test(script-test_pair_cgcmm-gpu "/usr/bin/mpiexec" "-n" "1" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/test_pair_cgcmm.py" "--mode=gpu" "--gpu_error_checking")
+set_tests_properties(script-test_pair_cgcmm-gpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;19;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;105;add_hoomd_script_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;0;")
+add_test(script-test_angle_cgcmm-mpi-cpu "/usr/bin/mpiexec" "-n" "2" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/test_angle_cgcmm.py" "--mode=cpu" "--gpu_error_checking")
+set_tests_properties(script-test_angle_cgcmm-mpi-cpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;46;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;118;add_hoomd_script_test_mpi;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;0;")
+add_test(script-test_angle_cgcmm-mpi-gpu "/usr/bin/mpiexec" "-n" "2" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/test_angle_cgcmm.py" "--mode=gpu" "--gpu_error_checking")
+set_tests_properties(script-test_angle_cgcmm-mpi-gpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;53;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;118;add_hoomd_script_test_mpi;/home/mg/Thesis/hoomd-v2.9.7/hoomd/cgcmm/test-py/CMakeLists.txt;0;")

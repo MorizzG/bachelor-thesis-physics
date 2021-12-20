@@ -1,0 +1,1 @@
+/usr/bin/c++ -march=native -Wall -Wno-unknown-pragmas -Wno-deprecated-declarations -O3 -DNDEBUG -rdynamic CMakeFiles/test_records.dir/test_Record.cpp.o -o test_records  -Wl,-rpath,/home/mg/Thesis/hoomd-v2.9.7/hoomd/extern/libgetar ../libgetar.so -ldl -lpthread 

@@ -1,0 +1,14 @@
+# CMake generated Testfile for 
+# Source directory: /home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py
+# Build directory: /home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(example_plugin-test_example.py-cpu "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/test_example.py" "--mode=cpu")
+set_tests_properties(example_plugin-test_example.py-cpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;31;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;60;add_script_test_cpu;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;0;")
+add_test(example_plugin-test_example.py-mpi-cpu "/usr/bin/mpiexec" "-n" "2" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/test_example.py" "--mode=cpu")
+set_tests_properties(example_plugin-test_example.py-mpi-cpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;8;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;34;add_script_test_cpu_mpi;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;60;add_script_test_cpu;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;0;")
+add_test(example_plugin-test_example.py-gpu "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/test_example.py" "--mode=gpu")
+set_tests_properties(example_plugin-test_example.py-gpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;38;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;72;add_script_test_gpu;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;0;")
+add_test(example_plugin-test_example.py-mpi-gpu "/usr/bin/mpiexec" "-n" "2" "/usr/bin/python3" "/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/test_example.py" "--mode=gpu" "--gpu_error_checking")
+set_tests_properties(example_plugin-test_example.py-mpi-gpu PROPERTIES  ENVIRONMENT "PYTHONPATH=/home/mg/Thesis/hoomd-v2.9.7:" _BACKTRACE_TRIPLES "/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;21;add_test;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;41;add_script_test_gpu_mpi;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;72;add_script_test_gpu;/home/mg/Thesis/hoomd-v2.9.7/hoomd/example_plugin/test-py/CMakeLists.txt;0;")
