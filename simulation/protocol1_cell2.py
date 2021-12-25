@@ -27,9 +27,9 @@ comment = time_now()  # This will be written as part of the filename and might h
 num_cycles = 105  # The number cycles simulated and therefore the number of conformations obtained
 
 # read a panda dataframe of particles in contact
-reading = pd.read_pickle("contact_pairs_cell2.pkl")
+reading = pd.read_pickle("data/contact_pairs_cell2.pkl")
 contact_pairs = reading[['ind_A', 'ind_B']].values
-length = pd.read_pickle("chromosome_lengths_cell2.pkl")
+length = pd.read_pickle("data/chromosome_lengths_cell2.pkl")
 
 NContact = contact_pairs.shape[0]  # number of contacts
 N_sum = length.sum()  # number of particles
