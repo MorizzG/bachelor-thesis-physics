@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 
-cp = pd.read_pickle("data/contact_pairs_cell2.pkl")
 cp_raw = pd.read_csv("data/Cell2_contact_pairs.txt", sep="\t")
 
 # chr_A and chr_B are labeled as "chr{n}" for n=1..19 or "chrX"

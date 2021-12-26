@@ -26,7 +26,7 @@ def time_now():
     return datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
 
 
-def make_contact__pairs(df_contact_pairs):
+def make_contact_pairs(df_contact_pairs):
     df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(
         lambda s: "chr20" if s == "chrX" else s
     )
@@ -104,15 +104,15 @@ def main():
             return
 
     for n_cell in cells:
-        df_contact_pairs = pd.read_csv(f"Cell{n_cell}_contact_pairs.txt", sep="\t")
+        df_contact_pairs = pd.read_csv(f"data/Cell{n_cell}_contact_pairs.txt", sep="\t")
 
         contact_pairs = make_contact_pairs(df_contact_pairs)
 
-        df_length = pd.read_pickle("data/chromosome_lengths.pkl")
+        lengths = pd.read_pickle("data/chromosome_lengths.pkl")
 
         N_contact = contact_pairs.shape[0]  # number of contacts
-        N_sum = length.sum()  # number of particles
-        diff = len(length.keys())  # number of chromosomes
+        N_sum = lengths.sum()  # number of particles
+        diff = len(lengths.keys())  # number of chromosomes
 
         # generate cube for initial configuration
         box = Cube(N_sum)
@@ -127,12 +127,12 @@ def main():
             bond_types=["backbone", "contact"],
         )
 
-        s.particles.typeid[:] = 0 # all particles of type A
+        s.particles.typeid[:] = 0  # all particles of type A
         s.particles.position[:] = box.random_points[:, :]
         # resize the number of HOOMD-bonds: one from each bead to the next
         # minus 20 since the chromosomes are single chains
         # plus one for each contact
-        s.bonds.resize(N_sum - diff + NContact)
+        s.bonds.resize(N_sum - diff + N_contact)
 
         # connect all particles of a chromosome to a chain
         # L = []
@@ -142,22 +142,75 @@ def main():
         #     b = a + 1
         #     n_already_added += length[key]
         #     L.append(np.column_stack((a,b)))
-        # 
+        #
         # # L = tuple(L)
         # final = np.vstack(L)
 
         x = np.arange(N_sum)
-        K = np.column_stack((x,x+1)) # connect particle N to N+1
-        K = np.delete(K, np.cumsum(length.values)-1, axis=0) # delete bonds between chromosomes
+        K = np.column_stack((x, x + 1))  # connect particle N to N+1
+        K = np.delete(
+            K, np.cumsum(lengths.values) - 1, axis=0
+        )  # delete bonds between chromosomes
 
-        print(f"{N_sum} {K.shape[0]} {len(length.keys())}")
+        print(f"{N_sum} {K.shape[0]} {len(lengths)}")
 
-        s.bonds.group[:N_sum - diff] = K
-        s.bonds.group[N_sum - diff:] = contact_pairs  # connect all particles in contact
-        s.bonds.typeid[:N_sum - diff] = 0  # Set id for chain bonds (bonds)
-        s.bonds.typeid[N_sum - diff:] = 1  # Set id for contact bonds (contacts)
+        s.bonds.group[: N_sum - diff] = K
+        s.bonds.group[
+            N_sum - diff :
+        ] = contact_pairs  # connect all particles in contact
+        s.bonds.typeid[: N_sum - diff] = 0  # Set id for chain bonds (bonds)
+        s.bonds.typeid[N_sum - diff :] = 1  # Set id for contact bonds (contacts)
 
-        system = hoomd.init.read_snapshot(s)
+        # set potentials and their coefficients
+        system = hoomd.init.read_snapshot(s)  # create dynamic system from snapshot
+        nl = hoomd.md.nlist.tree()  # Verlet-style list
+        # exclude particles already connected by bond or contact
+        nl.reset_exclusions(exclusions=["bond"])
+
+        # define excluded volume interaction
+        gauss = hoomd.md.pair.gauss(r_cut=0.5, nlist=nl)
+        gauss.pair_coeff.set("A", "A", epsilon=100.0, sigma=0.5)
+        gauss.disable(log=True)
+
+        # set the bond potential to harmonic bonds
+        harmonic = hoomd.md.bond.harmonic()
+        harmonic.bond_coeff.set("backbone", k=2000.0, r0=1.0)
+        harmonic.bond_coeff.set("contact", k=2000.0, r0=1.5)
+
+        # choose Langevin thermostat and integrator parameters
+        all_ = hoomd.group.all()
+        hoomd.md.integrate.mode_standard(dt=0.001)
+        seed_langevin = np.random.randint(0, 100000)
+        integrator = hoomd.md.integrate.langevin(group=all_, kT=1.0, seed=seed_langevin)
+
+        # write potential energy to log and structures to gsd after every cycle
+        per = int(18e4)
+        hoomd.analyze.log(
+            filename=f"log_all_cell{n_cell}" + comment + ".log",
+            quantities=["potential_energy", "temperature"],
+            period=per,
+            overwrite=True,
+            phase=per - 1,
+        )
+        hoomd.dump.gsd(
+            f"traj_all_cell{n_cell}" + comment + ".gsd",
+            period=per,
+            group=all_,
+            overwrite=True,
+            dynamic=["property", "attribute"],
+            phase=per - 1,
+        )
+
+        for i in range(1, 1 + num_cycles):
+            print(120 * "-")
+            print(f"Step {i} / {num_cycles}")
+            hoomd.run(0.8e5)
+            gauss.enable()
+            gauss.pair_coeff.set("A", "A", epsilon=100.0, sigma=0.1, r_cut=0.4)
+            hoomd.run(0.5e5)
+            gauss.pair_coeff.set("A", "A", epsilon=100.0, sigma=1.0, r_cut=3.5)
+            hoomd.run(0.5e5)
+            gauss.disable()
 
 
 if __name__ == "__main__":
