@@ -27,14 +27,12 @@ def time_now():
 
 
 def make_contact_pairs(df_contact_pairs):
-    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(
-        lambda s: "chr20" if s == "chrX" else s
-    )
+    # chromosomes are initially labelled as "chr17" or "chrX" for ch 20
+    # we want them labelled by numbers instead: chr17 -> 17, chrX -> 20
+    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(lambda s: "chr20" if s == "chrX" else s)
     df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(lambda s: int(s[3:]))
 
-    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(
-        lambda s: "chr20" if s == "chrX" else s
-    )
+    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(lambda s: "chr20" if s == "chrX" else s)
     df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(lambda s: int(s[3:]))
 
     chr_min_pos = {}
@@ -51,14 +49,16 @@ def make_contact_pairs(df_contact_pairs):
     lengths_cumsum = np.array(np.cumsum(lengths))
     lengths_cumsum = np.insert(lengths_cumsum, 0, 0)
 
+    # convert position on chromosomes to bead number
+    # each bead is a bin of 100,000 chromosome positions
+    # subtract the minimin position so our beads start at 0
+    # which chromosome a bead belongs to will be later taken care of
     df_contact_pairs["ind_A"] = df_contact_pairs.apply(
-        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000
-        + lengths_cumsum[row["chr_A"] - 1],
+        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000 + lengths_cumsum[row["chr_A"] - 1],
         axis=1,
     )
     df_contact_pairs["ind_B"] = df_contact_pairs.apply(
-        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000
-        + lengths_cumsum[row["chr_B"] - 1],
+        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000 + lengths_cumsum[row["chr_B"] - 1],
         axis=1,
     )
 
@@ -104,8 +104,10 @@ def main():
             return
 
     for n_cell in cells:
+        # read the raw contact pair data from file
         df_contact_pairs = pd.read_csv(f"data/Cell{n_cell}_contact_pairs.txt", sep="\t")
 
+        # convert that raw data to a numpy array of beads in contact
         contact_pairs = make_contact_pairs(df_contact_pairs)
 
         lengths = pd.read_pickle("data/chromosome_lengths.pkl")
@@ -146,18 +148,15 @@ def main():
         # # L = tuple(L)
         # final = np.vstack(L)
 
+        # connect all particles of a chromosome to a chain
         x = np.arange(N_sum)
         K = np.column_stack((x, x + 1))  # connect particle N to N+1
-        K = np.delete(
-            K, np.cumsum(lengths.values) - 1, axis=0
-        )  # delete bonds between chromosomes
+        K = np.delete(K, np.cumsum(lengths.values) - 1, axis=0)  # delete bonds between chromosomes
 
         print(f"{N_sum} {K.shape[0]} {len(lengths)}")
 
         s.bonds.group[: N_sum - diff] = K
-        s.bonds.group[
-            N_sum - diff :
-        ] = contact_pairs  # connect all particles in contact
+        s.bonds.group[N_sum - diff :] = contact_pairs  # connect all particles in contact
         s.bonds.typeid[: N_sum - diff] = 0  # Set id for chain bonds (bonds)
         s.bonds.typeid[N_sum - diff :] = 1  # Set id for contact bonds (contacts)
 
@@ -186,14 +185,14 @@ def main():
         # write potential energy to log and structures to gsd after every cycle
         per = int(18e4)
         hoomd.analyze.log(
-            filename=f"log_all_cell{n_cell}" + comment + ".log",
+            filename=f"log_all_cell{n_cell}_" + comment + ".log",
             quantities=["potential_energy", "temperature"],
             period=per,
             overwrite=True,
             phase=per - 1,
         )
         hoomd.dump.gsd(
-            f"traj_all_cell{n_cell}" + comment + ".gsd",
+            f"traj_all_cell{n_cell}_" + comment + ".gsd",
             period=per,
             group=all_,
             overwrite=True,
