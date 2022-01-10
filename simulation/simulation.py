@@ -29,10 +29,14 @@ def time_now():
 def make_contact_pairs(df_contact_pairs):
     # chromosomes are initially labelled as "chr17" or "chrX" for ch 20
     # we want them labelled by numbers instead: chr17 -> 17, chrX -> 20
-    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(lambda s: "chr20" if s == "chrX" else s)
+    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(
+        lambda s: "chr20" if s == "chrX" else s
+    )
     df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(lambda s: int(s[3:]))
 
-    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(lambda s: "chr20" if s == "chrX" else s)
+    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(
+        lambda s: "chr20" if s == "chrX" else s
+    )
     df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(lambda s: int(s[3:]))
 
     chr_min_pos = {}
@@ -54,21 +58,23 @@ def make_contact_pairs(df_contact_pairs):
     # subtract the minimin position so our beads start at 0
     # which chromosome a bead belongs to will be later taken care of
     df_contact_pairs["ind_A"] = df_contact_pairs.apply(
-        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000 + lengths_cumsum[row["chr_A"] - 1],
+        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000
+        + lengths_cumsum[row["chr_A"] - 1],
         axis=1,
     )
     df_contact_pairs["ind_B"] = df_contact_pairs.apply(
-        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000 + lengths_cumsum[row["chr_B"] - 1],
+        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000
+        + lengths_cumsum[row["chr_B"] - 1],
         axis=1,
     )
 
     # df_contact_pairs["ind_A"] = df_contact_pairs.apply(
     #     lambda row: (row["pos_A"] - 3000000) // 100000 + lengths_cumsum[row["chr_A"] - 1],
-    #     axis=1,
+    #     axis = 1,
     # )
     # df_contact_pairs["ind_B"] = df_contact_pairs.apply(
     #     lambda row: (row["pos_B"] - 3000000) // 100000 + lengths_cumsum[row["chr_B"] - 1],
-    #     axis=1,
+    #     axis = 1,
     # )
 
     # drop self-interacting and neighbouring terms
@@ -124,7 +130,8 @@ def main():
         hoomd.context.initialize("")
         s = hoomd.data.make_snapshot(
             N=N_sum,
-            box=hoomd.data.boxdim(Lx=50000, Ly=50000, Lz=50000),
+            # box = hoomd.data.boxdim(Lx = 50000, Ly = 50000, Lz = 50000),
+            box=hoomd.data.boxdim(L=50000),
             particle_types=["A"],
             bond_types=["backbone", "contact"],
         )
@@ -140,9 +147,9 @@ def main():
         # L = []
         # n_already_added = 0
         # for key in sorted(length.keys()):
-        #     a = np.arange(n_already_added, n_already_added + length[key] - 1, dtype="int")
+        #     a = np.arange(n_already_added, n_already_added + length[key] - 1, dtype = "int")
         #     b = a + 1
-        #     n_already_added += length[key]
+        #     n_already_added + = length[key]
         #     L.append(np.column_stack((a,b)))
         #
         # # L = tuple(L)
@@ -151,12 +158,16 @@ def main():
         # connect all particles of a chromosome to a chain
         x = np.arange(N_sum)
         K = np.column_stack((x, x + 1))  # connect particle N to N+1
-        K = np.delete(K, np.cumsum(lengths.values) - 1, axis=0)  # delete bonds between chromosomes
+        K = np.delete(
+            K, np.cumsum(lengths.values) - 1, axis=0
+        )  # delete bonds between chromosomes
 
         print(f"{N_sum} {K.shape[0]} {len(lengths)}")
 
         s.bonds.group[: N_sum - diff] = K
-        s.bonds.group[N_sum - diff :] = contact_pairs  # connect all particles in contact
+        s.bonds.group[
+            N_sum - diff :
+        ] = contact_pairs  # connect all particles in contact
         s.bonds.typeid[: N_sum - diff] = 0  # Set id for chain bonds (bonds)
         s.bonds.typeid[N_sum - diff :] = 1  # Set id for contact bonds (contacts)
 
@@ -203,12 +214,12 @@ def main():
         for i in range(1, 1 + num_cycles):
             print(120 * "-")
             print(f"Step {i} / {num_cycles}")
-            hoomd.run(0.8e5)
+            hoomd.run(8e4)
             gauss.enable()
             gauss.pair_coeff.set("A", "A", epsilon=100.0, sigma=0.1, r_cut=0.4)
-            hoomd.run(0.5e5)
+            hoomd.run(5e4)
             gauss.pair_coeff.set("A", "A", epsilon=100.0, sigma=1.0, r_cut=3.5)
-            hoomd.run(0.5e5)
+            hoomd.run(5e4)
             gauss.disable()
 
 
