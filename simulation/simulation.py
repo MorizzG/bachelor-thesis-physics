@@ -8,6 +8,9 @@ import hoomd.md
 import datetime
 
 
+from tools.read_cp import make_contact_pairs
+
+
 class Cube:
     """
     This class is meant to represent a cube, which can be filled with a chosen amount points on random positions
@@ -24,67 +27,6 @@ class Cube:
 
 def time_now():
     return datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
-
-
-def make_contact_pairs(df_contact_pairs):
-    # chromosomes are initially labelled as "chr17" or "chrX" for ch 20
-    # we want them labelled by numbers instead: chr17 -> 17, chrX -> 20
-    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(
-        lambda s: "chr20" if s == "chrX" else s
-    )
-    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(lambda s: int(s[3:]))
-
-    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(
-        lambda s: "chr20" if s == "chrX" else s
-    )
-    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(lambda s: int(s[3:]))
-
-    chr_min_pos = {}
-
-    # calculate min pos for each chromosome
-    for n in range(1, 21):
-        chrn_minA = min(df_contact_pairs.loc[df_contact_pairs["chr_A"] == n]["pos_A"])
-        chrn_minB = min(df_contact_pairs.loc[df_contact_pairs["chr_B"] == n]["pos_B"])
-
-        chr_min_pos[n] = min(chrn_minA, chrn_minB)
-
-    lengths = pd.read_pickle("data/chromosome_lengths.pkl")
-
-    lengths_cumsum = np.array(np.cumsum(lengths))
-    lengths_cumsum = np.insert(lengths_cumsum, 0, 0)
-
-    # convert position on chromosomes to bead number
-    # each bead is a bin of 100,000 chromosome positions
-    # subtract the minimin position so our beads start at 0
-    # which chromosome a bead belongs to will be later taken care of
-    df_contact_pairs["ind_A"] = df_contact_pairs.apply(
-        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000
-        + lengths_cumsum[row["chr_A"] - 1],
-        axis=1,
-    )
-    df_contact_pairs["ind_B"] = df_contact_pairs.apply(
-        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000
-        + lengths_cumsum[row["chr_B"] - 1],
-        axis=1,
-    )
-
-    # df_contact_pairs["ind_A"] = df_contact_pairs.apply(
-    #     lambda row: (row["pos_A"] - 3000000) // 100000 + lengths_cumsum[row["chr_A"] - 1],
-    #     axis = 1,
-    # )
-    # df_contact_pairs["ind_B"] = df_contact_pairs.apply(
-    #     lambda row: (row["pos_B"] - 3000000) // 100000 + lengths_cumsum[row["chr_B"] - 1],
-    #     axis = 1,
-    # )
-
-    # drop self-interacting and neighbouring terms
-    df_contact_pairs = df_contact_pairs.loc[
-        (df_contact_pairs["ind_A"] != df_contact_pairs["ind_B"])
-        & (df_contact_pairs["ind_A"] != df_contact_pairs["ind_B"] + 1)
-        & (df_contact_pairs["ind_A"] != df_contact_pairs["ind_B"] - 1)
-    ]
-
-    return df_contact_pairs[["ind_A", "ind_B"]].values
 
 
 def main():
@@ -111,12 +53,14 @@ def main():
 
     for n_cell in cells:
         # read the raw contact pair data from file
-        df_contact_pairs = pd.read_csv(f"data/Cell{n_cell}_contact_pairs.txt", sep="\t")
+        # df_contact_pairs = pd.read_csv(f"data/Cell{n_cell}_contact_pairs.txt", sep="\t")
+        df_contact_pairs = pd.read_pickle(f"data/Pairs/contact_pairs_cell{n_cell}.pkl")
 
         # convert that raw data to a numpy array of beads in contact
-        contact_pairs = make_contact_pairs(df_contact_pairs)
+        # contact_pairs = make_contact_pairs(df_contact_pairs)
+        contact_pairs = df_contact_pairs[["ind_A", "ind_B"]].values
 
-        lengths = pd.read_pickle("data/chromosome_lengths.pkl")
+        lengths = pd.read_pickle(f"data/LengthsAndStarts/chromosome_lengths_cell{n_cell}.pkl")
 
         N_contact = contact_pairs.shape[0]  # number of contacts
         N_sum = lengths.sum()  # number of particles
