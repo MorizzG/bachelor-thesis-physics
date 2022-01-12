@@ -144,14 +144,14 @@ def main():
         # write potential energy to log and structures to gsd after every cycle
         per = int(18e4)
         hoomd.analyze.log(
-            filename=f"log_all_cell{n_cell}_" + comment + ".log",
+            filename=f"log_cell{n_cell}_" + comment + ".log",
             quantities=["potential_energy", "temperature"],
             period=per,
             overwrite=True,
             phase=per - 1,
         )
         hoomd.dump.gsd(
-            f"traj_all_cell{n_cell}_" + comment + ".gsd",
+            f"traj_cell{n_cell}_" + comment + ".gsd",
             period=per,
             group=all_,
             overwrite=True,
