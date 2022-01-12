@@ -8,7 +8,7 @@ import hoomd.md
 import datetime
 
 
-from tools.read_cp import make_contact_pairs
+# from tools.read_cp import make_contact_pairs
 
 
 class Cube:
@@ -54,13 +54,17 @@ def main():
     for n_cell in cells:
         # read the raw contact pair data from file
         # df_contact_pairs = pd.read_csv(f"data/Cell{n_cell}_contact_pairs.txt", sep="\t")
-        df_contact_pairs = pd.read_pickle(f"data/Pairs/contact_pairs_cell{n_cell}.pkl")
+        df_contact_pairs = pd.read_pickle(
+            f"data/contact_pairs_jan/contact_pairs_cell{n_cell}.pkl"
+        )
 
         # convert that raw data to a numpy array of beads in contact
         # contact_pairs = make_contact_pairs(df_contact_pairs)
         contact_pairs = df_contact_pairs[["ind_A", "ind_B"]].values
 
-        lengths = pd.read_pickle(f"data/LengthsAndStarts/chromosome_lengths_cell{n_cell}.pkl")
+        lengths = pd.read_pickle(
+            f"data/lengths_jan/chromosome_lengths_cell{n_cell}.pkl"
+        )
 
         N_contact = contact_pairs.shape[0]  # number of contacts
         N_sum = lengths.sum()  # number of particles
@@ -116,7 +120,7 @@ def main():
         s.bonds.typeid[N_sum - diff :] = 1  # Set id for contact bonds (contacts)
 
         # set potentials and their coefficients
-        system = hoomd.init.read_snapshot(s)  # create dynamic system from snapshot
+        hoomd.init.read_snapshot(s)  # create dynamic system from snapshot
         nl = hoomd.md.nlist.tree()  # Verlet-style list
         # exclude particles already connected by bond or contact
         nl.reset_exclusions(exclusions=["bond"])
@@ -135,7 +139,7 @@ def main():
         all_ = hoomd.group.all()
         hoomd.md.integrate.mode_standard(dt=0.001)
         seed_langevin = np.random.randint(0, 100000)
-        integrator = hoomd.md.integrate.langevin(group=all_, kT=1.0, seed=seed_langevin)
+        hoomd.md.integrate.langevin(group=all_, kT=1.0, seed=seed_langevin)
 
         # write potential energy to log and structures to gsd after every cycle
         per = int(18e4)
