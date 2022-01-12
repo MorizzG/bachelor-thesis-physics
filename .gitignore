@@ -1,4 +1,9 @@
-*/hoomd/*
-*/hoomd3/*
-*/build/*
+# directories containing compiled hoomd
+simulation/hoomd/*
+simulation/hoomd3/*
+
+# build directory
+simulation/build/*
+
+# pycache
 __pycache__/
