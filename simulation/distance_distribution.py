@@ -16,7 +16,7 @@ from scipy.stats import rv_histogram
 
 # import matplotlib.pyplot as plt
 
-from mg_plot import new_fig, set_styling
+from tools.mg_plot import new_fig, set_styling
 
 
 # %% Global Variables
