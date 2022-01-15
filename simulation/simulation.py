@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import hoomd.md
 import datetime
+import argparse
 
 
 # from tools.read_cp import make_contact_pairs
@@ -31,25 +32,44 @@ def time_now():
 
 def main():
     comment = time_now()  # This will be written as part of the filename
-    num_cycles = 105
+    num_cycles = 105  # number of configurations to do
 
-    if len(sys.argv) != 2:
-        print("Invalid number of arguments")
-        print("Usage: simulation.py [num]")
-        print("where [num] is either 'all' or the number of the cell")
-        return
+    parser = argparse.ArgumentParser(
+        description="Run a hoomd simulation using Hi-C data"
+    )
 
-    if sys.argv[1] == "all":
-        cells = [1, 2, 3, 4, 5, 6, 7, 8]
+    arg_group = parser.add_mutually_exclusive_group(required=True)
+
+    arg_group.add_argument(
+        "cell_n",
+        action="store",
+        nargs="?",
+        type=int,
+        help="Cell to simulate",  # , nargs="*"
+    )
+    arg_group.add_argument("--all", action="store_true", help="Simulate all cells")
+
+    args = parser.parse_args()
+
+    # if len(sys.argv) != 2:
+    #     print("Invalid number of arguments")
+    #     print("Usage: simulation.py [num]")
+    #     print("where [num] is either 'all' or the number of the cell")
+    #     return
+
+    if args.all:
+        cells = list(range(1, 9))
     else:
-        try:
-            n = int(sys.argv[1])
-            if n < 1 or n > 8:
-                raise ValueError()
-            cells = [n]
-        except ValueError:
-            print("Error: invalid cell number")
-            return
+        cells = [args.cell_n]
+    # else:
+    #     try:
+    #         n = int(sys.argv[1])
+    #         if n < 1 or n > 8:
+    #             raise ValueError()
+    #         cells = [n]
+    #     except ValueError:
+    #         print("Error: invalid cell number")
+    #         return
 
     for n_cell in cells:
         # read the raw contact pair data from file

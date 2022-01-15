@@ -7,7 +7,8 @@ Created on Wed Jan 12 15:56:38 2022
 """
 
 import numpy as np
-import pandas as pd
+
+# import pandas as pd
 import gsd.hoomd
 import sys
 
@@ -34,15 +35,19 @@ snap = f[-1]
 
 pos = snap.particles.position
 
+len_pos = len(pos)
+
 
 def calc_all_dists(n):
-    return np.linalg.norm(np.array([pos[n] - pos[m] for m in range(n)]), axis=1)
+    return np.linalg.norm(np.array([pos[n] - pos[m] for m in range(len_pos)]), axis=1)
 
 
 p = Pool()
 
-dists = np.concatenate(p.map(calc_all_dists, range(1, len(pos))))
+dists = np.stack(p.map(calc_all_dists, range(len_pos)))
 
-s_dists = pd.Series(dists)
+# s_dists = pd.Series(dists)
 
-s_dists.to_pickle(f"data/dists/dists_cell{cell_n}.pkl")
+# s_dists.to_pickle(f"data/dists/dists_cell{cell_n}.pkl")
+
+np.save(f"data/dists/dists_cell{cell_n}", dists)
