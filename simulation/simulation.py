@@ -83,7 +83,7 @@ def main():
         contact_pairs = df_contact_pairs[["ind_A", "ind_B"]].values
 
         lengths = pd.read_pickle(
-            f"data/lengths_jan/chromosome_lengths_cell{n_cell}.pkl"
+            f"data/lengths_jan/chr_lens_cell{n_cell}.pkl"
         )
 
         N_contact = contact_pairs.shape[0]  # number of contacts

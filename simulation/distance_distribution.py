@@ -1,7 +1,15 @@
-#!/usr/bin/env python
-# coding: utf-8
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Jan 15 19:45:29 2022
+
+@author: mg
+"""
+
 
 # %% Imports
+
+import argparse
 
 import numpy as np
 
@@ -19,10 +27,25 @@ from scipy.stats import rv_histogram
 from tools.mg_plot import new_fig, set_styling
 
 
-# %% Global Variables
+# %% Parse args
 
 
-cell_n = 2
+parser = argparse.ArgumentParser(
+    description="Calculate distance distributions for bonds and contacts"
+)
+
+arg_group = parser.add_argument(
+    "cell_n",
+    action="store",
+    nargs="?",
+    type=int,
+    default=1,
+    help="Which cell to calculate",  # , nargs="*"
+)
+
+args = parser.parse_args()
+
+cell_n = args.cell_n
 
 
 # %% Read trajectory data
@@ -42,13 +65,22 @@ with gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb") as f:
     bonds = all_bonds[typeid == 0]
     contacts = all_bonds[typeid == 1]
 
-    all_pos = np.stack([snap.particles.position for snap in f])
+    # skip the first 5 configurations
+    all_pos = np.stack([snap.particles.position for snap in f[5:]])
 
-N = len(all_pos[0])
+
+# %% Read distance data
+
+# all_dists = np.load(f"data/dists/dists_cell{cell_n}.npy", allow_pickle=True)
+
+# all_dists = np.fromiter(
+#     (all_dists[n, m] for n in range(len(all_dists)) for m in range(n)),
+#     dtype="float32",
+#     count=(len(all_dists) * (len(all_dists) - 1) // 2),
+# )
 
 
 # %% Calculate bond and contact distance distribution
-
 
 bond_dists = np.linalg.norm(
     np.stack([pos[n] - pos[m] for (n, m) in bonds for pos in all_pos]), axis=1
@@ -62,6 +94,19 @@ contact_dists = np.linalg.norm(
 rv_bonds = rv_histogram(np.histogram(bond_dists, "auto", density=True))
 
 rv_contacts = rv_histogram(np.histogram(contact_dists, "auto", density=True))
+
+# rv_all = rv_histogram(np.histogram(np.ravel(all_dists), "auto", density=True))
+
+
+# %% Print averages and quartiles
+
+print(f"Bonds average distance: {rv_bonds.mean():.4}")
+print(f"Bonds 99.73% quartile: {rv_bonds.ppf(.9973):.4}")
+
+print()
+
+print(f"Contacts average distance: {rv_bonds.mean():.4}")
+print(f"Contacts 99.73% quartile: {rv_contacts.ppf(.9973):.4}")
 
 
 # %% Plot contact and bond distance distribution
@@ -89,9 +134,6 @@ ax.plot(X, rv_contacts.pdf(X), "C1-", label="contact length PDF")
 ax.vlines(bond_dists.mean(), ylim_low - 1, ylim_high + 1, colors="C0")
 ax.vlines(contact_dists.mean(), ylim_low - 1, ylim_high + 1, colors="C1")
 
-print(f"Bonds average distance: {bond_dists.mean():.4}")
-print(f"Contacts average distance: {contact_dists.mean():.4}")
-
 ax.set_xlim(0, 3)
 ax.set_ylim(ylim_low, ylim_high)
 
@@ -101,3 +143,14 @@ ax.set_ylabel("PDF")
 set_styling(ax)
 
 ax.legend()
+
+
+# ax2 = ax.twinx()
+
+# # X = np.linspace(0, 5, num=1000)
+
+# (line3,) = ax2.plot(X, rv_all.pdf(X), "C2-", label="all dists PDF")
+
+# lines = [line1, line2, line3]
+
+# ax.legend(lines, [line.get_label() for line in lines])
