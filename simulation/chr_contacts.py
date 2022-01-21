@@ -17,7 +17,8 @@ import gsd.hoomd
 # from tools.mg_plot import new_fig, set_styling
 
 import argparse
-from multiprocessing import Pool
+
+# from multiprocessing import Pool
 
 
 # %% Parse args
@@ -68,9 +69,8 @@ def calc_contact_ratios(cell_n):
 
     N = len(all_pos[0])
 
-    # 2.732 is calculated in distance_distribution.py as the 99.73% quartile
-    # of the contact distance distribution
-    is_contact = dists < 2.732
+    # 2x the expected bond length of 1.5
+    is_contact = dists < 3
 
     # count number of contacts, remove diagonal (self-contacts) and divide by two
     # since each contact is twice in the symmetric matrix
@@ -125,13 +125,15 @@ def calc_contact_ratios(cell_n):
     # chr_contact_ratios[cell_n] = chr_contact_ratio
 
 
-p = Pool()
+# p = Pool()
 
 chr_contact_ratios = list(map(calc_contact_ratios, range(1, 9)))
 
 # %% Display chromosome contact ratios graphically
 
 print("Plotting...")
+
+chr_contact_ratios /= np.max(chr_contact_ratios)
 
 norm = mpl.colors.Normalize(vmin=0, vmax=np.max(chr_contact_ratios))
 
@@ -147,10 +149,30 @@ axes_flat[-1].tick_params(left=False, bottom=False, labelleft=False, labelbottom
 for cell_n in range(8):
     axes_flat[cell_n].imshow(chr_contact_ratios[cell_n], norm=norm, cmap="plasma")
 
-    axes_flat[cell_n].tick_params(
-        left=False, bottom=False, labelleft=False, labelbottom=False
-    )
+    # axes_flat[cell_n].tick_params(
+    #     left=False, bottom=False  # , labelleft=False, labelbottom=False
+    # )
 
 fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap="plasma"), ax=axes)
 
 # set_styling(ax)
+
+
+# %% Calc means and stds
+
+ratios = np.stack(chr_contact_ratios)
+
+ratios = np.moveaxis(ratios, 0, -1)
+
+means = ratios.mean(axis=-1)
+
+stds = ratios.std(axis=-1)
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+
+im1 = axes[0].imshow(means, cmap="plasma")
+fig.colorbar(im1, cmap="plasma", ax=axes[0])
+
+im2 = axes[1].imshow(stds, cmap="plasma")
+fig.colorbar(im2, cmap="plasma", ax=axes[1])
