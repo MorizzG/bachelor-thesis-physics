@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan 12 17:51:54 2022
+Created on Wed Jan 12 17:51:54 2022.
 
 @author: mg
 """
@@ -11,6 +11,20 @@ import pandas as pd
 
 
 def remove_neighbours(df_contact_pairs):
+    """
+    Remove neighbouring contacts pairs.
+
+    Parameters
+    ----------
+    df_contact_pairs : pandas.DataFrame
+        data frame containing contact pair information
+
+    Returns
+    -------
+    pandas.DataFrame
+        data frame that has been stripped of neighbouring contacts
+
+    """
     return df_contact_pairs.drop(
         df_contact_pairs[
             (df_contact_pairs["chr_A"] == df_contact_pairs["chr_B"])
@@ -24,14 +38,47 @@ def remove_neighbours(df_contact_pairs):
 
 
 def min_ind(df, ch):
+    """
+    Return smallest index in a chromosome.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Contact data
+    ch : int
+        number of chromosome
+
+    Returns
+    -------
+    int
+        minimum index
+
+    """
     return min(min(df[df["chr_A"] == ch]["ind_A"]), min(df[df["chr_B"] == ch]["ind_B"]))
 
 
 def max_ind(df, ch):
+    """
+    Return largest index in a chromosome.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Contact data
+    ch : int
+        number of chromosome
+
+    Returns
+    -------
+    int
+        maximum index
+
+    """
     return max(max(df[df["chr_A"] == ch]["ind_A"]), max(df[df["chr_B"] == ch]["ind_B"]))
 
 
 def main():
+    """Execute main function."""
     global df_contact_pairs, df_ref
     df_contact_pairs = pd.read_csv(
         "data/contact_pairs_raw/Cell2_contact_pairs.txt", sep="\t"

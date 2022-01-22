@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jan 15 20:33:17 2022
+Created on Sat Jan 15 20:33:17 2022.
 
 @author: mg
 """
@@ -44,7 +44,20 @@ cell_n = args.cell_n
 
 
 def calc_contact_ratios(cell_n):
+    """
+    Calculate the contact ratios between chromosomes for a cell.
 
+    Parameters
+    ----------
+    cell_n : int
+        Cell number
+
+    Returns
+    -------
+    chr_contact_ratio : numpy.ndarray(shape=(20,20))
+        Array of chromosome contact rations
+
+    """
     print(f"Starting cell {cell_n}...")
     print()
 
