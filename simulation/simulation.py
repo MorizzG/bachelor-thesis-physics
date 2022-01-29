@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""
+Created on Mon Dec 20 2021.
 
-import sys
+@author: mg
+"""
+
+# import sys
 import numpy as np
 import pandas as pd
 import hoomd.md
@@ -12,26 +17,40 @@ import argparse
 # from tools.read_cp import make_contact_pairs
 
 
-class Cube:
-    """
-    This class is meant to represent a cube, which can be filled with a chosen amount points on random positions
-    These particles will later form the initial configuration
-    """
+# class Cube:
+#     """
+#     Class representing a cube, which can be filled with a chosen amount points on random positions.
 
-    def __init__(self, length):
-        self.length = length
-        self.random_points = 0
+#     These particles will later form the initial configuration
+#     """
 
-    def generate_points(self):
-        self.random_points = np.random.uniform(0, 1, size=(self.length, 3))
+#     def __init__(self):
+#         self.random_points = 0
+
+#     def generate_points(self, n):
+#         """
+#         Generate n random points.
+
+#         Parameters
+#         ----------
+#         n : int
+#             Number of random points to generate.
+
+#         Returns
+#         -------
+#         None.
+
+#         """
+#         self.random_points = np.random.uniform(0, 1, size=(self.n, 3))
 
 
-def time_now():
-    return datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
+# def time_now():
+#     return datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
 
 
 def main():
-    comment = time_now()  # This will be written as part of the filename
+    """Execute main function."""
+    comment = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")  # This will be written as part of the filename
     num_cycles = 105  # number of configurations to do
 
     parser = argparse.ArgumentParser(
@@ -91,8 +110,8 @@ def main():
         diff = len(lengths.keys())  # number of chromosomes
 
         # generate cube for initial configuration
-        box = Cube(N_sum)
-        box.generate_points()
+        # box = Cube()
+        # box.generate_points(N_sum)
 
         # define the hoomd snapshot
         hoomd.context.initialize("")
@@ -105,7 +124,8 @@ def main():
         )
 
         s.particles.typeid[:] = 0  # all particles of type A
-        s.particles.position[:] = box.random_points[:, :]
+        # s.particles.position[:] = box.random_points[:, :]
+        s.particles.position = np.random.uniform(0, 1, size=(N_sum, 3))
         # resize the number of HOOMD-bonds: one from each bead to the next
         # minus 20 since the chromosomes are single chains
         # plus one for each contact

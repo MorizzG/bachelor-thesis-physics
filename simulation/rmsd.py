@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan 19 20:12:34 2022
+Created on Wed Jan 19 20:12:34 2022.
 
 @author: mg
 """
@@ -40,7 +40,22 @@ cell_n = 2  # args.cell_n
 
 
 def calc_rmsds(cell_n, ref_frame=-1):
+    """
+    Calculate RMSD of all configurations in a cell with respect to a reference configuration.
 
+    Parameters
+    ----------
+    cell_n : int
+        Cell number
+    ref_frame : int, optional
+        Reference frame The default is -1.
+
+    Returns
+    -------
+    numpy.array
+        Array of RMSDs
+
+    """
     # print(f"Starting cell {cell_n}...")
     # print()
 
@@ -65,6 +80,5 @@ for i in range(8):
     rmsds = calc_rmsds(i + 1, ref_frame=-2)
 
     axes_flat[i].plot(rmsds)
-    
     axes_flat[i].set_xlabel(f"Configurations Cell {i+1}")
     axes_flat[i].set_ylabel("RMSD")

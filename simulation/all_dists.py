@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan 12 15:56:38 2022
+Created on Wed Jan 12 15:56:38 2022.
 
 @author: mg
 """
@@ -38,8 +38,7 @@ pos = snap.particles.position
 len_pos = len(pos)
 
 
-def calc_all_dists(n):
-    return np.linalg.norm(np.array([pos[n] - pos[m] for m in range(len_pos)]), axis=1)
+calc_all_dists = lambda n: np.linalg.norm(np.array([pos[n] - pos[m] for m in range(len_pos)]), axis=1)
 
 
 p = Pool()
