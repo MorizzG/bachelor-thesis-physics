@@ -50,7 +50,9 @@ import argparse
 
 def main():
     """Execute main function."""
-    comment = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")  # This will be written as part of the filename
+    comment = datetime.datetime.now().strftime(
+        "%y-%m-%d-%H-%M-%S"
+    )  # This will be written as part of the filename
     num_cycles = 105  # number of configurations to do
 
     parser = argparse.ArgumentParser(
@@ -93,17 +95,18 @@ def main():
     for n_cell in cells:
         # read the raw contact pair data from file
         # df_contact_pairs = pd.read_csv(f"data/Cell{n_cell}_contact_pairs.txt", sep="\t")
+        # df_contact_pairs = pd.read_pickle(
+        #     f"data/contact_pairs_jan/contact_pairs_cell{n_cell}.pkl"
+        # )
+
         df_contact_pairs = pd.read_pickle(
-            f"data/contact_pairs_jan/contact_pairs_cell{n_cell}.pkl"
+            f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl"
         )
 
         # convert that raw data to a numpy array of beads in contact
-        # contact_pairs = make_contact_pairs(df_contact_pairs)
-        contact_pairs = df_contact_pairs[["ind_A", "ind_B"]].values
+        contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].values)
 
-        lengths = pd.read_pickle(
-            f"data/lengths_jan/chr_lens_cell{n_cell}.pkl"
-        )
+        lengths = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{n_cell}.pkl")
 
         N_contact = contact_pairs.shape[0]  # number of contacts
         N_sum = lengths.sum()  # number of particles

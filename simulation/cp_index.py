@@ -1,45 +1,45 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan 12 17:51:54 2022.
+Created on Sun Jan 30 17:31:30 2022.
 
 @author: mg
 """
+
+# %% Imports
 
 import numpy as np
 import pandas as pd
 
 
-def remove_neighbours(df_contact_pairs):
+# %% Global Functions
+
+
+def remove_neighbour_contacts(df_cp):
     """
-    Remove neighbouring contacts pairs.
+    Remove neighbouring and self-interacting contacts pairs inplace.
 
     Parameters
     ----------
     df_contact_pairs : pandas.DataFrame
         data frame containing contact pair information
 
-    Returns
-    -------
-    pandas.DataFrame
-        data frame that has been stripped of neighbouring contacts
-
     """
-    return df_contact_pairs.drop(
-        df_contact_pairs[
-            (df_contact_pairs["chr_A"] == df_contact_pairs["chr_B"])
+    df_cp.drop(
+        df_cp[
+            (df_cp["chr_A"] == df_cp["chr_B"])
             & (
-                (df_contact_pairs["pos_A"] == df_contact_pairs["pos_B"] - 1)
-                | (df_contact_pairs["pos_A"] == df_contact_pairs["pos_B"])
-                | (df_contact_pairs["pos_A"] == df_contact_pairs["pos_B"] + 1)
+                (df_cp["ind_A"] == df_cp["ind_B"] - 1)
+                | (df_cp["ind_A"] == df_cp["ind_B"])
+                | (df_cp["ind_A"] == df_cp["ind_B"] + 1)
             )
-        ].index
+        ].index,
+        inplace=True,
     )
 
 
-def min_ind(df, ch):
+def min_chr_ind(df_cps, n_chr):
     """
-    Return smallest index in a chromosome.
+    Return smallest ind in a chromosome over all cells.
 
     Parameters
     ----------
@@ -54,12 +54,22 @@ def min_ind(df, ch):
         minimum index
 
     """
-    return min(min(df[df["chr_A"] == ch]["ind_A"]), min(df[df["chr_B"] == ch]["ind_B"]))
+    # return np.min(np.min(df[df["chr_A"] == ch]["ind_A"]), np.min(df[df["chr_B"] == ch]["ind_B"]))
+
+    return np.min(
+        [
+            (
+                np.min(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]),
+                np.min(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),
+            )
+            for df_cp in df_cps
+        ]
+    )
 
 
-def max_ind(df, ch):
+def max_chr_ind(df_cps, n_chr):
     """
-    Return largest index in a chromosome.
+    Return largest ind in a chromosome over all cells.
 
     Parameters
     ----------
@@ -74,79 +84,95 @@ def max_ind(df, ch):
         maximum index
 
     """
-    return max(max(df[df["chr_A"] == ch]["ind_A"]), max(df[df["chr_B"] == ch]["ind_B"]))
+    # return np.min(np.min(df[df["chr_A"] == ch]["ind_A"]), np.min(df[df["chr_B"] == ch]["ind_B"]))
 
-
-def main():
-    """Execute main function."""
-    global df_contact_pairs, df_ref
-    df_contact_pairs = pd.read_csv(
-        "data/contact_pairs_raw/Cell2_contact_pairs.txt", sep="\t"
+    return np.max(
+        [
+            (
+                np.max(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]),
+                np.max(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),
+            )
+            for df_cp in df_cps
+        ]
     )
 
-    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(
-        lambda s: "chr20" if s == "chrX" else s
-    )
-    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(lambda s: int(s[3:]))
 
-    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(
-        lambda s: "chr20" if s == "chrX" else s
-    )
-    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(lambda s: int(s[3:]))
+# %% Load CP files and change chromosome identifier from "chrN" to N as number
 
-    df_contact_pairs["pos_A"] = df_contact_pairs["pos_A"] // 100000
-    df_contact_pairs["pos_B"] = df_contact_pairs["pos_B"] // 100000
+df_cps = []
 
-    df_contact_pairs = remove_neighbours(df_contact_pairs)
-
-    min_pos_A = {
-        n: min(df_contact_pairs[df_contact_pairs["chr_A"] == n]["pos_A"])
-        for n in range(1, 21)
-    }
-    min_pos_B = {
-        n: min(df_contact_pairs[df_contact_pairs["chr_B"] == n]["pos_B"])
-        for n in range(1, 21)
-    }
-
-    min_pos = {n: min(min_pos_A[n], min_pos_B[n]) for n in range(1, 21)}
-
-    df_contact_pairs["ind_A"] = df_contact_pairs.apply(
-        lambda row: (row["pos_A"] - min_pos[row["chr_A"]]),
-        axis=1,
-    )
-    df_contact_pairs["ind_B"] = df_contact_pairs.apply(
-        lambda row: (row["pos_B"] - min_pos[row["chr_B"]]),
-        axis=1,
+for n_cell in range(1, 9):
+    df_cp = pd.read_csv(
+        f"data/contact_pairs_raw/Cell{n_cell}_contact_pairs.txt", sep="\t"
     )
 
-    df_contact_pairs = df_contact_pairs.sort_values(
-        ["chr_A", "chr_B", "pos_A", "pos_B"]
-    )
+    df_cp["chr_A"] = df_cp["chr_A"].apply(lambda s: "chr20" if s == "chrX" else s)
+    df_cp["chr_A"] = df_cp["chr_A"].apply(lambda s: int(s[3:]))
 
-    max_ind_A = {
-        n: max(df_contact_pairs[df_contact_pairs["chr_A"] == n]["ind_A"])
-        for n in range(1, 21)
-    }
-    max_ind_B = {
-        n: max(df_contact_pairs[df_contact_pairs["chr_B"] == n]["ind_B"])
-        for n in range(1, 21)
-    }
+    df_cp["chr_B"] = df_cp["chr_B"].apply(lambda s: "chr20" if s == "chrX" else s)
+    df_cp["chr_B"] = df_cp["chr_B"].apply(lambda s: int(s[3:]))
 
-    max_ind = [0] + [max(max_ind_A[n], max_ind_B[n]) for n in range(1, 21)]
+    df_cps += [df_cp]
+# %% Bin positions with size 100,000 and remove neighbouring contacts
 
-    max_ind_cumsum = np.cumsum(max_ind) + np.arange(21)
+for df_cp in df_cps:
+    df_cp["ind_A"] = df_cp["pos_A"] // 100000
+    df_cp["ind_B"] = df_cp["pos_B"] // 100000
 
-    df_contact_pairs["ind_A"] = df_contact_pairs.apply(
-        lambda row: (row["ind_A"] + max_ind_cumsum[row["chr_A"] - 1]),
-        axis=1,
-    )
-    df_contact_pairs["ind_B"] = df_contact_pairs.apply(
-        lambda row: (row["ind_B"] + max_ind_cumsum[row["chr_B"] - 1]),
-        axis=1,
-    )
+    remove_neighbour_contacts(df_cp)
+# %% Calculate minimum and maximum index and length for each chromosome
 
-    df_ref = pd.read_pickle("data/contact_pairs_jan/contact_pairs_cell2.pkl")
+chr_mins = pd.Series(
+    [min_chr_ind(df_cps, n_chr) for n_chr in range(1, 21)], index=range(1, 21)
+)
+
+chr_maxs = pd.Series(
+    [max_chr_ind(df_cps, n_chr) for n_chr in range(1, 21)], index=range(1, 21)
+)
+
+chr_lens = pd.Series(
+    [chr_maxs[n_chr] - chr_mins[n_chr] + 1 for n_chr in range(1, 21)],
+    index=range(1, 21),
+)
 
 
-if __name__ == "__main__":
-    main()
+# chr_lens.to_pickle("data/chromosome_lengths.pkl")
+
+chr_cum_lens = np.cumsum(chr_lens.values)
+chr_cum_lens = pd.Series(np.insert(chr_cum_lens, 0, 0)[:-1], index=range(1, 21))
+
+
+# %% Subtract minimum from ind and add cumsum
+
+# for df_cp in df_cps:
+#     df_cp["ind_A"] = df_cp.apply(
+#         lambda row: (row["ind_A"] - chr_mins[row["chr_A"]]),
+#         axis=1,
+#     )
+#     df_cp["ind_B"] = df_cp.apply(
+#         lambda row: (row["ind_B"] - chr_mins[row["chr_B"]]),
+#         axis=1,
+#     )
+
+for df_cp in df_cps:
+    for n_chr in range(1, 21):
+        df_cp.loc[df_cp["chr_A"] == n_chr, "ind_A"] = (
+            df_cp[df_cp["chr_A"] == n_chr]["ind_A"]
+            - chr_mins[n_chr]
+            + chr_cum_lens[n_chr]
+        )
+        df_cp.loc[df_cp["chr_B"] == n_chr, "ind_B"] = (
+            df_cp[df_cp["chr_B"] == n_chr]["ind_B"]
+            - chr_mins[n_chr]
+            + chr_cum_lens[n_chr]
+        )
+    df_cp.sort_values(["chr_A", "chr_B", "ind_A", "ind_B"], inplace=True)
+# %% Write contact pairs to pickle
+
+# for n_cell in range(1, 9):
+#     df_cps[n_cell - 1].to_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")
+# %% Debug
+
+df_cp = df_cps[0]
+
+df_ref = pd.read_pickle("data/contact_pairs_jan/contact_pairs_cell1.pkl")
