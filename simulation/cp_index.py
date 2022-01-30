@@ -136,7 +136,7 @@ chr_lens = pd.Series(
 )
 
 
-# chr_lens.to_pickle("data/chromosome_lengths.pkl")
+chr_lens.to_pickle("data/chromosome_lengths.pkl")
 
 chr_cum_lens = np.cumsum(chr_lens.values)
 chr_cum_lens = pd.Series(np.insert(chr_cum_lens, 0, 0)[:-1], index=range(1, 21))
@@ -169,10 +169,10 @@ for df_cp in df_cps:
     df_cp.sort_values(["chr_A", "chr_B", "ind_A", "ind_B"], inplace=True)
 # %% Write contact pairs to pickle
 
-# for n_cell in range(1, 9):
-#     df_cps[n_cell - 1].to_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")
+for n_cell in range(1, 9):
+    df_cps[n_cell - 1].to_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")
 # %% Debug
 
-df_cp = df_cps[0]
+# df_cp = df_cps[0]
 
-df_ref = pd.read_pickle("data/contact_pairs_jan/contact_pairs_cell1.pkl")
+# df_ref = pd.read_pickle("data/contact_pairs_jan/contact_pairs_cell1.pkl")

@@ -104,7 +104,7 @@ def main():
         )
 
         # convert that raw data to a numpy array of beads in contact
-        contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].values)
+        contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].values, axis=0)
 
         lengths = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{n_cell}.pkl")
 
@@ -128,7 +128,7 @@ def main():
 
         s.particles.typeid[:] = 0  # all particles of type A
         # s.particles.position[:] = box.random_points[:, :]
-        s.particles.position = np.random.uniform(0, 1, size=(N_sum, 3))
+        s.particles.position[:] = np.random.uniform(0, 1, size=(N_sum, 3))
         # resize the number of HOOMD-bonds: one from each bead to the next
         # minus 20 since the chromosomes are single chains
         # plus one for each contact
