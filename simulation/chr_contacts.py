@@ -43,7 +43,7 @@ cell_n = args.cell_n
 # %% Load dist and bond data
 
 
-def calc_contact_ratios(cell_n):
+def calc_contacts(cell_n):
     """
     Calculate the contact ratios between chromosomes for a cell.
 
@@ -74,7 +74,7 @@ def calc_contact_ratios(cell_n):
         all_bonds = f[0].bonds.group
         typeid = f[0].bonds.typeid  # 0 -> bond; 1 -> contact
 
-        bonds = all_bonds[typeid == 0]
+        # bonds = all_bonds[typeid == 0]
         contacts = all_bonds[typeid == 1]
 
         # skip the first 5 configurations
@@ -85,28 +85,29 @@ def calc_contact_ratios(cell_n):
     # 2x the expected bond length of 1.5
     is_contact = dists < 3
 
+    for i in np.arange(N - 1):
+        is_contact[i, i] = 0
+        is_contact[i, i + 1] = 0
+        is_contact[i + 1, i] = 0
+
+    is_contact[-1, -1] = 0
+
     # count number of contacts, remove diagonal (self-contacts) and divide by two
     # since each contact is twice in the symmetric matrix
-    N_all_contacts = (np.count_nonzero(is_contact) - N) // 2
+    N_all_contacts = np.count_nonzero(is_contact) // 2
 
-    N_bonds = len(bonds)
+    # N_bonds = len(bonds)
     N_contacts = len(contacts)
 
-    chr_lens = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{cell_n}.pkl").values
-
-    # %% Calculate contacts between chromosomes
-
-    # print(f"{N_bonds=}")
-    # print(f"{N_contacts=}")
-    # print(f"{N_all_contacts=}")
-
-    # print()
-
-    print(
-        f"Percentage of contacts specified: {(N_bonds + N_contacts) / N_all_contacts * 100:.3} %"
-    )
+    print(f"Percentage of contacts specified: {N_contacts / N_all_contacts * 100:.3} %")
 
     print()
+
+    return is_contact
+
+
+def chr_contact_ratios(is_contact):
+    chr_lens = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{cell_n}.pkl").values
 
     chr_starts = np.insert(np.cumsum(chr_lens), 0, 0)
 
@@ -138,54 +139,70 @@ def calc_contact_ratios(cell_n):
     # chr_contact_ratios[cell_n] = chr_contact_ratio
 
 
+mat = calc_contacts(1)
+
+X = np.arange(mat.shape[0], step=100)
+
+mat_thinned = np.array(
+    [
+        [np.sum(mat[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)]
+        for j in range(len(X) - 1)
+    ]
+)
+
+fig, ax = plt.subplots(figsize=(8, 6))
+
+im = ax.imshow(mat_thinned)
+plt.colorbar(im)
+
 # p = Pool()
 
-chr_contact_ratios = list(map(calc_contact_ratios, range(1, 9)))
+# # chr_contact_ratios = list(map(calc_contact_ratios, range(1, 9)))
 
-# %% Display chromosome contact ratios graphically
+# # %% Display chromosome contact ratios graphically
 
-print("Plotting...")
+# print("Plotting...")
 
-chr_contact_ratios /= np.max(chr_contact_ratios)
+# chr_contact_ratios /= np.max(chr_contact_ratios)
 
-norm = mpl.colors.Normalize(vmin=0, vmax=np.max(chr_contact_ratios))
+# norm = mpl.colors.Normalize(vmin=0, vmax=np.max(chr_contact_ratios))
 
-fig, axes = plt.subplots(3, 3, figsize=(12, 14))
+# fig, axes = plt.subplots(3, 3, figsize=(12, 14))
 
-# axes = axes.flatten()
+# # axes = axes.flatten()
 
-axes_flat = axes.ravel()
+# axes_flat = axes.ravel()
 
-axes_flat[-1].set_frame_on(False)
-axes_flat[-1].tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+# axes_flat[-1].set_frame_on(False)
+# axes_flat[-1].tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 
-for cell_n in range(8):
-    axes_flat[cell_n].imshow(chr_contact_ratios[cell_n], norm=norm, cmap="plasma")
+# for cell_n in range(8):
+#     axes_flat[cell_n].imshow(chr_contact_ratios[cell_n], norm=norm, cmap="plasma")
 
-    # axes_flat[cell_n].tick_params(
-    #     left=False, bottom=False  # , labelleft=False, labelbottom=False
-    # )
+#     # axes_flat[cell_n].tick_params(
+#     #     left=False, bottom=False  # , labelleft=False, labelbottom=False
+#     # )
 
-fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap="plasma"), ax=axes)
+# fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap="plasma"), ax=axes)
 
-# set_styling(ax)
-
-
-# %% Calc means and stds
-
-ratios = np.stack(chr_contact_ratios)
-
-ratios = np.moveaxis(ratios, 0, -1)
-
-means = ratios.mean(axis=-1)
-
-stds = ratios.std(axis=-1)
-
-fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+# # set_styling(ax)
 
 
-im1 = axes[0].imshow(means, cmap="plasma")
-fig.colorbar(im1, cmap="plasma", ax=axes[0])
+# # %% Calc means and stds
 
-im2 = axes[1].imshow(stds, cmap="plasma")
-fig.colorbar(im2, cmap="plasma", ax=axes[1])
+# ratios = np.stack(chr_contact_ratios)
+
+# ratios = np.moveaxis(ratios, 0, -1)
+
+# means = ratios.mean(axis=-1)
+
+# stds = ratios.std(axis=-1)
+
+# fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+
+# im1 = axes[0].imshow(means, cmap="plasma")
+# fig.colorbar(im1, cmap="plasma", ax=axes[0])
+
+# im2 = axes[1].imshow(stds, cmap="plasma")
+# fig.colorbar(im2, cmap="plasma", ax=axes[1])
