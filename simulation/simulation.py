@@ -92,6 +92,8 @@ def main():
     #         print("Error: invalid cell number")
     #         return
 
+    lengths = pd.read_pickle("data/chromosome_lengths.pkl")
+
     for n_cell in cells:
         # read the raw contact pair data from file
         # df_contact_pairs = pd.read_csv(f"data/Cell{n_cell}_contact_pairs.txt", sep="\t")
@@ -105,8 +107,6 @@ def main():
 
         # convert that raw data to a numpy array of beads in contact
         contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].values, axis=0)
-
-        lengths = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{n_cell}.pkl")
 
         N_contact = contact_pairs.shape[0]  # number of contacts
         N_sum = lengths.sum()  # number of particles
