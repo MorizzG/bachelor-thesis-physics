@@ -106,7 +106,9 @@ def main():
         )
 
         # convert that raw data to a numpy array of beads in contact
-        contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].values, axis=0)
+        contact_pairs = np.unique(
+            df_contact_pairs[["ind_A", "ind_B"]].to_numpy(), axis=0
+        )
 
         N_contact = contact_pairs.shape[0]  # number of contacts
         N_sum = lengths.sum()  # number of particles

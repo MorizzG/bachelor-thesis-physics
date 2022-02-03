@@ -89,7 +89,7 @@ def calc_contacts(cell_n):
 
 
 def chr_contact_ratios(is_contact):
-    chr_lens = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{cell_n}.pkl").values
+    chr_lens = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{cell_n}.pkl").to_numpy()
 
     chr_starts = np.insert(np.cumsum(chr_lens), 0, 0)
 
@@ -123,7 +123,9 @@ def chr_contact_ratios(is_contact):
 
 # is_contact = calc_contacts(1)
 
-is_contact_sparse = scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{cell_n}.npz")
+is_contact_sparse = scipy.sparse.load_npz(
+    f"data/contact_matrices/contact_matrix_cell{cell_n}.npz"
+)
 
 is_contact = is_contact_sparse.toarray()
 
@@ -164,7 +166,10 @@ X = np.arange(is_contact.shape[0], step=100)
 
 mat_thinned = np.array(
     [
-        [np.sum(is_contact[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)]
+        [
+            np.sum(is_contact[X[i] : X[i + 1], X[j] : X[j + 1]])
+            for i in range(len(X) - 1)
+        ]
         for j in range(len(X) - 1)
     ]
 )
