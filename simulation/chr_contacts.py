@@ -9,6 +9,8 @@ Created on Sat Jan 15 20:33:17 2022.
 import numpy as np
 import pandas as pd
 
+import scipy.sparse
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -80,28 +82,8 @@ def calc_contacts(cell_n):
         # skip the first 5 configurations
         all_pos = np.stack([snap.particles.position for snap in f[5:]])
 
-    N = len(all_pos[0])
-
     # 2x the expected bond length of 1.5
     is_contact = dists < 3
-
-    for i in np.arange(N - 1):
-        is_contact[i, i] = 0
-        is_contact[i, i + 1] = 0
-        is_contact[i + 1, i] = 0
-
-    is_contact[-1, -1] = 0
-
-    # count number of contacts, remove diagonal (self-contacts) and divide by two
-    # since each contact is twice in the symmetric matrix
-    N_all_contacts = np.count_nonzero(is_contact) // 2
-
-    # N_bonds = len(bonds)
-    N_contacts = len(contacts)
-
-    print(f"Percentage of contacts specified: {N_contacts / N_all_contacts * 100:.3} %")
-
-    print()
 
     return is_contact
 
@@ -139,13 +121,50 @@ def chr_contact_ratios(is_contact):
     # chr_contact_ratios[cell_n] = chr_contact_ratio
 
 
-mat = calc_contacts(1)
+# is_contact = calc_contacts(1)
 
-X = np.arange(mat.shape[0], step=100)
+is_contact_sparse = scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{cell_n}.npz")
+
+is_contact = is_contact_sparse.toarray()
+
+num_neighbour_contacts = 0
+
+for i in np.arange(is_contact.shape[0] - 1):
+    num_neighbour_contacts += is_contact[i, i]
+    num_neighbour_contacts += is_contact[i, i + 1]
+    num_neighbour_contacts += is_contact[i + 1, i]
+
+num_neighbour_contacts += is_contact[-1, -1]
+
+# count number of contacts, remove diagonal (self-contacts) and divide by two
+# since each contact is twice in the symmetric matrix
+N_all_contacts = (np.count_nonzero(is_contact) - num_neighbour_contacts) // 2
+
+with gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb") as f:
+
+    # pos_all = np.array([f[n].particles.position for n in range(len(f))])
+
+    # pos = pos_all[-1]
+
+    # snap = f[-1]
+
+    all_bonds = f[0].bonds.group
+    typeid = f[0].bonds.typeid  # 0 -> bond; 1 -> contact
+
+    # bonds = all_bonds[typeid == 0]
+    contacts = all_bonds[typeid == 1]
+
+N_contacts = len(contacts)
+
+print(f"Percentage of contacts specified: {N_contacts / N_all_contacts * 100:.3} %")
+
+print()
+
+X = np.arange(is_contact.shape[0], step=100)
 
 mat_thinned = np.array(
     [
-        [np.sum(mat[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)]
+        [np.sum(is_contact[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)]
         for j in range(len(X) - 1)
     ]
 )

@@ -14,6 +14,10 @@ import argparse
 import numpy as np
 
 # import pandas as pd
+import seaborn as sns
+
+# import matplotlib.pyplot as plt
+
 import gsd.hoomd
 
 # from multiprocessing import Pool
@@ -21,8 +25,6 @@ import gsd.hoomd
 from scipy.stats import rv_histogram
 
 # from scipy.signal import savgol_filter
-
-# import matplotlib.pyplot as plt
 
 from tools.mg_plot import new_fig, set_styling
 
@@ -83,11 +85,11 @@ with gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb") as f:
 # %% Calculate bond and contact distance distribution
 
 bond_dists = np.linalg.norm(
-    np.stack([pos[n] - pos[m] for (n, m) in bonds for pos in all_pos]), axis=1
+    np.concatenate([pos[bonds[:, 0]] - pos[bonds[:, 1]] for pos in all_pos]), axis=1
 )
 
 contact_dists = np.linalg.norm(
-    np.stack([pos[n] - pos[m] for (n, m) in contacts for pos in all_pos]), axis=1
+    np.concatenate([pos[contacts[:, 0]] - pos[contacts[:, 1]] for pos in all_pos]), axis=1
 )
 
 
@@ -111,9 +113,9 @@ print(f"Contacts 99.73% quartile: {rv_contacts.ppf(.9973):.4}")
 
 # %% Plot contact and bond distance distribution
 
-fig, ax = new_fig()
+# fig, ax = new_fig()
 
-X = np.linspace(0, 3, num=1000)
+# X = np.linspace(0, 3, num=1000)
 
 
 # def pdf_bonds_smooth(x, window_length=21, window_width=0.07):
@@ -126,8 +128,42 @@ X = np.linspace(0, 3, num=1000)
 #     return savgol_filter(rv_contacts.pdf(X), window_length, 3, axis=0)[10, :]
 
 
-ax.plot(X, rv_bonds.pdf(X), "C0-", label="bond length PDF")
-ax.plot(X, rv_contacts.pdf(X), "C1-", label="contact length PDF")
+# ax.plot(X, rv_bonds.pdf(X), "C0-", label="bond length PDF")
+# ax.plot(X, rv_contacts.pdf(X), "C1-", label="contact length PDF")
+
+# (ylim_low, ylim_high) = ax.get_ylim()
+
+# ax.vlines(bond_dists.mean(), ylim_low - 1, ylim_high + 1, colors="C0")
+# ax.vlines(contact_dists.mean(), ylim_low - 1, ylim_high + 1, colors="C1")
+
+# ax.set_xlim(0, 3)
+# ax.set_ylim(ylim_low, ylim_high)
+
+# ax.set_xlabel("distance")
+# ax.set_ylabel("PDF")
+
+# set_styling(ax)
+
+# ax.legend()
+
+
+# ax2 = ax.twinx()
+
+# # X = np.linspace(0, 5, num=1000)
+
+# (line3,) = ax2.plot(X, rv_all.pdf(X), "C2-", label="all dists PDF")
+
+# lines = [line1, line2, line3]
+
+# ax.legend(lines, [line.get_label() for line in lines])
+
+
+# %% Plot contact and bond distribution using seaborn
+
+fig, ax = new_fig()
+
+sns.kdeplot(bond_dists, ax=ax, label="bond length PDF")
+sns.kdeplot(contact_dists, ax=ax, label="contact length PDF")
 
 (ylim_low, ylim_high) = ax.get_ylim()
 
@@ -143,14 +179,3 @@ ax.set_ylabel("PDF")
 set_styling(ax)
 
 ax.legend()
-
-
-# ax2 = ax.twinx()
-
-# # X = np.linspace(0, 5, num=1000)
-
-# (line3,) = ax2.plot(X, rv_all.pdf(X), "C2-", label="all dists PDF")
-
-# lines = [line1, line2, line3]
-
-# ax.legend(lines, [line.get_label() for line in lines])
