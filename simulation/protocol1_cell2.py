@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import datetime
+
+import hoomd.md
 import numpy as np
 import pandas as pd
-import hoomd.md
-import datetime
 
 
 class Cube:

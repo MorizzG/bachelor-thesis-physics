@@ -11,22 +11,22 @@ Created on Sat Jan 15 19:45:29 2022.
 
 import argparse
 
+import gsd.hoomd
 import numpy as np
-
 # import pandas as pd
 import seaborn as sns
+from scipy.stats import rv_histogram
+
+from tools.mg_plot import new_fig, set_styling
 
 # import matplotlib.pyplot as plt
 
-import gsd.hoomd
 
 # from multiprocessing import Pool
 
-from scipy.stats import rv_histogram
 
 # from scipy.signal import savgol_filter
 
-from tools.mg_plot import new_fig, set_styling
 
 
 # %% Parse args

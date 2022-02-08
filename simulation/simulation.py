@@ -6,13 +6,13 @@ Created on Mon Dec 20 2021.
 @author: mg
 """
 
+import argparse
+import datetime
+
+import hoomd.md
 # import sys
 import numpy as np
 import pandas as pd
-import hoomd.md
-import datetime
-import argparse
-
 
 # from tools.read_cp import make_contact_pairs
 

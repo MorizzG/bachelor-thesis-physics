@@ -6,14 +6,16 @@ Created on Sat Jan 15 19:45:29 2022.
 @author: mg
 """
 
+import argparse
+
 # import numpy as np
 import pandas as pd
 
-# import matplotlib.pyplot as plt
-
 from tools.mg_plot import new_fig, set_styling
 
-import argparse
+# import matplotlib.pyplot as plt
+
+
 
 
 # %% Parse args

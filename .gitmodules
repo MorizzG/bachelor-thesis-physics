@@ -1,3 +1,9 @@
 [submodule "src/gsd-vmd"]
 	path = src/gsd-vmd
 	url = https://github.com/mphowardlab/gsd-vmd
+[submodule "src/hicreppy"]
+	path = src/hicreppy
+	url = https://github.com/cmdoret/hicreppy
+[submodule "src/cooler"]
+	path = src/cooler
+	url = https://github.com/open2c/cooler

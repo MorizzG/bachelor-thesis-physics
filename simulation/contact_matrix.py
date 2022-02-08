@@ -8,25 +8,26 @@ Created on Sat Jan 29 21:09:32 2022
 
 # %% Imports
 
+import argparse
+from multiprocessing import Pool
+
+import gsd.hoomd
 import numpy as np
+import scipy.sparse
+import scipy.spatial
 
 # import pandas as pd
 
-import scipy.spatial
-import scipy.sparse
 
 # import matplotlib as mpl
 # import matplotlib.pyplot as plt
 
-import gsd.hoomd
 
 # from tools.mg_plot import new_fig, set_styling
 
-import argparse
 
-from multiprocessing import Pool
 
-NUM_THREADS = 16
+NUM_THREADS = 8
 
 
 # %% Parse args
@@ -99,40 +100,42 @@ def count_contacts(i):
     return np.sum(dists < 3, axis=0)
 
 
-p = Pool(NUM_THREADS)
+if __name__ == "__main__":
 
-# num_contacts = np.array(
-#     p.map(
-#         count_contacts, ((i, j) for i in range(N_particles) for j in range(N_particles))
-#     )
-# ).reshape((N_particles, N_particles))
+    p = Pool(NUM_THREADS)
 
-num_contacts = np.empty((N_particles, N_particles))
+    # num_contacts = np.array(
+    #     p.map(
+    #         count_contacts, ((i, j) for i in range(N_particles) for j in range(N_particles))
+    #     )
+    # ).reshape((N_particles, N_particles))
 
-# for i in range(N_particles):
-#     print(f"Doing row {i}")
-#     for j in range(N_particles):
-#         num_contacts[i, j] = count_contacts((i, j))
+    num_contacts = np.empty((N_particles, N_particles))
 
-# for i in range(N_particles):
-#     print(f"Doing row {i}")
-#     num_contacts[i, :] = count_contacts(i)
+    # for i in range(N_particles):
+    #     print(f"Doing row {i}")
+    #     for j in range(N_particles):
+    #         num_contacts[i, j] = count_contacts((i, j))
 
-I_IDX = range(N_particles)
+    # for i in range(N_particles):
+    #     print(f"Doing row {i}")
+    #     num_contacts[i, :] = count_contacts(i)
 
-print(f"{0:.1%} done")
+    I_IDX = range(N_particles)
 
-while I_IDX:
-    idxs = I_IDX[: 100 * NUM_THREADS]
-    I_IDX = I_IDX[100 * NUM_THREADS :]
+    print(f"{0:.1%} done")
 
-    ccs = p.map(count_contacts, idxs)
+    while I_IDX:
+        idxs = I_IDX[: 100 * NUM_THREADS]
+        I_IDX = I_IDX[100 * NUM_THREADS :]
 
-    for (i, cc) in zip(idxs, ccs):
-        num_contacts[i] = cc
+        ccs = p.map(count_contacts, idxs)
 
-    print(f"{idxs[-1] / N_particles:.1%} done")
+        for (i, cc) in zip(idxs, ccs):
+            num_contacts[i] = cc
 
-num_contacts_sparse = scipy.sparse.bsr_matrix(num_contacts, dtype="uint8")
+        print(f"{idxs[-1] / N_particles:.1%} done")
 
-scipy.sparse.save_npz(f"data/contact_matrices/contact_matrix_cell{cell_n}", num_contacts_sparse)
+    num_contacts_sparse = scipy.sparse.bsr_matrix(num_contacts, dtype="uint8")
+
+    scipy.sparse.save_npz(f"data/contact_matrices/contact_matrix_cell{cell_n}", num_contacts_sparse)

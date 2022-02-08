@@ -8,7 +8,6 @@ Created on Sat Nov  6 15:31:33 2021
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-
 # mpl.rcParams["font.family"] = "Avenir LT Std"
 plt.rcParams["font.size"] = 12
 plt.rcParams["axes.linewidth"] = 1.5

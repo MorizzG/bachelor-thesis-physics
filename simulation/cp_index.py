@@ -10,7 +10,6 @@ Created on Sun Jan 30 17:31:30 2022.
 import numpy as np
 import pandas as pd
 
-
 # %% Global Functions
 
 

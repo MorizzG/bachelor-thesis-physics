@@ -6,19 +6,17 @@ Created on Sat Jan 15 20:33:17 2022.
 @author: mg
 """
 
-import numpy as np
-import pandas as pd
-
-import scipy.sparse
-
-import matplotlib as mpl
-import matplotlib.pyplot as plt
+import argparse
 
 import gsd.hoomd
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import scipy.sparse
 
 # from tools.mg_plot import new_fig, set_styling
 
-import argparse
 
 # from multiprocessing import Pool
 
@@ -83,12 +81,12 @@ def calc_contacts(cell_n):
         all_pos = np.stack([snap.particles.position for snap in f[5:]])
 
     # 2x the expected bond length of 1.5
-    is_contact = dists < 3
+    contact_mat = dists < 3
 
-    return is_contact
+    return contact_mat
 
 
-def chr_contact_ratios(is_contact):
+def chr_contact_ratios(contact_mat):
     chr_lens = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{cell_n}.pkl").to_numpy()
 
     chr_starts = np.insert(np.cumsum(chr_lens), 0, 0)
@@ -97,7 +95,7 @@ def chr_contact_ratios(is_contact):
         [
             [
                 np.count_nonzero(
-                    is_contact[
+                    contact_mat[
                         chr_starts[n] : chr_starts[n + 1],
                         chr_starts[m] : chr_starts[m + 1],
                     ]
@@ -121,26 +119,24 @@ def chr_contact_ratios(is_contact):
     # chr_contact_ratios[cell_n] = chr_contact_ratio
 
 
-# is_contact = calc_contacts(1)
+# contact_mat = calc_contacts(1)
 
-is_contact_sparse = scipy.sparse.load_npz(
-    f"data/contact_matrices/contact_matrix_cell{cell_n}.npz"
-)
+contact_mat_sparse = scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{cell_n}.npz")
 
-is_contact = is_contact_sparse.toarray()
+contact_mat = contact_mat_sparse.toarray()
 
 num_neighbour_contacts = 0
 
-for i in np.arange(is_contact.shape[0] - 1):
-    num_neighbour_contacts += is_contact[i, i]
-    num_neighbour_contacts += is_contact[i, i + 1]
-    num_neighbour_contacts += is_contact[i + 1, i]
+for i in np.arange(contact_mat.shape[0] - 1):
+    num_neighbour_contacts += contact_mat[i, i]
+    num_neighbour_contacts += contact_mat[i, i + 1]
+    num_neighbour_contacts += contact_mat[i + 1, i]
 
-num_neighbour_contacts += is_contact[-1, -1]
+num_neighbour_contacts += contact_mat[-1, -1]
 
 # count number of contacts, remove diagonal (self-contacts) and divide by two
 # since each contact is twice in the symmetric matrix
-N_all_contacts = (np.count_nonzero(is_contact) - num_neighbour_contacts) // 2
+N_all_contacts = (np.count_nonzero(contact_mat) - num_neighbour_contacts) // 2
 
 with gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb") as f:
 
@@ -162,21 +158,18 @@ print(f"Percentage of contacts specified: {N_contacts / N_all_contacts * 100:.3}
 
 print()
 
-X = np.arange(is_contact.shape[0], step=100)
+X = np.arange(contact_mat.shape[0], step=100)
 
-mat_thinned = np.array(
+chrom_contact_mat = np.array(
     [
-        [
-            np.sum(is_contact[X[i] : X[i + 1], X[j] : X[j + 1]])
-            for i in range(len(X) - 1)
-        ]
+        [np.sum(contact_mat[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)]
         for j in range(len(X) - 1)
     ]
 )
 
 fig, ax = plt.subplots(figsize=(8, 6))
 
-im = ax.imshow(mat_thinned)
+im = ax.imshow(chrom_contact_mat)
 plt.colorbar(im)
 
 # p = Pool()

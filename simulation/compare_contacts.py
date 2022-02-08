@@ -10,9 +10,7 @@ Created on Thu Feb  3 19:15:36 2022
 
 import numpy as np
 import pandas as pd
-
 import scipy.sparse
-
 
 # %% Global functions and constants
 
