@@ -55,23 +55,27 @@ for i, ax in enumerate(axes_flat[:-1]):
     ax.set_ylabel("RMSD")
 y_max = np.max([ax.get_ylim()[1] for ax in axes_flat])
 
+fig.show()
+
 for ax in axes_flat:
     ax.set_ylim(0, y_max)
 # %% rmsd grouping
 
-# n_cell = 8
+print("grouping\n")
+
+n_cell = 5
 
 
-# rmsds = np.load(f"data/rmsds/rmsds_cell{n_cell}.npy")
-# idxs = set(range(105))
+rmsds = np.load(f"data/rmsds/rmsds_cell{n_cell}.npy")
+idxs = set(range(105))
 
-# groups = []
+groups = []
 
-# while idxs:
-#     idx = list(idxs)[0]
+while idxs:
+    idx = list(idxs)[0]
 
-#     similar_configs = list(np.nonzero(rmsds[idx, :] < 6)[0])
+    similar_configs = list(np.nonzero(rmsds[idx, :] < 6)[0])
 
-#     groups += [similar_configs]
-
-#     idxs -= set(similar_configs)
+    groups += [similar_configs]
+    idxs -= set(similar_configs)
+print(groups)

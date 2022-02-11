@@ -45,9 +45,7 @@ cell2_sim = (
     .astype("float32")
 ) / 100
 
-assert (
-    cell1_sim.shape[0] == cell1_sim.shape[1] == cell2_sim.shape[0] == cell2_sim.shape[1]
-)
+assert cell1_sim.shape[0] == cell1_sim.shape[1] == cell2_sim.shape[0] == cell2_sim.shape[1]
 N_particles = cell1_sim.shape[0]
 
 cps1 = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell1}.pkl")[

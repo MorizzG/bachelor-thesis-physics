@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
-
 from tools import scc
 
 np.set_printoptions(precision=3)
@@ -38,11 +37,7 @@ def load_sim_contact_matrix(n_cell: int) -> sp.csr_matrix:
     scipy.sparse.csr_matrix
         CSR sparse contact matrix
     """
-    mat = (
-        sp.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell}.npz")
-        .tocsr()
-        .astype(np.single)
-    )
+    mat = sp.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell}.npz").tocsr().astype(np.single)
 
     return mat / mat.max()
 
@@ -70,9 +65,7 @@ def make_hic_contact_matrix(n_cell: int) -> sp.csr_matrix:
         CSR sparse contact matrix
     """
     cps = np.unique(
-        pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")[
-            ["ind_A", "ind_B"]
-        ].to_numpy(),
+        pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")[["ind_A", "ind_B"]].to_numpy(),
         axis=0,
     )
 
@@ -148,6 +141,7 @@ def _f(h):
 
             mat[i, j] = s
             mat[j, i] = s
+
     return mat
 
 
@@ -255,6 +249,7 @@ if __name__ == "__main__":
         s = scc.genome_scc(hic_mat, sim_mat, BIN_SIZE, chroms_lengths, MAX_DIST, 5)
 
         sccs[n] = s
+
     plt.figure()
 
     plt.plot(range(1, 9), sccs, "C0o")
