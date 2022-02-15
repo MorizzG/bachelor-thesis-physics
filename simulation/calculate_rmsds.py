@@ -61,9 +61,11 @@ for ax in axes_flat:
     ax.set_ylim(0, y_max)
 # %% rmsd grouping
 
-print("grouping\n")
-
 n_cell = 5
+
+print(f"grouping for cell {n_cell}")
+
+print()
 
 
 rmsds = np.load(f"data/rmsds/rmsds_cell{n_cell}.npy")
@@ -80,4 +82,4 @@ while idxs:
     idxs -= set(similar_configs)
 print(groups)
 
-input()
+# input()
