@@ -22,6 +22,39 @@ def smooth(signal: "sp.coo_matrix", h: int) -> "sp.coo_matrix":
     scipy.sparse.coo_matrix :
         The smoothed matrix.
     """
+    # km = 2 * h + 1
+    # kernel = np.ones((km, km)) / (km**2)
+    # sm, sn = signal.shape
+
+    # # Sanity checks
+    # if sp.issparse(kernel):
+    #     raise ValueError("cannot handle kernel in sparse format")
+    # if not sp.issparse(signal):
+    #     raise ValueError("cannot handle signal in dense format")
+    # constant_kernel = kernel[0, 0]
+
+    # # Simplified convolution for the special case where kernel is constant:
+    # l_subkernel_sp = sp.diags(np.ones(km), np.arange(km), shape=(sm - km + 1, sm), format="csr")
+    # r_subkernel_sp = sp.diags(np.ones(km), -np.arange(km), shape=(sn, sn - km + 1), format="csr")
+    # out = (l_subkernel_sp @ signal) @ r_subkernel_sp
+    # out *= constant_kernel
+    # # Resize matrix: increment rows and cols by half kernel and set shape to input
+    # # matrix, effectively adding margins.
+    # out = out.tocoo()
+    # rows, cols = out.row + h, out.col + h
+    # out = sp.coo_matrix((out.data, (rows, cols)), shape=(sm, sn), dtype=np.float64)
+
+    # return out
+
+    # pad signal matrix with h zeros all around
+    rows, cols = signal.row + h, signal.col + h
+    sm, sn = signal.shape
+    signal = sp.coo_matrix(
+        (signal.data, (rows, cols)), shape=(sm + 2 * h, sn + 2 * h), dtype=np.float64
+    )
+
+    sm, sn = signal.shape
+
     km = 2 * h + 1
     kernel = np.ones((km, km)) / (km ** 2)
     sm, sn = signal.shape
@@ -45,8 +78,6 @@ def smooth(signal: "sp.coo_matrix", h: int) -> "sp.coo_matrix":
     # Resize matrix: increment rows and cols by half kernel and set shape to input
     # matrix, effectively adding margins.
     out = out.tocoo()
-    rows, cols = out.row + h, out.col + h
-    out = sp.coo_matrix((out.data, (rows, cols)), shape=(sm, sn), dtype=np.float64)
 
     return out
 

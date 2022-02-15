@@ -35,6 +35,7 @@ def h_train(
     chroms_lengths: "np.array[int]",
     max_dist: int,
     h_max: int,
+    sample_count: int = 100,
 ) -> int:
     """
     Find the optimal value for the smoothing parameter h.
@@ -60,17 +61,15 @@ def h_train(
     h_max : int
         The maximum value of the smoothing parameter h (neighbourhood size) to
         test. All values between 0 and h_max will be explored.
-    whitelist : None or list of strs
-        If given, only compare those chromosomes.
-    blacklist : None or list of strs
-        If given, do not compare those chromosomes.
+    sample_count : int
+        Number of samples to draw for each h-value
 
     Returns
     -------
     int :
         Optimal value for the smoothing parameter h.
     """
-    print("Starting h-training")
+    print("Starting h-training\n")
     max_bins = max_dist // binsize
     # Define chromosomes to scan
     # NOTE: chromosomes smaller than the kernel used for smoothing or the max_dist must
@@ -86,6 +85,8 @@ def h_train(
     #     )
     chrom_starts = np.insert(np.cumsum(chroms_lengths), 0, 0)
     prev_scc = -np.inf
+    sccs = []
+    p = Pool(8)
     for h_value in range(h_max + 1):
         # Compute SCC values separately for each chromosome
         chroms_scc = np.zeros(len(chroms_lengths))
@@ -99,17 +100,10 @@ def h_train(
             # compute time and memory usage
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore", category=sp.SparseEfficiencyWarning)
-                chrom_1 = mat_process.diag_trim(
-                    chrom_1.todia(), max_bins + h_value
-                ).tocoo()
-                chrom_2 = mat_process.diag_trim(
-                    chrom_2.todia(), max_bins + h_value
-                ).tocoo()
+                chrom_1 = mat_process.diag_trim(chrom_1.todia(), max_bins + h_value).tocoo()
+                chrom_2 = mat_process.diag_trim(chrom_2.todia(), max_bins + h_value).tocoo()
             # Sample 10% contacts and smooth 10 times for this chromosome
-            p = Pool(8)
-            samples_scc = np.array(
-                p.map(_sample_scc, 100 * [(chrom_1, chrom_2, h_value, max_bins)])
-            )
+            samples_scc = np.array(p.map(_sample_scc, sample_count * [(chrom_1, chrom_2, h_value, max_bins)]))
             # Use average SCC from 10 subsamples
             chroms_scc[c] = np.nanmean(samples_scc)
         # Compute the genome SCC for this value of h using the weighted averge
@@ -119,22 +113,21 @@ def h_train(
         trunc_scc = chroms_scc[nan_scc_mask]
         trunc_lengths = np.array(chroms_lengths)[nan_scc_mask]
         curr_scc = np.average(trunc_scc, weights=trunc_lengths)
-        print(
-            f"Found SCC of {curr_scc:.3f} with h={h_value:>2d} "
-            f"with improvement {curr_scc - prev_scc:.3f}"
-        )
+        sccs += [curr_scc]
+        print(f"Found SCC of {curr_scc:.3f} with h={h_value:>2d} " f"with improvement {curr_scc - prev_scc:.3f}")
         # Check if SCC improvement is less than threshold
-        if curr_scc - prev_scc < 0.01:
-            break
+        # delta = curr_scc - prev_scc
+        # if 0 < delta and delta < 0.01:
+        #     break
         prev_scc = curr_scc
     if h_value == h_max:
         print(
-            "Note: It's likely that your searching range is too "
-            "narrow. Try to expand the range and rerun it.\n",
+            "Note: It's likely that your searching range is too " "narrow. Try to expand the range and rerun it.\n",
         )
-        return h_value
+        return h_value, sccs
     # Return last h value with improvement >= 0.01
-    return max(h_value - 1, 0)
+    print(f"{sccs=}")
+    return max(h_value - 1, 0), sccs
 
 
 def get_scc(mat1: "sp.csr_matrix", mat2: "sp.csr_matrix", max_bins: int) -> float:
@@ -165,14 +158,12 @@ def get_scc(mat1: "sp.csr_matrix", mat2: "sp.csr_matrix", max_bins: int) -> floa
     for d in range(max_bins):
         d1 = mat1.diagonal(d)
         d2 = mat2.diagonal(d)
-        # Silence NaN warnings: this happens for empty diagonals and will
-        # not be used in the end.
+        # Silence NaN warnings: this happens for equal diagonals
+        # which will be dropped
         with warnings.catch_warnings():
             # Warning does not exist in older scipy versions (<=1.2)
             try:
-                warnings.filterwarnings(
-                    "ignore", category=ss.PearsonRConstantInputWarning
-                )
+                warnings.filterwarnings("ignore", category=ss.PearsonRConstantInputWarning)
             except AttributeError:
                 pass
             # Compute raw pearson coeff for this diag
@@ -185,7 +176,8 @@ def get_scc(mat1: "sp.csr_matrix", mat2: "sp.csr_matrix", max_bins: int) -> floa
     weight_diag /= sum(weight_diag)
 
     # Weighted sum of coefficients to get SCCs
-    scc = np.sum(corr_diag * weight_diag)
+    # scc = np.sum(corr_diag * weight_diag)
+    scc = np.average(corr_diag, weights=weight_diag)
 
     return scc
 

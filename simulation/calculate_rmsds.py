@@ -79,3 +79,5 @@ while idxs:
     groups += [similar_configs]
     idxs -= set(similar_configs)
 print(groups)
+
+input()
