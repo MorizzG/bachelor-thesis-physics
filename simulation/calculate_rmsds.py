@@ -95,6 +95,10 @@ n_cell = 1
 
 CUTOFF_RMSD = 3
 
+print(f"grouping for cell {n_cell}")
+
+print()
+
 
 rmsds = np.load(f"data/rmsds/rmsds_cell{n_cell}.npy")
 idxs = set(range(105))
