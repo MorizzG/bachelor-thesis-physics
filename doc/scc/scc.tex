@@ -19,12 +19,12 @@
 
 % \usepackage{url}
 \usepackage{graphicx}
-% \usepackage{float}
+\usepackage{float}
 \usepackage{caption}
 % \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{csquotes}
-% \usepackage{xcolor}
+\usepackage{xcolor}
 \usepackage[section]{placeins}
 
 
@@ -86,7 +86,7 @@
 
 \begin{abstract}
 
-Using experiments and simulations, one can obtain contact matrices for the entire genome, detailing which sections of the genome are in contact with each other. HiCRep\cite{yang_hicrep_2017} introduces a measure called the stratum adjusted correlation coefficient (SCC) to compare the similarity between two such matrices. For this both contact matrices are first smoothed and the certain pearson correlation coefficients are calculated and weigthed average is performed.
+Using experiments and simulations, one can obtain contact matrices for the entire genome, detailing which sections of the genome are in contact with each other. HiCRep\cite{yang_hicrep_2017} introduces a measure called the stratum adjusted correlation coefficient (SCC) to compare the similarity between two such matrices. For this both contact matrices are first smoothed and the certain pearson correlation coefficients are calculated and weigthed average is performed. HicRep.py\cite{lin_hicreppy_2021} provides a Python implemention of the HicRep package.
 
 \end{abstract}
 
@@ -96,17 +96,17 @@ Using experiments and simulations, one can obtain contact matrices for the entir
 \subsection{Smoothing} % (fold)
 \label{subsec:smoothing}
 
-Both contact maps are first smoothed using a uniform filter of width \(2h+1\) for a chosen smoothing parameter \(h>0\). This helps dealing with a lack of coverage, that is the fact that not all actual contacts are contained in the contact matrices, something that is quite normal for Hi-C. Mathematically this filter is defined as
+Both contact maps are first smoothed using a uniform filter of width \(2h+1\) for a chosen smoothing parameter \(h \geq 0\). This helps compensating a lack of coverage, that is the fact that not all actual contacts are contained in the contact matrices, something that is quite common for Hi-C data. Mathematically this filter is defined as
 
 \[
 	X_{ij} = \frac{ \sum_{k=i-h}^{i+h} \sum_{l=j-h}^{j+h} C_{kl} }{ 2h+1 }
 \]
 
-where \(C\) is the \(n \times n\) contact matrix and \(X\) is the \(n \times n\) smoothed matrix. \(C_{ij}\) is to be 0 for \(i\) or \(j\) not in \(1 \dots n\).
+where \(C\) is the \(n \times n\) contact matrix and \(X\) is the \(n \times n\) smoothed matrix. \(C_{ij}\) is defined to be 0 for either \(i\) or \(j\) not in \(1 \dots n\).
 
-The uniform filter might seem like an unusual choice compared to other more sophisticated filters, but has the great advantage of having the representation \( X = L \cdot C \cdot R \), where \(C\) is the contact matrix to be smoothed, \(X\) is the smoothed matrix, and \(L\) and \(R\) are upper and lower trigangular matrices respectively. This comes in handy especially when using sparse representations of \(C\) and \(X\), as is very much recommended since contact matrices can generally be quite large and are largely empty.
+The uniform filter might seem like an unusual choice compared to other more sophisticated filters, but has the great advantage of having the representation \( X = L \cdot C \cdot R \), where \(X\) is the smoothed matrix, \(C\) is the contact matrix, and \(L\) and \(R\) are upper and lower trigangular matrices respectively. This comes in handy especially when using sparse representations of \(C\) and \(X\), which is very much recommended since contact matrices generally can be quite large and are largely empty.
 
-\(h\) is a parameter for the SCC algorithm and thus has to be chosen appropriately. The HiCRep package includes a function called \verb|htrain| in the original R package (\verb|h_train| in the HiCRep.py python package) that tried to estimate an appropriate h-value heuristically. For our resolution of \(\SI{100}{kbp}\) an example value of \( h = 3 \) is given in the original HiCRep paper, which should be kept in mind as a refence later when trying to choose an h-value for our own data.
+\(h\) is a parameter for the SCC algorithm and thus has to be chosen appropriately. The HiCRep package includes a function called \verb|htrain| (\verb|h_train| in the HiCRep.py python package) that tries to estimate an appropriate h-value heuristically. For our resolution of \(\SI{100}{kbp}\) an example value of \( h = 3 \) is given in the original HiCRep paper, which should be kept in mind as a refence later when trying to choose an h-value for our own data.
 
 % subsection smoothing (end)
 
@@ -116,7 +116,7 @@ The uniform filter might seem like an unusual choice compared to other more soph
 The stratum adjusted correlation coefficient aims to be a measure of correlation between two random variables \(X\) and \(Y\), stratified by a third variable into \(K\) strata \(X_1, \dots, X_K\) and \(Y_1, \dots, Y_K\) respectively. In each stratum we have the stratified random variables \((X_k, Y_k)\) with \(N_k\) observations \( (x_{k,1}, y_{k,1}), \dots, (x_{k,N_k}, y_{k,N_k}) \) each. The pearson correlation coefficient between \(X\) and \(Y\) for the k-th stratum is given by
 
 \[
-	\rho_k = \frac{ \mathrm{Cov}(X,Y) }{ \sqrt{ \mathrm{Var}(X) \mathrm{Var}(Y)} } = \frac{ \sum_{i=1}^{N_k} (x_{k,i} - \overbar{x}_k) (y_{k,i} - \overbar{y}_k) }{ \sqrt{ \sum_{i=1}^{N_k} x_{k,i} - \overbar{x}_k } \sqrt{ \sum_{i=1}^{N_k} y_{k,i} - \overbar{y}_k } }
+	\rho_k = \frac{ \mathrm{Cov}(X_k,Y_k) }{ \sqrt{ \mathrm{Var}(X_k) \mathrm{Var}(Y_k)} } = \frac{ \sum_{i=1}^{N_k} (x_{k,i} - \overbar{x}_k) (y_{k,i} - \overbar{y}_k) }{ \sqrt{ \sum_{i=1}^{N_k} x_{k,i} - \overbar{x}_k } \sqrt{ \sum_{i=1}^{N_k} y_{k,i} - \overbar{y}_k } }
 \]
 
 The SCC is the weighted average of the pearson correlation coefficients
@@ -125,22 +125,22 @@ The SCC is the weighted average of the pearson correlation coefficients
 	\rho_s = \sum_{k=1}^{K} w_k \rho_k
 \]
 
-where the weights \(w_k\) are given as
+where the weights \(w_k\) are
 
 \[
 	w_k = \sqrt{ \mathrm{Var}\left( \frac{ \mathrm{Rank}(X_k) }{ N_k } \right) \mathrm{Var}\left( \frac{ \mathrm{Rank}(Y_k) }{ N_k } \right) }
 \]
 
-with \( \mathrm{Rank}(X_k) \) and \( \mathrm{Rank}(Y_k) \) being the ranked variables\footnote{\url{https://en.wikipedia.org/wiki/Ranking\#Ranking_in_statistics}}. For a thorough deviation of the SCC see \cite{yang_hicrep_2017}, Section \enquote{Derivation of stratum-adjusted correlation coefficient (SCC)}.
+with \( \mathrm{Rank}(X_k) \) and \( \mathrm{Rank}(Y_k) \) being the ranked variables\footnote{\url{https://en.wikipedia.org/wiki/Ranking\#Ranking_in_statistics}}. For a thorough deviation of the SCC see the original HiCRep paper\cite{yang_hicrep_2017}, Section \enquote{Derivation of stratum-adjusted correlation coefficient (SCC)}.
 
 % subsection scc (end)
 
 \subsection{Using SCC for comparison of Hi-C contact matrices} % (fold)
 \label{subsec:scc_for_comparison_of_hi_c_contact_matrices}
 
-To compare two Hi-C contact matrices we want to calculate SCC values for each chromosome. That is, for each chromosome we select the contact sub-matrix \(C\) that describes the contacts of that chromosome with itself. The observations of \(X\) and \(Y\) are the entries of these two sub-matrices, and the stratification is by genomic distances, that is \(\abs{j-i}\) for each contact \(c_{ij}\). In particular, the k-th stratum corresponds to the k-th diagonal in the contact sub-matrices. The original paper recommends limiting the maximum interaction range to \(\SI{5}{Mbp}\), which corresponds to a \(K\) of \(50\) in our \(\SI{100}{kbp}\) resolution. That means our SCC is actually a weighted average of the individual pearson correlation coefficients of the \(50\) first diagonals of the chromosome contact sub-matrices.
+To compare two Hi-C contact matrices we want to calculate SCC values for each chromosome. For each chromosome we select the contact sub-matrix \(C\) that describes the contacts of that chromosome with itself. The observations of \(X\) and \(Y\) are the entries of these two sub-matrices, and the stratification is by genomic distances, that is \(\abs{j-i}\) for each contact \(C_{ij}\). In particular, the k-th stratum corresponds to the k-th diagonal in the contact sub-matrices. The original paper recommends limiting the maximum interaction range to \(\SI{5}{Mbp}\), which corresponds to a \(K\) of \(50\) in our \(\SI{100}{kbp}\) resolution. That means our SCC is actually a weighted average of the individual pearson correlation coefficients of the \(50\) first diagonals of the chromosome contact sub-matrices.
 
-From these chromosomal SCC values then a total genomic SCC value can be calculated by again taking a weighted average, this time of the chromosomal SCC values using the chromosome lengths as weights. This will yield a value between \(-1.0\) and \(1.0\), with a value approching \(1.0\) meaning a high correlation between the contact matrices and one approaching \(0.0\) meaning little correlation (while negative values would be possible in theory they would be rather unusual, as a negative correlation would signal that each contact matrix's contacts are preferentially where the other matrix's contacts are not).
+From these chromosomal SCC values then a total genomic SCC value is calculated by again taking a weighted average, this time of the chromosomal SCC values using the chromosome lengths as weights. This will yield a value between \(-1.0\) and \(1.0\), with a value approching \(1.0\) meaning a high correlation between the contact matrices and one approaching \(0.0\) meaning little correlation (while negative values would be possible they would be rather unusual, as a negative correlation would signal that each contact matrix's contacts are preferentially where the other matrix's contacts are not).
 
 % subsection scc_for_comparison_of_hi_c_contact_matrices (end)
 
@@ -166,12 +166,12 @@ For the choice of the h-value the \verb|h_train| function can be used. This func
 \subsection{Hi-C vs simulated data} % (fold)
 \label{sub:hi_c_vs_simulated_data}
 
-In Figure \ref{img:hic-vs-sim-scc} the SCC between the original Hi-C contact matrices and the contact matrices of the simulation can be seen for each cell. For all cells the SCC is between \(0.68\) and \(0.80\). This is sensible since on one hand, the SCC is expected to be high, as the simulated data is based on the Hi-C data, on the other hand it is not surprising that the scores are not perfect since the Hi-C data doesn't cover all contacts in the real genome whereas the simulation data includes all contacts in the simulated genome.
+In Figure \ref{img:hic-vs-sim-scc} the SCC between the original Hi-C contact matrices and the contact matrices of the simulation can be seen for each cell. For all cells the SCC is between \(0.68\) and \(0.80\). This is sensible \textcolor{orange}{or maybe not? in the HicRep paper SCCs of \(\sim 0.7\) are for examples of nonreplicates. still a lot higher than the SCCs between cells later tho?} since on one hand, the SCC is expected to be high, as the simulated data is based on the Hi-C data, on the other hand it is not surprising that the scores are not perfect since the Hi-C data doesn't cover all contacts in the real genome whereas the simulation data includes all contacts in the simulated genome.
 
 \begin{figure}[ht]
 \centering
 	\includegraphics[width=14cm]{hic-vs-sim-scc.png}
-	\caption{caption}
+	\caption{SCC of Hi-C contact matrix and contact matrix of simulated genome for each cell.}
 	\label{img:hic-vs-sim-scc}
 \end{figure}
 
@@ -180,7 +180,43 @@ In Figure \ref{img:hic-vs-sim-scc} the SCC between the original Hi-C contact mat
 \subsection{Comparison of different cells} % (fold)
 \label{sub:comparison_of_different_cells}
 
+Calculating the SCC scores between the simulated genome contact matrices gives a measure of how similar the conformations of the different simulated genomes are. These can be seen in Table \ref{tab:scc_sim_between}. As can be seen quite clearly, all values are very small, and thus it strongly suggests that all conformations of the cells are quite different, something that is also supported by the high RMSDs of the last configuration of each cell as seen in Table \ref{tab:rmsd_between}.
 
+\begin{table}[H]
+\caption{SCC between simulated genome contact matrices. The SCC of each cell with itself is always one and thus omitted.\vspace{10px}}
+\label{tab:scc_sim_between}
+\centering
+	\begin{tabular}{S | S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S}
+		{Cell} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+	\midrule
+		1 & {-}   & 0.132 & 0.093 & 0.116 & 0.128 & 0.105 & 0.136 & 0.092 \\
+		2 & 0.132 & {-}   & 0.098 & 0.104 & 0.147 & 0.116 & 0.150 & 0.138 \\
+		3 & 0.093 & 0.098 & {-}   & 0.062 & 0.104 & 0.093 & 0.101 & 0.092 \\
+		4 & 0.116 & 0.104 & 0.062 & {-}   & 0.108 & 0.101 & 0.123 & 0.077 \\
+		5 & 0.128 & 0.147 & 0.104 & 0.108 & {-}   & 0.121 & 0.148 & 0.123 \\
+		6 & 0.105 & 0.116 & 0.093 & 0.101 & 0.121 & {-}   & 0.145 & 0.097 \\
+		7 & 0.136 & 0.150 & 0.101 & 0.123 & 0.148 & 0.145 & {-}   & 0.116 \\
+		8 & 0.092 & 0.138 & 0.092 & 0.077 & 0.123 & 0.097 & 0.116 & {-}   \\
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{RMSD between last simulated configuration of each cell. The RMSD of each cell with itself is always zero and thos omitted. \textcolor{orange}{this table isn't directly related to the SCCs, but I generated it as a comparison and put it here so it's \enquote{somewhere} and doesn't get lost}\vspace{10px}}
+\label{tab:rmsd_between}
+\centering
+	\begin{tabular}{S | S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S @{\phantom{ab}} S}
+		{Cell} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+	\midrule
+		1 & {-}    & 19.436 & 19.825 & 18.573 & 19.229 & 19.765 & 23.951 & 24.539 \\
+		2 & 19.436 & {-}    & 19.008 & 18.627 & 19.622 & 20.269 & 24.723 & 24.296 \\
+		3 & 19.825 & 19.008 & {-}    & 18.593 & 19.557 & 19.993 & 22.273 & 24.073 \\
+		4 & 18.573 & 18.627 & 18.593 & {-}    & 19.186 & 19.439 & 24.728 & 24.732 \\
+		5 & 19.229 & 19.622 & 19.557 & 19.186 & {-}    & 19.772 & 25.166 & 23.585 \\
+		6 & 19.765 & 20.269 & 19.993 & 19.439 & 19.772 & {-}    & 24.091 & 22.786 \\
+		7 & 23.951 & 24.723 & 22.273 & 24.728 & 25.166 & 24.091 & {-}    & 24.579 \\
+		8 & 24.539 & 24.296 & 24.073 & 24.732 & 23.585 & 22.786 & 24.579 & {-}    \\
+	\end{tabular}
+\end{table}
 
 % subsection comparison_of_different_cells (end)
 

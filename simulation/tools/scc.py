@@ -36,6 +36,7 @@ def h_train(
     max_dist: int,
     h_max: int,
     sample_count: int = 100,
+    full_range: bool = False
 ) -> int:
     """
     Find the optimal value for the smoothing parameter h.
@@ -116,17 +117,20 @@ def h_train(
         sccs += [curr_scc]
         print(f"Found SCC of {curr_scc:.3f} with h={h_value:>2d} " f"with improvement {curr_scc - prev_scc:.3f}")
         # Check if SCC improvement is less than threshold
-        # delta = curr_scc - prev_scc
-        # if 0 < delta and delta < 0.01:
-        #     break
+        delta = curr_scc - prev_scc
+        if not full_range and 0 < delta and delta < 0.01:
+            break
         prev_scc = curr_scc
+    if full_range:
+        return h_value, sccs
+
     if h_value == h_max:
         print(
             "Note: It's likely that your searching range is too " "narrow. Try to expand the range and rerun it.\n",
         )
         return h_value, sccs
     # Return last h value with improvement >= 0.01
-    print(f"{sccs=}")
+    # print(f"{sccs=}")
     return max(h_value - 1, 0), sccs
 
 

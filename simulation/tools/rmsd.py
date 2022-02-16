@@ -16,7 +16,7 @@ import scipy.spatial
 
 
 def _rmsd_worker(n_cell, ref_idx):
-    return calc_rmsds(f"../data/trajs/traj_cell{n_cell}.gsd", ref_idx=ref_idx)
+    return cell_file_rmsds(f"../data/trajs/traj_cell{n_cell}.gsd", ref_idx=ref_idx)
 
 
 def create_all_rmsd_files():
@@ -42,7 +42,7 @@ def create_all_rmsd_files():
 # %% Load traj and calculate rmsd
 
 
-def calc_rmsds(filepath, ref_idx=-1):
+def cell_file_rmsds(filepath, ref_idx=-1):
     """
     Calculate RMSD of all configurations in a cell with respect to a reference configuration.
 
@@ -81,6 +81,34 @@ def calc_rmsds(filepath, ref_idx=-1):
     rmsd[ref_idx] = 0
 
     return rmsd
+
+def rmsd(pos1, pos2):
+    """
+    Calculate the RMSD between two arrays os positions.
+
+    Parameters
+    ----------
+    pos1 : numpy.ndarray
+        First array of positions.
+    pos2 : numpy.ndarray
+        Second array of positions.
+
+    Returns
+    -------
+    float64
+        RMSD
+
+    """
+    mean_pos1 = np.mean(pos1, axis=0)
+
+    norm1 = np.linalg.norm(pos1 - mean_pos1)
+
+    mtx1, mtx2, M_sq = scipy.spatial.procrustes(pos1, pos2)
+
+    # scipy.spatial.procrustes normalises both trajectories so that
+    # the sum of all norms is equal to 1
+    # we want the rmsd of the original positions, so we reverse it by multiplying by the norm
+    return norm1 * np.sqrt(3 * ((mtx1 - mtx2) ** 2).mean())
 
 
 if __name__ == "__main__":
