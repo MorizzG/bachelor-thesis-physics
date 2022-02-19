@@ -38,7 +38,7 @@ args = parser.parse_args()
 
 cell_n = args.cell_n
 
-cell_n = 4
+cell_n = 1
 
 
 # %% Plot energy distribution

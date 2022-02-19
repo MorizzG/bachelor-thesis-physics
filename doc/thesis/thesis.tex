@@ -1,0 +1,367 @@
+%_______________________________________________________________________________
+%class
+%_______________________________________________________________________________
+%\documentclass[a4paper,11pt,onecolumn,final,german,openbib]{scrbook}
+\documentclass[a4paper,11pt,oneside,final,english,toc=bib]{scrbook}
+
+% fonts
+
+\usepackage{fontspec}
+\setmainfont{Libre Baskerville} % Libre Baskerville - Palatino Linotype - Constantia
+\setsansfont{Helvetica} % Arial
+\setmonofont{Consolas} % Hack
+%_______________________________________________________________________________
+% page borders
+%_______________________________________________________________________________
+\addtolength{\headheight}{2cm}
+%\addtolength{\topmargin}{2cm}
+\setlength{\oddsidemargin}{1.0cm}
+\setlength{\evensidemargin}{0.5cm}
+\setlength{\textwidth}{14.3cm}
+\setlength{\parindent}{0mm}
+
+%_______________________________________________________________________________
+% packages
+%_______________________________________________________________________________
+% \usepackage{german}
+\usepackage{babel}[uk-english]
+% \usepackage{textcomp}
+\usepackage{csquotes}
+
+\usepackage{mathtools}
+\usepackage{amssymb}
+% \usepackage{physics}
+% \usepackage[separate-uncertainty=true,per-mode=power]{siunitx} % ,per-mode=fraction 
+% \usepackage[version=4]{mhchem}
+% \usepackage{dsfont}
+% \usepackage{slashed}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+% \usepackage{float}
+\usepackage{caption}
+% \usepackage{subcaption}
+
+% \usepackage{url}
+\usepackage{hyperref}
+% \usepackage{enumerate}
+
+\usepackage{booktabs}
+% \usepackage{multirow}
+
+% \usepackage{appendix}
+
+\usepackage[style=ieee]{biblatex} % ,sorting=none style=h-physrev3 defernumbers=true
+\bibliography{Physik_thesis_Bachelorarbeit}
+
+
+\graphicspath{ {./images/} }
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=green
+}
+
+\captionsetup[figure]{labelfont=bf,format=hang,labelsep=period,margin=1cm}
+\captionsetup[table]{labelfont=bf,format=hang,labelsep=period,margin=1cm} % ,labelsep=newline
+
+\renewcommand{\arraystretch}{1.2}
+
+\parindent10mm
+
+\usepackage{mgscience}
+
+%_______________________________________________________________________________
+% bold fonts for headings
+%_______________________________________________________________________________
+\font\afont=cmssbx10 scaled \magstep5     % for the title
+\font\bfont=cmssbx10 scaled \magstep4     % for chapter headings
+\font\cfont=cmssbx10 scaled \magstep3
+\font\dfont=cmssbx10 scaled \magstep2     % for section headings and author name
+\font\efont=cmssbx10 scaled \magstephalf
+
+%_______________________________________________________________________________
+% index depth
+%_______________________________________________________________________________
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+%_______________________________________________________________________________
+% new commands
+%_______________________________________________________________________________
+% \newcommand{\demi}{\frac{1}{2}}
+
+%_______________________________________________________________________________
+% renewed commands
+%_______________________________________________________________________________
+% \renewcommand{\topfraction}{1.}       % this is important for figure placement
+% \renewcommand{\bottomfraction}{1.}
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\normalfont\normalsize\bfseries}
+}
+\makeatother
+
+%_______________________________________________________________________________
+% special words, hyphenation
+%_______________________________________________________________________________
+% \hyphenation{Ba-che-lor-ar-beit}
+
+\pagestyle{empty}
+\pagestyle{headings}
+%for changing the style on a specific page use \thispagestyle{e.g., empty}
+
+%_______________________________________________________________________________
+%_______________________________________________________________________________
+\begin{document}
+\pagenumbering{roman}
+
+%_______________________________________________________________________________
+\begin{titlepage}
+  \vspace*{6mm}
+  \begin{center}
+     {\afont Title of the Bachelor Thesis}
+     \\[3.5cm]
+     {\large von}
+     \\[3.5cm]
+     {\dfont Moritz Gmeiner}
+     \\[1.5cm]
+     {\dfont Supervisor: PD Dr. Peter Virnau}
+     \\[2cm]
+     % {\large Bachelorarbeit in Physik \/\\
+     %    vorgelegt dem Fachbereich Physik, Mathematik und Informatik (FB 08) \/\\
+     %    der Johannes Gutenberg-Universität Mainz \/\\
+     %    am 1. April 2012}
+     {\large Bachelor Thesis in Physics \/\\
+        presented to the faculty physics, mathematics, and computer science (FB 08) \/\\
+        of the Johannes Gutenberg University Mainz \/\\
+        \today}
+   \end{center}
+   \vfill
+   1. Reviewer: PD Dr. Peter Virnau \\	
+   2. Reviewer: Prof. Dr. Friederike Schmid \\
+   \vfill
+\end{titlepage}
+
+\thispagestyle{empty}
+Ich versichere, dass ich die Arbeit selbstständig verfasst und keine 
+anderen als die angegebenen Quellen und Hilfsmittel benutzt sowie 
+Zitate kenntlich gemacht habe.
+\\
+\\[3.5cm] 
+Mainz, den \today
+\vfill
+\noindent 
+Johanna Musterfrau\\
+KOMET\\
+Institut für Physik\\
+Staudingerweg 7\\
+Johannes Gutenberg-Universität
+D-55099 Mainz\\
+{ \texttt{Johanna.Musterfrau@uni-mainz.de} }
+
+%_______________________________________________________________________________
+% \renewcommand\contentsname{Inhaltsverzeichnis}
+% \renewcommand\figurename{Abbildung}
+% \renewcommand\tablename{Tabelle}
+
+\tableofcontents
+\clearpage
+
+\mainmatter
+\sloppy
+
+%_______________________________________________________________________________
+% \include{...}
+\chapter{Introduction}
+
+{\em Dieses Dokument richtet sich an Studierende am Fachbereich 08 im 
+Studiengang Bachelor of Science (Physik). Sie finden hier Beispiele 
+für eine mögliche Gliederung Ihrer Arbeit und Hinweise zur 
+Strukturierung des Inhalts. Selbstverständlich sollen Sie diese 
+Gliederung nach den Gegebenheiten Ihrer Bachelorarbeit anpassen. 
+Besprechen Sie rechtzeitig mit Ihrem Betreuer, ob Ihr Entwurf sinnvoll 
+ist. Holen Sie sich auch Anregungen zur Gestaltung von Abschlussarbeiten 
+aus der Literatur (siehe z.\ B.\ \verb|\cite{EbelBliefert}|).
+\medskip
+
+Sofern Sie sich dazu entscheiden, Ihr Dokument in \LaTeX\ zu erstellen, 
+können Sie diese Datei als Vorlage verwenden. Fast die gesamte 
+Literatur in der Physik verwendet \LaTeX, vor allem wegen der 
+ausgezeichneten Möglichkeiten für das Formelschreiben.
+}
+\bigskip
+
+In der Einleitung Ihrer Bachelorarbeit sollte das Thema der Arbeit 
+möglichst allgemeinverständlich eingeführt werden. Gehen Sie 
+dabei auch auf das weitere Umfeld der Arbeit ein und erläutern Sie, 
+warum Aufgabenstellung und Herangehensweise interessant sind. Auch 
+die weitere Gliederung kann angesprochen werden, um dem Leser einen 
+ersten überblick über den nachfolgenden Text zu geben.
+
+%_______________________________________________________________________________
+\chapter{Main Part}
+
+Die typische Gliederung einer Bachelorarbeit könnte so aussehen, 
+wie im folgenden dargestellt. 
+\medskip
+
+Verwenden Sie aussagekräftige Kapitelüberschriften, also zum 
+Beispiel {\em Aufbau eines Teilchenbeschleunigers} statt 
+{\em Versuchsaufbau}.
+
+
+%_______________________________________________________________________________
+\section{Theoretical Foundations}
+
+Beschreiben Sie bei einer experimentellen Arbeit die wesentlichen 
+theoretischen Grundlagen und in jedem Fall den Stand der Forschung.
+
+\section{Setup}
+
+Wenn Sie an einem experimentellen Thema arbeiten, beschreiben Sie 
+den Versuchsaufbau, auch wenn Sie an einem bereits vorhandenen 
+Versuch arbeiten, soweit dies für Ihre spezielle Fragestellung 
+relevant ist. 
+
+\section{Method}
+
+Entsprechend kann es bei einer theoretischen Arbeit sinnvoll sein,
+die Lösungsmethoden in einem eigenen Kapitel zu beschreiben.
+
+\section{Results}
+
+Hauptteil Ihrer Arbeit ist das Kapitel (oder die Kapitel) mit den 
+Ergebnissen. Bei einer theoretischen Arbeit kann damit auch 
+die Herleitung von Formeln oder die Beschreibung eines Computerprogramms 
+gemeint sein.
+
+%_______________________________________________________________________________
+\chapter{Conclusion}
+
+In der Zusammenfassung sollten Sie in knapper Form die Aufgabenstellung 
+und die wichtigsten Ergebnisse rekapitulieren. Es ist für die 
+Gutachter hilfreich, wenn Sie ausdrücklich beschreiben, worin 
+Ihre eigenen Beiträge liegen. Scheuen Sie sich auch nicht davor 
+auszusprechen, welche Untersuchungen durch die Zeitbegrenzung der 
+Bachelorarbeit nicht möglich waren und nutzen Sie dies als 
+überleitung zu einem Ausblick auf mögliche weitergehende 
+Arbeiten an der Aufgabenstellung.
+
+%_______________________________________________________________________________
+\appendix
+
+% \chapter{Appendix}
+
+\chapter{Tables and Figures}
+
+In der Regel sind die in Tabellen und Abbildungen enthalten Informationen 
+so wichtig, dass sie im Hauptteil der Arbeit erscheinen sollten. Unter 
+Umständen sind aber ergänzende Tabellen und Abbildungen gut in einem 
+Anhang aufgehoben. Wie im Hauptteil sollten Sie auch hier darauf achten, 
+dass die in Tabellen und Figuren (siehe Abb.\ \ref{Abb:1}) dargestellte 
+Information im Text angesprochen wird und selbsterklärende Legenden 
+vorhanden sind.
+\medskip
+
+% \begin{figure}[h]
+% \begin{center}
+% \includegraphics[scale=0.8]{BA-Abbildung1.pdf}
+% \end{center}
+% \caption{\label{Abb:1}
+% Feynmandiagramm für eine typische Einschleifen-Korrektur zur 
+% Produktion von sieben Jets in der $e^+e^-$-Vernichtung (entnommen 
+% aus \cite{thepnews}, mit Zustimmung der Autoren).
+% } 
+% \end{figure}
+
+
+%_______________________________________________________________________________
+\chapter{Weiterführende Details zur Arbeit}
+
+Manch wichtiger Teil Ihrer tatsächlichen Arbeit ist zu technisch 
+und würde den Hauptteil des Textes unübersichtlich machen, 
+beispielsweise wenn es um die Details des Versuchsaufbaus in einer 
+experimentellen Arbeit oder um den für eine numerische Auswertung 
+verwendeten Algorithmus geht. Dennoch ist es sinnvoll, entsprechende 
+Beschreibungen in einem Anhang Ihrer Bachelorarbeit aufzunehmen. 
+Insbesondere für zukünftige Arbeiten, die an Ihre Bachelorarbeit 
+anschlie{\ss}en, sind dies manchmal hilfreiche Informationen.
+
+%_______________________________________________________________________________
+\chapter{References}
+
+Machen Sie genaue Angaben, so dass die verwendeten Literaturstellen 
+eindeutig identifiziert und aufgefunden werden können.
+Bei Lehrbüchern \cite{Weinberg:1995mt} ist es sinnvoll, 
+den Titel anzugeben, eventuell auch die Ausgabe. Bei Artikeln in 
+Fachzeitschriften \cite{Moch:2001zr} ist es üblich, nur die 
+gebräuchlichen Abkürzungen für den Titel der Zeitschrift, Band, 
+Erscheinungsjahr und Seite anzugeben. Unter Umständen kann es auch 
+sinnvoll sein, im Internet aufgefundene Informationsquellen anzugeben, 
+zum Beispiel für Software \cite{LoopTools} oder zu den Details von 
+Ergebnissen gro{\ss}er experimenteller Kollaborationen. Es ist 
+selbstverständlich, dass Sie auch Bachelor- \cite{BA:Freund}, 
+Diplom- oder Doktorarbeiten angeben, wenn Sie diese in Ihrer eigenen 
+Arbeit verwendet haben.
+\medskip
+
+Im folgenden Beispiel werden die in der Datei \texttt{h-physrev3.bst} 
+enthaltenen Anweisungen als Stilvorlage verwendet. Andere 
+Möglichkeiten für die Gestaltung eines Literaturverzeichnisses 
+findet man im Internet: \url{http://janeden.net/bibliographien-mit-latex}.
+
+\printbibliography
+
+% \renewcommand{\bibname}{Literaturverzeichnis} 
+% \bibliographystyle{h-physrev3}
+% \begin{thebibliography}{99}
+
+% %\cite{thepnews}
+% \bibitem{EbelBliefert}
+% H.\ F.\ Ebel, C.\ Bliefert, 
+%   ``Bachelor-, Master- und Doktorarbeit: Anleitungen für den 
+%   naturwissenschaftlich-technischen Nachwuchs,''
+%   Wiley-VCH, Weinheim (2009). 
+% \bibitem{thepnews}
+%   S.~Becker, D.~Götz, C.~Reuschle, C.~Schwan, S.~Weinzierl,  
+%   \url{http://wwwthep.physik.uni-mainz.de/site/news/168/}.
+
+% %\cite{Weinberg:1995mt}
+% \bibitem{Weinberg:1995mt}
+%   S.~Weinberg,
+%   ``The Quantum theory of fields. Vol. 1: Foundations,''
+%   Cambridge, UK: Univ. Pr. (1995) 609 p.
+
+% %\cite{Moch:2001zr}
+% \bibitem{Moch:2001zr}
+%   S.~Moch, P.~Uwer, S.~Weinzierl,
+%   %``Nested sums, expansion of transcendental functions and multiscale 
+%   % multiloop integrals,''
+%   J.\ Math.\ Phys.\  {43 } (2002)  3363-3386.
+%   [hep-ph/0110083].
+
+% %\cite{LoopTools}
+% \bibitem{LoopTools}
+%   T.~Hahn, 
+%   ``The LoopTools Site,''
+%   \url{http://www.feynarts.de/looptools/}.
+
+% %\cite{BA:Freund}
+% \bibitem{BA:Freund}
+%   B.~Freund, 
+%   Bachelorarbeit, Johannes Gutenberg-Universität Mainz, 2012.
+
+% \end{thebibliography}
+
+%_______________________________________________________________________________
+\chapter{Thanking}
+
+... an wen auch immer. Denken Sie an Ihre Freundinnen und Freunde, 
+Familie, Lehrer, Berater und Kollegen.
+
+
+\end{document}

@@ -11,13 +11,12 @@ import gsd.hoomd
 
 import tools.rmsd as rmsd
 from tools import scc
+from tools.constants import NUM_PARTICLES
 from tools.mg_plot import new_fig, set_styling
 
 # %% Setup
 
 np.set_printoptions(precision=3)
-
-N_PARTICLES = 25714
 
 
 # %% Parse args
@@ -91,7 +90,7 @@ print("grouping\n")
 # for group in groups:
 #     print(group)
 
-n_cell = 1
+n_cell = 5
 
 CUTOFF_RMSD = 3
 
@@ -229,7 +228,7 @@ ax.legend()
 
 # print()
 
-# pos = np.empty((8, N_PARTICLES, 3))
+# pos = np.empty((8, NUM_PARTICLES, 3))
 
 # for n_cell in range(1, 9):
 #     traj = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}.gsd")
