@@ -36,7 +36,7 @@ def h_train(
     max_dist: int,
     h_max: int,
     sample_count: int = 100,
-    full_range: bool = False
+    full_range: bool = False,
 ) -> int:
     """
     Find the optimal value for the smoothing parameter h.

@@ -35,25 +35,17 @@ def d(A, B):
 
 # since the contact matrices are sums of 100 configurations, normalise by dividing by 100
 cell1_sim = (
-    scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell1}.npz")
-    .toarray()
-    .astype("float32")
+    scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell1}.npz").toarray().astype("float32")
 ) / 100
 cell2_sim = (
-    scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell2}.npz")
-    .toarray()
-    .astype("float32")
+    scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell2}.npz").toarray().astype("float32")
 ) / 100
 
 assert cell1_sim.shape[0] == cell1_sim.shape[1] == cell2_sim.shape[0] == cell2_sim.shape[1]
 N_particles = cell1_sim.shape[0]
 
-cps1 = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell1}.pkl")[
-    ["ind_A", "ind_B"]
-].to_numpy()
-cps2 = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell2}.pkl")[
-    ["ind_A", "ind_B"]
-].to_numpy()
+cps1 = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell1}.pkl")[["ind_A", "ind_B"]].to_numpy()
+cps2 = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell2}.pkl")[["ind_A", "ind_B"]].to_numpy()
 
 # %% Make cp data cells
 

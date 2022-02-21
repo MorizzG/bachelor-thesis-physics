@@ -4,14 +4,16 @@
 # Maintainer: mphoward
 
 import unittest
+
 import hoomd
 from hoomd import mpcd
+
 
 # unit tests for snapshots with mpcd particle data
 class mpcd_snapshot(unittest.TestCase):
     def setUp(self):
         hoomd.context.initialize()
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.0)))
 
     def test_set_params(self):
         s = mpcd.init.make_random(N=3, kT=1.0, seed=7)
@@ -26,5 +28,6 @@ class mpcd_snapshot(unittest.TestCase):
     def tearDown(self):
         pass
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

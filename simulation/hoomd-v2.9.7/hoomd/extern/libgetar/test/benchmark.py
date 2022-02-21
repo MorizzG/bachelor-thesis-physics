@@ -57,90 +57,94 @@ with gtar.GTAR('{filename:}', 'r') as traj:
 #        val += np.sum(traj.getRecord(quatrec, frame))
 """
 
-parser = argparse.ArgumentParser(
-    description='Run some GTAR speed benchmarks')
-parser.add_argument('--number', type=eval, required=True,
-                    help='List of numbers of particles to evaluate for')
-parser.add_argument('--byte-counts', type=eval, required=True,
-                    help='List of numbers of byte sizes to evaluate for')
-parser.add_argument('-o', '--output', default='show',
-                    help='Output file location')
-parser.add_argument('--replicants', type=int, default=5,
-                    help='Number of replicants to run')
-parser.add_argument('--filenames', default='test_.zip,test_.tar,test_.sqlite',
-                    help='File names to open')
-parser.add_argument('--tests', default='Open,COpen,Write,Read,CRead,RRead,CRRead',
-                    help='Tests to run')
+parser = argparse.ArgumentParser(description="Run some GTAR speed benchmarks")
+parser.add_argument("--number", type=eval, required=True, help="List of numbers of particles to evaluate for")
+parser.add_argument("--byte-counts", type=eval, required=True, help="List of numbers of byte sizes to evaluate for")
+parser.add_argument("-o", "--output", default="show", help="Output file location")
+parser.add_argument("--replicants", type=int, default=5, help="Number of replicants to run")
+parser.add_argument("--filenames", default="test_.zip,test_.tar,test_.sqlite", help="File names to open")
+parser.add_argument("--tests", default="Open,COpen,Write,Read,CRead,RRead,CRRead", help="Tests to run")
+
 
 def runTest(name, **kwargs):
-    if name == 'Open':
+    if name == "Open":
         return openSpeed(**kwargs)[0]
-    elif name == 'COpen':
+    elif name == "COpen":
         return openSpeed(withCache=True, **kwargs)[0]
-    elif name == 'Write':
+    elif name == "Write":
         (byteCount, time, _) = writeSpeed(**kwargs)
-        return byteCount/time
-    elif name == 'Read':
+        return byteCount / time
+    elif name == "Read":
         (byteCount, time, _) = readSpeed(**kwargs)
-        return byteCount/time
-    elif name == 'CRead':
+        return byteCount / time
+    elif name == "CRead":
         (byteCount, time, _) = readSpeed(withCache=True, **kwargs)
-        return byteCount/time
-    elif name == 'RRead':
+        return byteCount / time
+    elif name == "RRead":
         (byteCount, time, _) = readSpeed(shuffle=True, **kwargs)
-        return byteCount/time
-    elif name == 'CRRead':
+        return byteCount / time
+    elif name == "CRRead":
         (byteCount, time, _) = readSpeed(withCache=True, shuffle=True, **kwargs)
-        return byteCount/time
-    elif name == 'Seek':
+        return byteCount / time
+    elif name == "Seek":
         (_, time, recCount) = readSpeed(shuffle=True, **kwargs)
-        return time/recCount
-    elif name == 'CSeek':
+        return time / recCount
+    elif name == "CSeek":
         (_, time, recCount) = readSpeed(withCache=True, shuffle=True, **kwargs)
-        return time/recCount
+        return time / recCount
     else:
-        raise RuntimeError('Unknown test {}'.format(name))
+        raise RuntimeError("Unknown test {}".format(name))
+
 
 def writeSpeed(filename, Nbytes, Nparticles, Nrep=5, **kwargs):
     """Returns (num_bytes, speed(s), num_records) for a write benchmark"""
-    Nframes = int(np.ceil(Nbytes/(Nparticles*(3 + 4)*4)))
+    Nframes = int(np.ceil(Nbytes / (Nparticles * (3 + 4) * 4)))
     setup = imports + generateRandom.format(Nframes=Nframes, N=Nparticles)
     stmt = testWrite.format(filename=filename)
 
-    realBytes = Nframes*Nparticles*(3 + 4)*4
+    realBytes = Nframes * Nparticles * (3 + 4) * 4
     time = min(timeit.repeat(stmt=stmt, setup=setup, repeat=Nrep, number=1))
 
-    return (realBytes, time, 2*Nframes)
+    return (realBytes, time, 2 * Nframes)
+
 
 def openSpeed(filename, Nbytes, Nparticles, Nrep=5, withCache=False, **kwargs):
     """Returns (speed(s), num_records) for a file open benchmark"""
-    Nframes = int(np.ceil(Nbytes/(Nparticles*(3 + 4)*4)))
-    setup = (imports + generateRandom.format(Nframes=Nframes, N=Nparticles) +
-             testWrite.format(filename=filename) +
-             (testOpen.format(filename=filename) if withCache else clearCache))
+    Nframes = int(np.ceil(Nbytes / (Nparticles * (3 + 4) * 4)))
+    setup = (
+        imports
+        + generateRandom.format(Nframes=Nframes, N=Nparticles)
+        + testWrite.format(filename=filename)
+        + (testOpen.format(filename=filename) if withCache else clearCache)
+    )
     stmt = testOpen.format(filename=filename)
 
     time = min(timeit.repeat(stmt=stmt, setup=setup, repeat=Nrep, number=1))
 
-    return (time, 2*Nframes)
+    return (time, 2 * Nframes)
+
 
 def readSpeed(filename, Nbytes, Nparticles, Nrep=5, shuffle=False, withCache=False, **kwargs):
     """Returns (num_bytes, speed(s), num_records) for a read benchmark"""
     readText = testRandomRead if shuffle else testRead
-    Nframes = int(np.ceil(Nbytes/(Nparticles*(3 + 4)*4)))
-    setup = (imports + generateRandom.format(Nframes=Nframes, N=Nparticles) +
-             testWrite.format(filename=filename) +
-             (readText.format(filename=filename) if withCache else clearCache))
+    Nframes = int(np.ceil(Nbytes / (Nparticles * (3 + 4) * 4)))
+    setup = (
+        imports
+        + generateRandom.format(Nframes=Nframes, N=Nparticles)
+        + testWrite.format(filename=filename)
+        + (readText.format(filename=filename) if withCache else clearCache)
+    )
     stmt = readText.format(filename=filename)
 
-    realBytes = Nframes*Nparticles*(3 + 4)*4
+    realBytes = Nframes * Nparticles * (3 + 4) * 4
     time = min(timeit.repeat(stmt=stmt, setup=setup, repeat=Nrep, number=1))
 
-    return (realBytes, time, 2*Nframes)
+    return (realBytes, time, 2 * Nframes)
+
 
 def main(number, byte_counts, output, replicants, filenames, tests):
-    filenames = filenames.split(',')
-    tests = tests.split(',')
+    filenames = filenames.split(",")
+    tests = tests.split(",")
     data = {}
     try:
         for filename in filenames:
@@ -150,24 +154,27 @@ def main(number, byte_counts, output, replicants, filenames, tests):
                 for filesize in byte_counts:
                     print(filename, N, filesize, file=sys.stderr)
                     data[filename][-1].append(
-                        [runTest(name, filename=filename, Nbytes=filesize, Nparticles=N) for name in tests])
-                    print('  ' +
-                          ''.join(len(data[filename][-1][-1])*[' {:>4.2e}']).
-                          format(*data[filename][-1][-1]), file=sys.stderr)
+                        [runTest(name, filename=filename, Nbytes=filesize, Nparticles=N) for name in tests]
+                    )
+                    print(
+                        "  " + "".join(len(data[filename][-1][-1]) * [" {:>4.2e}"]).format(*data[filename][-1][-1]),
+                        file=sys.stderr,
+                    )
     except KeyboardInterrupt:
-        print('Exiting due to interrupt')
+        print("Exiting due to interrupt")
     finally:
         for filename in filenames:
             if os.path.exists(filename):
                 os.unlink(filename)
 
-    if output == 'show':
-        header = (2*' ' + '    {:>7}' + '    {:>9}' + ''.join(len(tests)*['    {:>9}'])).format(
-            'N', 'Size/B', *tests)
+    if output == "show":
+        header = (2 * " " + "    {:>7}" + "    {:>9}" + "".join(len(tests) * ["    {:>9}"])).format(
+            "N", "Size/B", *tests
+        )
         print(header)
-        template = (2*' ' + '    {:>7d}' + '    {:>5.3e}' + ''.join(len(tests)*['    {:>5.3e}']))
+        template = 2 * " " + "    {:>7d}" + "    {:>5.3e}" + "".join(len(tests) * ["    {:>5.3e}"])
         for filename in data:
-            print('{}:'.format(filename))
+            print("{}:".format(filename))
             for (i, N) in enumerate(number):
                 for (j, filesize) in enumerate(byte_counts):
                     try:
@@ -178,6 +185,8 @@ def main(number, byte_counts, output, replicants, filenames, tests):
                     except KeyError:
                         pass
     else:
-        json.dump({'headers': ['N', 'Size'] + tests, 'files': data}, open(output, 'w'))
+        json.dump({"headers": ["N", "Size"] + tests, "files": data}, open(output, "w"))
 
-if __name__ == '__main__': main(**vars(parser.parse_args()))
+
+if __name__ == "__main__":
+    main(**vars(parser.parse_args()))

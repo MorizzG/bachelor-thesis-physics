@@ -11,9 +11,11 @@ time when you use a feature that should be cited. Users should read and cite the
 Citations can be saved as a BibTeX file for easy incorporation into bibliographies.
 """
 
-import hoomd
-import textwrap
 import os
+import textwrap
+
+import hoomd
+
 
 ## \internal
 # \brief Generic citation object
@@ -41,7 +43,7 @@ class _citation(object):
         # author requires special handling for I/O
         self.author = None
         if author is not None:
-            if not isinstance(author, (list,tuple)):
+            if not isinstance(author, (list, tuple)):
                 self.author = [author]
             else:
                 self.author = author
@@ -51,7 +53,7 @@ class _citation(object):
 
         # initialize all standard keys as member variables
         for key in _citation.standard_keys:
-            setattr(self,key,None)
+            setattr(self, key, None)
 
         # doi and url require special handling for I/O
         self.doi = None
@@ -93,25 +95,25 @@ class _citation(object):
 
         out = str(self)
         if len(out) == 0:
-            return None # quit if there is nothing to actually log in this citation
+            return None  # quit if there is nothing to actually log in this citation
 
-        wrapper = textwrap.TextWrapper(initial_indent = '* ', subsequent_indent = '  ', width = 80)
-        return wrapper.fill(out) + '\n'
+        wrapper = textwrap.TextWrapper(initial_indent="* ", subsequent_indent="  ", width=80)
+        return wrapper.fill(out) + "\n"
 
     ## \internal
     # \brief Get the citation in human readable format
     # \note Deriving classes \b must implement this method themselves.
     def __str__(self):
-        hoomd.context.msg.error('Bug in hoomd.cite: each deriving class must implement its own string method\n')
-        raise RuntimeError('Citation does not implement string method')
+        hoomd.context.msg.error("Bug in hoomd.cite: each deriving class must implement its own string method\n")
+        raise RuntimeError("Citation does not implement string method")
 
     ## \internal
     # \brief Ensures that all required fields have been set
     def validate(self):
         for entry in self.required_entries:
-            if getattr(self,entry) is None:
-                hoomd.context.msg.error('Bug in hoomd.cite: required field %s not set, please report\n' % entry)
-                raise RuntimeError('Required citation field not set')
+            if getattr(self, entry) is None:
+                hoomd.context.msg.error("Bug in hoomd.cite: required field %s not set, please report\n" % entry)
+                raise RuntimeError("Required citation field not set")
 
     ## \internal
     # \brief Formats the author name list
@@ -123,11 +125,11 @@ class _citation(object):
 
         if len(self.author) > 1:
             if not fancy:
-                return ' and '.join(self.author)
+                return " and ".join(self.author)
             elif len(self.author) > 2:
-                return '%s, and %s' % (', '.join(self.author[:-1]), self.author[-1])
+                return "%s, and %s" % (", ".join(self.author[:-1]), self.author[-1])
             else:
-                return '%s and %s' % tuple(self.author)
+                return "%s and %s" % tuple(self.author)
         else:
             return self.author[0]
 
@@ -139,43 +141,67 @@ class _citation(object):
     # If no note is set for the citation, a default note identifying the HOOMD feature used is generated.
     def bibtex(self):
         if self.bibtex_type is None:
-            hoomd.context.msg.error('Bug in hoomd.cite: BibTeX record type must be set, please report\n')
+            hoomd.context.msg.error("Bug in hoomd.cite: BibTeX record type must be set, please report\n")
             raise RuntimeError()
 
-        lines = ['@%s{%s,' % (self.bibtex_type, self.cite_key)]
+        lines = ["@%s{%s," % (self.bibtex_type, self.cite_key)]
         if self.author is not None:
-            lines += ['  author = {%s},' % self.format_authors(False)]
+            lines += ["  author = {%s}," % self.format_authors(False)]
 
         for key in _citation.standard_keys:
             val = getattr(self, key)
             if getattr(self, key) is not None:
-                lines += ['  %s = {%s},' % (key, val)]
+                lines += ["  %s = {%s}," % (key, val)]
 
         # doi requires special handling because it is not "standard"
         if self.doi is not None:
-            lines += ['  doi = {%s},' % self.doi]
+            lines += ["  doi = {%s}," % self.doi]
         # only override the url with the doi if it is not set
         if self.url is None and self.doi is not None:
-            lines += ['  url = {http://dx.doi.org/%s},' % self.doi]
+            lines += ["  url = {http://dx.doi.org/%s}," % self.doi]
         elif self.url is not None:
-            lines += ['  url = {%s},' % self.url]
+            lines += ["  url = {%s}," % self.url]
 
         # add note based on the feature if a note has not been set
         if self.feature is not None and self.note is None:
-            lines += ['  note = {HOOMD-blue feature: %s},' % self.feature]
+            lines += ["  note = {HOOMD-blue feature: %s}," % self.feature]
 
         # remove trailing comma
         lines[-1] = lines[-1][:-1]
 
         # close off record
-        lines += ['}']
+        lines += ["}"]
 
-        return '\n'.join(lines)
+        return "\n".join(lines)
+
+
 ## \internal
 # List of standard BibTeX keys that citations may use
-_citation.standard_keys = ['address','annote','booktitle','chapter','crossref','edition','editor','howpublished',
-                           'institution', 'journal','key','month','note','number','organization','pages','publisher',
-                           'school','series','title', 'type','volume','year']
+_citation.standard_keys = [
+    "address",
+    "annote",
+    "booktitle",
+    "chapter",
+    "crossref",
+    "edition",
+    "editor",
+    "howpublished",
+    "institution",
+    "journal",
+    "key",
+    "month",
+    "note",
+    "number",
+    "organization",
+    "pages",
+    "publisher",
+    "school",
+    "series",
+    "title",
+    "type",
+    "volume",
+    "year",
+]
 
 
 ## \internal
@@ -198,11 +224,27 @@ class article(_citation):
     # \param doi Digital object identifier
     # \param feature Name of HOOMD feature corresponding to citation
     # \param display Flag to automatically print the citation when adding to a bibliography
-    def __init__(self, cite_key, author, title, journal, year, volume, pages, number=None, month=None, note=None, key=None, doi=None, feature=None, display=True):
+    def __init__(
+        self,
+        cite_key,
+        author,
+        title,
+        journal,
+        year,
+        volume,
+        pages,
+        number=None,
+        month=None,
+        note=None,
+        key=None,
+        doi=None,
+        feature=None,
+        display=True,
+    ):
         _citation.__init__(self, cite_key, feature, author, display)
 
-        self.required_entries = ['author', 'title', 'journal', 'year', 'volume', 'pages']
-        self.bibtex_type = 'article'
+        self.required_entries = ["author", "title", "journal", "year", "volume", "pages"]
+        self.bibtex_type = "article"
 
         self.title = title
         self.journal = journal
@@ -216,12 +258,13 @@ class article(_citation):
         self.doi = doi
 
     def __str__(self):
-        out = ''
+        out = ""
         if self.author is not None:
             out += self.format_authors(True)
-            out += '. '
+            out += ". "
         out += '"%s", %s %s (%s) %s' % (self.title, self.journal, str(self.volume), str(self.year), str(self.pages))
         return out
+
 
 ## \internal
 # \brief Miscellaneous BibTeX entry
@@ -239,10 +282,22 @@ class misc(_citation):
     # \param key Optional key
     # \param feature Name of HOOMD feature corresponding to citation
     # \param display Flag to automatically print the citation when adding to a bibliography
-    def __init__(self, cite_key, author=None, title=None, howpublished=None, year=None, month=None, note=None, key=None, feature=None, display=True):
+    def __init__(
+        self,
+        cite_key,
+        author=None,
+        title=None,
+        howpublished=None,
+        year=None,
+        month=None,
+        note=None,
+        key=None,
+        feature=None,
+        display=True,
+    ):
         _citation.__init__(self, cite_key, feature, author, display)
         self.required_entries = []
-        self.bibtex_type = 'misc'
+        self.bibtex_type = "misc"
 
         self.title = title
         self.howpublished = howpublished
@@ -252,22 +307,23 @@ class misc(_citation):
         self.key = key
 
     def __str__(self):
-        out = ''
+        out = ""
         if self.author is not None:
             out += self.format_authors(True)
         if self.title is not None:
             if len(out) > 0:
-                out += '. '
+                out += ". "
             out += '"%s"' % self.title
         if self.howpublished is not None:
             if len(out) > 0:
-                out += ', '
+                out += ", "
             out += self.howpublished
         if self.year is not None:
             if len(out) > 0:
-                out += ' '
-            out += '(%s)' % str(year)
+                out += " "
+            out += "(%s)" % str(year)
         return out
+
 
 ## \internal
 # \brief Collection of citations
@@ -282,7 +338,8 @@ class bibliography(object):
         self.entries = {}
         self.autosave = False
         self.updated = False
-        self.file = 'hoomd.bib'
+        self.file = "hoomd.bib"
+
     ## \var entries
     # \internal
     # \brief Dictionary of citations
@@ -304,7 +361,7 @@ class bibliography(object):
     # \param entry Citation or list of citations to add to the bibliography
     def add(self, entry):
         # wrap the entry as a list if it is not
-        if not isinstance(entry, (list,tuple)):
+        if not isinstance(entry, (list, tuple)):
             entry = [entry]
 
         # parse unique sets of features out of attached citations
@@ -314,26 +371,26 @@ class bibliography(object):
             self.entries[e.cite_key] = e
 
             log_str = e.log()
-            if log_str is not None: # if display is enabled and log returns an output
+            if log_str is not None:  # if display is enabled and log returns an output
                 # if a feature is specified, we try to group them together into logical sets
                 if e.feature is not None:
                     if e.feature not in citations:
                         citations[e.feature] = [log_str]
                     else:
                         citations[e.feature] += [log_str]
-                else: # otherwise, just print the feature without any decoration
-                    cite_str = '-'*5 + '\n'
-                    cite_str += 'Please cite the following:\n'
+                else:  # otherwise, just print the feature without any decoration
+                    cite_str = "-" * 5 + "\n"
+                    cite_str += "Please cite the following:\n"
                     cite_str += log_str
-                    cite_str += '-'*5 + '\n'
+                    cite_str += "-" * 5 + "\n"
                     hoomd.context.msg.notice(1, cite_str)
 
         # print each feature set together
         for feature in citations:
-            cite_str = '-'*5 + '\n'
-            cite_str += 'You are using %s. Please cite the following:\n' % feature
-            cite_str += ''.join(citations[feature])
-            cite_str += '-'*5 + '\n'
+            cite_str = "-" * 5 + "\n"
+            cite_str += "You are using %s. Please cite the following:\n" % feature
+            cite_str += "".join(citations[feature])
+            cite_str += "-" * 5 + "\n"
             hoomd.context.msg.notice(1, cite_str)
 
         # after adding, we need to update the file
@@ -350,11 +407,11 @@ class bibliography(object):
             return
 
         # dump all BibTeX entries to file (in no particular order)
-        f = open(self.file, 'w')
-        f.write('% This BibTeX file was automatically generated from HOOMD-blue\n')
-        f.write('% Encoding: UTF-8\n\n')
+        f = open(self.file, "w")
+        f.write("% This BibTeX file was automatically generated from HOOMD-blue\n")
+        f.write("% Encoding: UTF-8\n\n")
         for entry in self.entries:
-            f.write(self.entries[entry].bibtex() + '\n\n')
+            f.write(self.entries[entry].bibtex() + "\n\n")
         f.close()
 
         # after saving, we no longer need updating
@@ -382,6 +439,7 @@ class bibliography(object):
         # otherwise, check if the bibliography has been updated since last save
         return self.updated
 
+
 _extra_default_entries = []
 
 ## \internal
@@ -395,28 +453,31 @@ _extra_default_entries = []
 # always includes two references: (1) the original HOOMD paper and (2) the HOOMD-blue website, which are automatically
 # put into the global bibliography. Subsequent citations are then added to these citations.
 def _ensure_global_bib():
-    global _extra_default_entries;
+    global _extra_default_entries
 
     if hoomd.context.bib is None:
         hoomd.context.bib = bibliography()
         # the hoomd bibliography always includes the following citations
-        hoomd_base = article(cite_key = 'Anderson2020',
-                        author = ['J A Anderson','J Glaser','S C Glotzer'],
-                        title = 'HOOMD-blue: A Python package for high-performance molecular dynamics and hard particle Monte Carlo simulations',
-                        journal = 'Computational Materials Science',
-                        volume = 173,
-                        pages = '109363',
-                        year = 2020,
-                        month = 'feb',
-                        doi = '10.1016/j.commatsci.2019.109363',
-                        feature = 'HOOMD-blue')
+        hoomd_base = article(
+            cite_key="Anderson2020",
+            author=["J A Anderson", "J Glaser", "S C Glotzer"],
+            title="HOOMD-blue: A Python package for high-performance molecular dynamics and hard particle Monte Carlo simulations",
+            journal="Computational Materials Science",
+            volume=173,
+            pages="109363",
+            year=2020,
+            month="feb",
+            doi="10.1016/j.commatsci.2019.109363",
+            feature="HOOMD-blue",
+        )
 
         hoomd.context.bib.add([hoomd_base])
         hoomd.context.bib.add(_extra_default_entries)
 
     return hoomd.context.bib
 
-def save(file='hoomd.bib'):
+
+def save(file="hoomd.bib"):
     """ Saves the automatically generated bibliography to a BibTeX file
 
     Args:

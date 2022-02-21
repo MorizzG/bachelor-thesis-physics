@@ -37,54 +37,41 @@ will not require any modifications. **Maintainer:** Joshua A. Anderson
     API stability it provides.
 """
 
+import ctypes
+import os
 # Maintainer: joaander
-import sys;
-import ctypes;
-import os;
+import sys
 
 # need to import HOOMD with RTLD_GLOBAL in python sitedir builds
-if not ('NOT_HOOMD_PYTHON_SITEDIR' in os.environ):
-    flags = sys.getdlopenflags();
-    sys.setdlopenflags(flags | ctypes.RTLD_GLOBAL);
+if not ("NOT_HOOMD_PYTHON_SITEDIR" in os.environ):
+    flags = sys.getdlopenflags()
+    sys.setdlopenflags(flags | ctypes.RTLD_GLOBAL)
 
-from hoomd import _hoomd;
+from hoomd import _hoomd
 
-if not ('NOT_HOOMD_PYTHON_SITEDIR' in os.environ):
-    sys.setdlopenflags(flags);
+if not ("NOT_HOOMD_PYTHON_SITEDIR" in os.environ):
+    sys.setdlopenflags(flags)
 
-from hoomd import meta
-from hoomd import context
-from hoomd import cite
-from hoomd import analyze
-from hoomd import benchmark
-from hoomd import comm
-from hoomd import compute
-from hoomd import data
-from hoomd import dump
-from hoomd import group
-from hoomd import init
-from hoomd import integrate
-from hoomd import option
-from hoomd import update
-from hoomd import util
-from hoomd import variant
-from hoomd import lattice
+from hoomd import (analyze, benchmark, cite, comm, compute, context, data,
+                   dump, group, init, integrate, lattice, meta, option, update,
+                   util, variant)
+from hoomd._hoomd import WalltimeLimitReached
 
-from hoomd._hoomd import WalltimeLimitReached;
-
-_default_excepthook = sys.excepthook;
+_default_excepthook = sys.excepthook
 
 ## \internal
 # \brief Override pythons except hook to abort MPI runs
 def _hoomd_sys_excepthook(type, value, traceback):
-    _default_excepthook(type, value, traceback);
-    sys.stderr.flush();
+    _default_excepthook(type, value, traceback)
+    sys.stderr.flush()
     if context.exec_conf is not None:
-        _hoomd.abort_mpi(context.exec_conf);
+        _hoomd.abort_mpi(context.exec_conf)
+
 
 sys.excepthook = _hoomd_sys_excepthook
 
 __version__ = "{0}.{1}.{2}".format(*_hoomd.__version__)
+
 
 def run(tsteps, profile=False, limit_hours=None, limit_multiple=1, callback_period=0, callback=None, quiet=False):
     """ Runs the simulation for a given number of time steps.
@@ -163,26 +150,26 @@ def run(tsteps, profile=False, limit_hours=None, limit_multiple=1, callback_peri
     """
 
     if not quiet:
-        util.print_status_line();
+        util.print_status_line()
     # check if initialization has occurred
     if not init.is_initialized():
-        context.msg.error("Cannot run before initialization\n");
-        raise RuntimeError('Error running');
+        context.msg.error("Cannot run before initialization\n")
+        raise RuntimeError("Error running")
 
     if context.current.integrator is None:
-        context.msg.warning("Starting a run without an integrator set");
+        context.msg.warning("Starting a run without an integrator set")
     else:
-        context.current.integrator.update_forces();
-        context.current.integrator.update_methods();
-        context.current.integrator.update_thermos();
+        context.current.integrator.update_forces()
+        context.current.integrator.update_methods()
+        context.current.integrator.update_thermos()
 
     # update autotuner parameters
-    context.current.system.setAutotunerParams(context.options.autotuner_enable, int(context.options.autotuner_period));
+    context.current.system.setAutotunerParams(context.options.autotuner_enable, int(context.options.autotuner_period))
 
     for logger in context.current.loggers:
-        logger.update_quantities();
-    context.current.system.enableProfiler(profile);
-    context.current.system.enableQuietRun(quiet);
+        logger.update_quantities()
+    context.current.system.enableProfiler(profile)
+    context.current.system.enableQuietRun(quiet)
 
     # update all user-defined neighbor lists
     for nl in context.current.neighbor_lists:
@@ -191,16 +178,17 @@ def run(tsteps, profile=False, limit_hours=None, limit_multiple=1, callback_peri
 
     # detect 0 hours remaining properly
     if limit_hours == 0.0:
-        context.msg.warning("Requesting a run() with a 0 time limit, doing nothing.\n");
-        return;
+        context.msg.warning("Requesting a run() with a 0 time limit, doing nothing.\n")
+        return
     if limit_hours is None:
         limit_hours = 0.0
 
     if not quiet:
-        context.msg.notice(1, "** starting run **\n");
-    context.current.system.run(int(tsteps), callback_period, callback, limit_hours, int(limit_multiple));
+        context.msg.notice(1, "** starting run **\n")
+    context.current.system.run(int(tsteps), callback_period, callback, limit_hours, int(limit_multiple))
     if not quiet:
-        context.msg.notice(1, "** run complete **\n");
+        context.msg.notice(1, "** run complete **\n")
+
 
 def run_upto(step, **keywords):
     """Runs the simulation up to a given time step number.
@@ -221,26 +209,27 @@ def run_upto(step, **keywords):
         run_upto(10000, profile=True)
         run_upto(1e9, limit_hours=11)
     """
-    if 'quiet' in keywords and not keywords['quiet']:
-        util.print_status_line();
+    if "quiet" in keywords and not keywords["quiet"]:
+        util.print_status_line()
     # check if initialization has occurred
     if not init.is_initialized():
-        context.msg.error("Cannot run before initialization\n");
-        raise RuntimeError('Error running');
+        context.msg.error("Cannot run before initialization\n")
+        raise RuntimeError("Error running")
 
     # determine the number of steps to run
-    step = int(step);
-    cur_step = context.current.system.getCurrentTimeStep();
+    step = int(step)
+    cur_step = context.current.system.getCurrentTimeStep()
 
     if cur_step >= step:
-        context.msg.notice(2, "Requesting run up to a time step that has already passed, doing nothing\n");
-        return;
+        context.msg.notice(2, "Requesting run up to a time step that has already passed, doing nothing\n")
+        return
 
-    n_steps = step - cur_step;
+    n_steps = step - cur_step
 
-    util.quiet_status();
-    run(n_steps, **keywords);
-    util.unquiet_status();
+    util.quiet_status()
+    run(n_steps, **keywords)
+    util.unquiet_status()
+
 
 def get_step():
     """ Get the current simulation time step.
@@ -255,7 +244,7 @@ def get_step():
 
     # check if initialization has occurred
     if not init.is_initialized():
-        context.msg.error("Cannot get step before initialization\n");
-        raise RuntimeError('Error getting step');
+        context.msg.error("Cannot get step before initialization\n")
+        raise RuntimeError("Error getting step")
 
-    return context.current.system.getCurrentTimeStep();
+    return context.current.system.getCurrentTimeStep()

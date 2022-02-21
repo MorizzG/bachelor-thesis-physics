@@ -3,7 +3,7 @@
 
 # Maintainer: joaander / All Developers are free to add commands for new features
 
-R""" Bond potentials.
+r""" Bond potentials.
 
 Bonds add forces between specified pairs of particles and are typically used to
 model chemical bonds between two particles.
@@ -13,16 +13,16 @@ specify an bond force (i.e. bond.harmonic), are forces actually calculated betwe
 listed particles.
 """
 
-from hoomd import _hoomd
-from hoomd.md import _md
-from hoomd.md import force;
-import hoomd;
+import math
+import sys
 
-import math;
-import sys;
+import hoomd
+from hoomd import _hoomd
+from hoomd.md import _md, force
+
 
 class coeff:
-    R""" Define bond coefficients.
+    r""" Define bond coefficients.
 
     The coefficients for all bond potentials are specified using this class. Coefficients are
     specified per bond type.
@@ -50,7 +50,7 @@ class coeff:
     # The main task to be performed during initialization is just to init some variables
     # \param self Python required class instance variable
     def __init__(self):
-        self.values = {};
+        self.values = {}
         self.default_coeff = {}
 
     ## \var values
@@ -70,10 +70,10 @@ class coeff:
     # Some coefficients have reasonable default values and the user should not be burdened with typing them in
     # all the time. set_default_coeff() sets
     def set_default_coeff(self, name, value):
-        self.default_coeff[name] = value;
+        self.default_coeff[name] = value
 
     def set(self, type, **coeffs):
-        R""" Sets parameters for bond types.
+        r""" Sets parameters for bond types.
 
         Args:
             type (str): Type of bond (or a list of type names)
@@ -100,34 +100,34 @@ class coeff:
             parameters as they were previously set.
 
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # listify the input
         type = hoomd.util.listify(type)
 
         for typei in type:
-            self.set_single(typei, coeffs);
+            self.set_single(typei, coeffs)
 
     ## \internal
     # \brief Sets a single parameter
     def set_single(self, type, coeffs):
-        type = str(type);
+        type = str(type)
 
         # create the type identifier if it hasn't been created yet
-        if (not type in self.values):
-            self.values[type] = {};
+        if not type in self.values:
+            self.values[type] = {}
 
         # update each of the values provided
         if len(coeffs) == 0:
-            hoomd.context.msg.error("No coefficients specified\n");
+            hoomd.context.msg.error("No coefficients specified\n")
         for name, val in coeffs.items():
-            self.values[type][name] = val;
+            self.values[type][name] = val
 
         # set the default values
         for name, val in self.default_coeff.items():
             # don't override a coeff if it is already set
             if not name in self.values[type]:
-                self.values[type][name] = val;
+                self.values[type][name] = val
 
     ## \internal
     # \brief Verifies that all values are set
@@ -139,39 +139,45 @@ class coeff:
     def verify(self, required_coeffs):
         # first, check that the system has been initialized
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot verify bond coefficients before initialization\n");
-            raise RuntimeError('Error verifying force coefficients');
+            hoomd.context.msg.error("Cannot verify bond coefficients before initialization\n")
+            raise RuntimeError("Error verifying force coefficients")
 
         # get a list of types from the particle data
-        ntypes = hoomd.context.current.system_definition.getBondData().getNTypes();
-        type_list = [];
-        for i in range(0,ntypes):
-            type_list.append(hoomd.context.current.system_definition.getBondData().getNameByType(i));
+        ntypes = hoomd.context.current.system_definition.getBondData().getNTypes()
+        type_list = []
+        for i in range(0, ntypes):
+            type_list.append(hoomd.context.current.system_definition.getBondData().getNameByType(i))
 
-        valid = True;
+        valid = True
         # loop over all possible types and verify that all required variables are set
-        for i in range(0,ntypes):
-            type = type_list[i];
+        for i in range(0, ntypes):
+            type = type_list[i]
 
             if type not in self.values.keys():
-                hoomd.context.msg.error("Bond type " +str(type) + " not found in bond coeff\n");
-                valid = False;
-                continue;
+                hoomd.context.msg.error("Bond type " + str(type) + " not found in bond coeff\n")
+                valid = False
+                continue
 
             # verify that all required values are set by counting the matches
-            count = 0;
+            count = 0
             for coeff_name in self.values[type].keys():
                 if not coeff_name in required_coeffs:
-                    hoomd.context.msg.notice(2, "Notice: Possible typo? Force coeff " + str(coeff_name) + " is specified for type " + str(type) + \
-                          ", but is not used by the bond force\n");
+                    hoomd.context.msg.notice(
+                        2,
+                        "Notice: Possible typo? Force coeff "
+                        + str(coeff_name)
+                        + " is specified for type "
+                        + str(type)
+                        + ", but is not used by the bond force\n",
+                    )
                 else:
-                    count += 1;
+                    count += 1
 
             if count != len(required_coeffs):
-                hoomd.context.msg.error("Bond type " + str(type) + " is missing required coefficients\n");
-                valid = False;
+                hoomd.context.msg.error("Bond type " + str(type) + " is missing required coefficients\n")
+                valid = False
 
-        return valid;
+        return valid
 
     ## \internal
     # \brief Gets the value of a single %bond %force coefficient
@@ -180,15 +186,16 @@ class coeff:
     # \param coeff_name Coefficient to get
     def get(self, type, coeff_name):
         if type not in self.values.keys():
-            hoomd.context.msg.error("Bug detected in force.coeff. Please report\n");
-            raise RuntimeError("Error setting bond coeff");
+            hoomd.context.msg.error("Bug detected in force.coeff. Please report\n")
+            raise RuntimeError("Error setting bond coeff")
 
-        return self.values[type][coeff_name];
+        return self.values[type][coeff_name]
 
     ## \internal
     # \brief Return metadata
     def get_metadata(self):
         return self.values
+
 
 ## \internal
 # \brief Base class for bond potentials
@@ -209,36 +216,36 @@ class _bond(force._force):
     # Assigns a name to the force in force_name;
     def __init__(self, name=None):
         # initialize the base class
-        force._force.__init__(self, name);
+        force._force.__init__(self, name)
 
-        self.cpp_force = None;
+        self.cpp_force = None
 
         # setup the coefficient vector
-        self.bond_coeff = coeff();
+        self.bond_coeff = coeff()
 
-        self.enabled = True;
+        self.enabled = True
 
     def update_coeffs(self):
-        coeff_list = self.required_coeffs;
+        coeff_list = self.required_coeffs
         # check that the force coefficients are valid
         if not self.bond_coeff.verify(coeff_list):
-           hoomd.context.msg.error("Not all force coefficients are set\n");
-           raise RuntimeError("Error updating force coefficients");
+            hoomd.context.msg.error("Not all force coefficients are set\n")
+            raise RuntimeError("Error updating force coefficients")
 
         # set all the params
-        ntypes = hoomd.context.current.system_definition.getBondData().getNTypes();
-        type_list = [];
-        for i in range(0,ntypes):
-            type_list.append(hoomd.context.current.system_definition.getBondData().getNameByType(i));
+        ntypes = hoomd.context.current.system_definition.getBondData().getNTypes()
+        type_list = []
+        for i in range(0, ntypes):
+            type_list.append(hoomd.context.current.system_definition.getBondData().getNameByType(i))
 
-        for i in range(0,ntypes):
+        for i in range(0, ntypes):
             # build a dict of the coeffs to pass to proces_coeff
-            coeff_dict = {};
+            coeff_dict = {}
             for name in coeff_list:
-                coeff_dict[name] = self.bond_coeff.get(type_list[i], name);
+                coeff_dict[name] = self.bond_coeff.get(type_list[i], name)
 
-            param = self.process_coeff(coeff_dict);
-            self.cpp_force.setParams(i, param);
+            param = self.process_coeff(coeff_dict)
+            self.cpp_force.setParams(i, param)
 
     ## \internal
     # \brief Get metadata
@@ -248,11 +255,12 @@ class _bond(force._force):
         # make sure coefficients are up-to-date
         self.update_coeffs()
 
-        data['bond_coeff'] = self.bond_coeff
+        data["bond_coeff"] = self.bond_coeff
         return data
 
+
 class harmonic(_bond):
-    R""" Harmonic bond potential.
+    r""" Harmonic bond potential.
 
     Args:
         name (str): Name of the bond instance.
@@ -276,33 +284,34 @@ class harmonic(_bond):
         harmonic.bond_coeff.set('polymer', k=330.0, r0=0.84)
 
     """
-    def __init__(self,name=None):
-        hoomd.util.print_status_line();
+
+    def __init__(self, name=None):
+        hoomd.util.print_status_line()
 
         # initialize the base class
-        _bond.__init__(self);
-
+        _bond.__init__(self)
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_force = _md.PotentialBondHarmonic(hoomd.context.current.system_definition,self.name);
+            self.cpp_force = _md.PotentialBondHarmonic(hoomd.context.current.system_definition, self.name)
         else:
-            self.cpp_force = _md.PotentialBondHarmonicGPU(hoomd.context.current.system_definition,self.name);
+            self.cpp_force = _md.PotentialBondHarmonicGPU(hoomd.context.current.system_definition, self.name)
 
-        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
         # setup the coefficient options
-        self.required_coeffs = ['k','r0'];
+        self.required_coeffs = ["k", "r0"]
 
     def process_coeff(self, coeff):
-        k = coeff['k'];
-        r0 = coeff['r0'];
+        k = coeff["k"]
+        r0 = coeff["r0"]
 
         # set the parameters for the appropriate type
-        return _hoomd.make_scalar2(k, r0);
+        return _hoomd.make_scalar2(k, r0)
+
 
 class fene(_bond):
-    R""" FENE bond potential.
+    r""" FENE bond potential.
 
     Args:
         name (str): Name of the bond instance.
@@ -338,41 +347,40 @@ class fene(_bond):
         fene.bond_coeff.set('backbone', k=100.0, r0=1.0, sigma=1.0, epsilon= 2.0)
 
     """
-    def __init__(self, name=None):
-        hoomd.util.print_status_line();
 
+    def __init__(self, name=None):
+        hoomd.util.print_status_line()
 
         # initialize the base class
-        _bond.__init__(self, name);
+        _bond.__init__(self, name)
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_force = _md.PotentialBondFENE(hoomd.context.current.system_definition,self.name);
+            self.cpp_force = _md.PotentialBondFENE(hoomd.context.current.system_definition, self.name)
         else:
-            self.cpp_force = _md.PotentialBondFENEGPU(hoomd.context.current.system_definition,self.name);
+            self.cpp_force = _md.PotentialBondFENEGPU(hoomd.context.current.system_definition, self.name)
 
-        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
         # setup the coefficient options
-        self.required_coeffs = ['k','r0','epsilon','sigma'];
+        self.required_coeffs = ["k", "r0", "epsilon", "sigma"]
 
     def process_coeff(self, coeff):
-        k = coeff['k'];
-        r0 = coeff['r0'];
-        lj1 = 4.0 * coeff['epsilon'] * math.pow(coeff['sigma'], 12.0);
-        lj2 = 4.0 * coeff['epsilon'] * math.pow(coeff['sigma'], 6.0);
-        return _hoomd.make_scalar4(k, r0, lj1, lj2);
-
-
+        k = coeff["k"]
+        r0 = coeff["r0"]
+        lj1 = 4.0 * coeff["epsilon"] * math.pow(coeff["sigma"], 12.0)
+        lj2 = 4.0 * coeff["epsilon"] * math.pow(coeff["sigma"], 6.0)
+        return _hoomd.make_scalar4(k, r0, lj1, lj2)
 
 
 def _table_eval(r, rmin, rmax, V, F, width):
-      dr = (rmax - rmin) / float(width-1);
-      i = int(round((r - rmin)/dr))
-      return (V[i], F[i])
+    dr = (rmax - rmin) / float(width - 1)
+    i = int(round((r - rmin) / dr))
+    return (V[i], F[i])
+
 
 class table(force._force):
-    R""" Tabulated bond potential.
+    r""" Tabulated bond potential.
 
     Args:
         width (int): Number of points to use to interpolate V and F
@@ -446,72 +454,70 @@ class table(force._force):
         Ensure that ``rmin`` and ``rmax`` cover the range of possible bond lengths. When gpu error checking is on, a error will
         be thrown if a bond distance is outside than this range.
     """
+
     def __init__(self, width, name=None):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # initialize the base class
-        force._force.__init__(self, name);
-
+        force._force.__init__(self, name)
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_force = _md.BondTablePotential(hoomd.context.current.system_definition, int(width), self.name);
+            self.cpp_force = _md.BondTablePotential(hoomd.context.current.system_definition, int(width), self.name)
         else:
-            self.cpp_force = _md.BondTablePotentialGPU(hoomd.context.current.system_definition, int(width), self.name);
+            self.cpp_force = _md.BondTablePotentialGPU(hoomd.context.current.system_definition, int(width), self.name)
 
-        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
         # setup the coefficients matrix
-        self.bond_coeff = coeff();
+        self.bond_coeff = coeff()
 
         # stash the width for later use
-        self.width = width;
+        self.width = width
 
     def update_bond_table(self, btype, func, rmin, rmax, coeff):
         # allocate arrays to store V and F
-        Vtable = _hoomd.std_vector_scalar();
-        Ftable = _hoomd.std_vector_scalar();
+        Vtable = _hoomd.std_vector_scalar()
+        Ftable = _hoomd.std_vector_scalar()
 
         # calculate dr
-        dr = (rmax - rmin) / float(self.width-1);
+        dr = (rmax - rmin) / float(self.width - 1)
 
         # evaluate each point of the function
         for i in range(0, self.width):
-            r = rmin + dr * i;
-            (V,F) = func(r, rmin, rmax, **coeff);
+            r = rmin + dr * i
+            (V, F) = func(r, rmin, rmax, **coeff)
 
             # fill out the tables
-            Vtable.append(V);
-            Ftable.append(F);
+            Vtable.append(V)
+            Ftable.append(F)
 
         # pass the tables on to the underlying cpp compute
-        self.cpp_force.setTable(btype, Vtable, Ftable, rmin, rmax);
-
+        self.cpp_force.setTable(btype, Vtable, Ftable, rmin, rmax)
 
     def update_coeffs(self):
         # check that the bond coefficients are valid
         if not self.bond_coeff.verify(["func", "rmin", "rmax", "coeff"]):
-            hoomd.context.msg.error("Not all bond coefficients are set for bond.table\n");
-            raise RuntimeError("Error updating bond coefficients");
+            hoomd.context.msg.error("Not all bond coefficients are set for bond.table\n")
+            raise RuntimeError("Error updating bond coefficients")
 
         # set all the params
-        ntypes = hoomd.context.current.system_definition.getBondData().getNTypes();
-        type_list = [];
-        for i in range(0,ntypes):
-            type_list.append(hoomd.context.current.system_definition.getBondData().getNameByType(i));
-
+        ntypes = hoomd.context.current.system_definition.getBondData().getNTypes()
+        type_list = []
+        for i in range(0, ntypes):
+            type_list.append(hoomd.context.current.system_definition.getBondData().getNameByType(i))
 
         # loop through all of the unique type bonds and evaluate the table
-        for i in range(0,ntypes):
-            func = self.bond_coeff.get(type_list[i], "func");
-            rmin = self.bond_coeff.get(type_list[i], "rmin");
-            rmax = self.bond_coeff.get(type_list[i], "rmax");
-            coeff = self.bond_coeff.get(type_list[i], "coeff");
+        for i in range(0, ntypes):
+            func = self.bond_coeff.get(type_list[i], "func")
+            rmin = self.bond_coeff.get(type_list[i], "rmin")
+            rmax = self.bond_coeff.get(type_list[i], "rmax")
+            coeff = self.bond_coeff.get(type_list[i], "coeff")
 
-            self.update_bond_table(i, func, rmin, rmax, coeff);
+            self.update_bond_table(i, func, rmin, rmax, coeff)
 
     def set_from_file(self, bondname, filename):
-        R""" Set a bond pair interaction from a file.
+        r""" Set a bond pair interaction from a file.
 
         Args:
             bondname (str): Name of bond
@@ -532,54 +538,60 @@ class table(force._force):
         is treated as a comment. The ``r`` values must monotonically increase and be equally spaced. The table is read
         directly into the grid points used to evaluate :math:`F_{\mathrm{user}}(r)` and :math:`V_{\mathrm{user}}(r)`.
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # open the file
-        f = open(filename);
+        f = open(filename)
 
-        r_table = [];
-        V_table = [];
-        F_table = [];
+        r_table = []
+        V_table = []
+        F_table = []
 
         # read in lines from the file
         for line in f.readlines():
-            line = line.strip();
+            line = line.strip()
 
             # skip comment lines
-            if line[0] == '#':
-                continue;
+            if line[0] == "#":
+                continue
 
             # split out the columns
-            cols = line.split();
-            values = [float(f) for f in cols];
+            cols = line.split()
+            values = [float(f) for f in cols]
 
             # validate the input
             if len(values) != 3:
-                hoomd.context.msg.error("bond.table: file must have exactly 3 columns\n");
-                raise RuntimeError("Error reading table file");
+                hoomd.context.msg.error("bond.table: file must have exactly 3 columns\n")
+                raise RuntimeError("Error reading table file")
 
             # append to the tables
-            r_table.append(values[0]);
-            V_table.append(values[1]);
-            F_table.append(values[2]);
+            r_table.append(values[0])
+            V_table.append(values[1])
+            F_table.append(values[2])
 
         # validate input
         if self.width != len(r_table):
-            hoomd.context.msg.error("bond.table: file must have exactly " + str(self.width) + " rows\n");
-            raise RuntimeError("Error reading table file");
+            hoomd.context.msg.error("bond.table: file must have exactly " + str(self.width) + " rows\n")
+            raise RuntimeError("Error reading table file")
 
         # extract rmin and rmax
-        rmin_table = r_table[0];
-        rmax_table = r_table[-1];
+        rmin_table = r_table[0]
+        rmax_table = r_table[-1]
 
         # check for even spacing
-        dr = (rmax_table - rmin_table) / float(self.width-1);
-        for i in range(0,self.width):
-            r = rmin_table + dr * i;
+        dr = (rmax_table - rmin_table) / float(self.width - 1)
+        for i in range(0, self.width):
+            r = rmin_table + dr * i
             if math.fabs(r - r_table[i]) > 1e-3:
-                hoomd.context.msg.error("bond.table: r must be monotonically increasing and evenly spaced\n");
-                raise RuntimeError("Error reading table file");
+                hoomd.context.msg.error("bond.table: r must be monotonically increasing and evenly spaced\n")
+                raise RuntimeError("Error reading table file")
 
-        hoomd.util.quiet_status();
-        self.bond_coeff.set(bondname, func=_table_eval, rmin=rmin_table, rmax=rmax_table, coeff=dict(V=V_table, F=F_table, width=self.width))
-        hoomd.util.unquiet_status();
+        hoomd.util.quiet_status()
+        self.bond_coeff.set(
+            bondname,
+            func=_table_eval,
+            rmin=rmin_table,
+            rmax=rmax_table,
+            coeff=dict(V=V_table, F=F_table, width=self.width),
+        )
+        hoomd.util.unquiet_status()

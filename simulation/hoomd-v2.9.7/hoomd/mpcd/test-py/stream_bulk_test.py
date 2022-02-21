@@ -4,10 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 # unit tests for mpcd integrator
 class mpcd_stream_bulk_test(unittest.TestCase):
@@ -20,12 +21,12 @@ class mpcd_stream_bulk_test(unittest.TestCase):
             hoomd.comm.decomposition(nz=2)
 
         # default testing configuration
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.0)))
 
         # initialize the system from the starting snapshot
         snap = mpcd.data.make_snapshot(N=2)
-        snap.particles.position[:] = [[1.,4.85,3.],[-3.,-4.75,-1.]]
-        snap.particles.velocity[:] = [[1.,1.,1.],[-1.,-1.,-1.]]
+        snap.particles.position[:] = [[1.0, 4.85, 3.0], [-3.0, -4.75, -1.0]]
+        snap.particles.velocity[:] = [[1.0, 1.0, 1.0], [-1.0, -1.0, -1.0]]
         self.s = mpcd.init.read_snapshot(snap)
 
     # test basic stepping behavior
@@ -37,29 +38,29 @@ class mpcd_stream_bulk_test(unittest.TestCase):
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.1,4.95,3.1])
-            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.1,-4.85,-1.1])
+            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.1, 4.95, 3.1])
+            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.1, -4.85, -1.1])
 
         # take another step, wrapping the first particle through the boundary
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.2,-4.95,3.2])
-            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.2,-4.95,-1.2])
+            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.2, -4.95, 3.2])
+            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.2, -4.95, -1.2])
 
         # take another step, wrapping the second particle through the boundary
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.3,-4.85,3.3])
-            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.3,4.95,-1.3])
+            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.3, -4.85, 3.3])
+            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.3, 4.95, -1.3])
 
     # test that streaming can proceed periodically
     def test_period(self):
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            snap.particles.position[0] = [1.3,-4.85,3.3]
-            snap.particles.position[1] = [-3.3,4.95,-1.3]
+            snap.particles.position[0] = [1.3, -4.85, 3.3]
+            snap.particles.position[1] = [-3.3, 4.95, -1.3]
         self.s.restore_snapshot(snap)
 
         mpcd.integrator(dt=0.05)
@@ -69,22 +70,22 @@ class mpcd_stream_bulk_test(unittest.TestCase):
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.5,-4.65,3.5])
-            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.5,4.75,-1.5])
+            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.5, -4.65, 3.5])
+            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.5, 4.75, -1.5])
 
         # running again should not move the particles since we haven't hit next period
         hoomd.run(3)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.5,-4.65,3.5])
-            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.5,4.75,-1.5])
+            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.5, -4.65, 3.5])
+            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.5, 4.75, -1.5])
 
         # but one more step should move them again
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.7,-4.45,3.7])
-            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.7,4.55,-1.7])
+            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.7, -4.45, 3.7])
+            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.7, 4.55, -1.7])
 
         # trying to change the period on the wrong step should throw an error
         with self.assertRaises(RuntimeError):
@@ -98,8 +99,8 @@ class mpcd_stream_bulk_test(unittest.TestCase):
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.8,-4.35,3.8])
-            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.8,4.45,-1.8])
+            np.testing.assert_array_almost_equal(snap.particles.position[0], [1.8, -4.35, 3.8])
+            np.testing.assert_array_almost_equal(snap.particles.position[1], [-3.8, 4.45, -1.8])
 
         # changing in between runs should fail
         with self.assertRaises(RuntimeError):
@@ -135,7 +136,7 @@ class mpcd_stream_bulk_test(unittest.TestCase):
             mpcd.stream.bulk()
 
         # it is an error to make a collision rule without initializing MPCD first
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.0)))
         with self.assertRaises(RuntimeError):
             mpcd.stream.bulk()
 
@@ -150,5 +151,6 @@ class mpcd_stream_bulk_test(unittest.TestCase):
     def tearDown(self):
         del self.s
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

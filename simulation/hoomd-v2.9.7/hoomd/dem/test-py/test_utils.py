@@ -3,10 +3,12 @@
 
 import itertools
 import unittest
+
 import numpy as np
 from hoomd.dem.utils import *
 
 np.random.seed(10)
+
 
 class utils(unittest.TestCase):
     def test_mass_properties_2d(self, tries=32):
@@ -21,9 +23,8 @@ class utils(unittest.TestCase):
         verts -= com0
 
         for _ in range(tries):
-            theta = np.random.uniform(0, 2*np.pi)
-            rot = np.array([[np.cos(theta), -np.sin(theta)],
-                            [np.sin(theta), np.cos(theta)]])
+            theta = np.random.uniform(0, 2 * np.pi)
+            rot = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
 
             verts = verts.dot(rot)
             (mass, com, moment) = massProperties(verts)
@@ -37,16 +38,16 @@ class utils(unittest.TestCase):
         try:
             from scipy.spatial import ConvexHull as _
         except ImportError:
-            msg = 'Convex hull not available, skipping hoomd.dem.utils.convexHull test'
+            msg = "Convex hull not available, skipping hoomd.dem.utils.convexHull test"
             raise unittest.SkipTest(msg)
 
         for _ in range(tries):
             # take a random displacement; make sure that convexHull works
             # even for non-centered inputs
             delta = np.random.uniform(-2, 2, 3)
-            massFactor = np.random.uniform(.5, 1.5)
+            massFactor = np.random.uniform(0.5, 1.5)
 
-            vertices = np.array(list(itertools.product(*(3*[[-1., 1.]]))))
+            vertices = np.array(list(itertools.product(*(3 * [[-1.0, 1.0]]))))
             (vertices, faces) = convexHull(vertices)
 
             # convexHull centers its output, so add on another random
@@ -54,14 +55,13 @@ class utils(unittest.TestCase):
             delta = np.random.uniform(-2, 2, 3)
             (mass, com, moment) = massProperties(vertices + delta, faces, factor=massFactor)
 
-            self.assertAlmostEqual(mass, 8*massFactor)
+            self.assertAlmostEqual(mass, 8 * massFactor)
             for (est, real) in zip(com, delta):
                 self.assertAlmostEqual(est, real)
 
-            trueMoment = [16./3*massFactor, 0, 0, 16./3*massFactor, 0, 16./3*massFactor]
+            trueMoment = [16.0 / 3 * massFactor, 0, 0, 16.0 / 3 * massFactor, 0, 16.0 / 3 * massFactor]
             for (est, real) in zip(moment, trueMoment):
                 self.assertAlmostEqual(est, real)
-
 
         for _ in range(tries):
             nverts = np.random.randint(4, 16)
@@ -78,5 +78,6 @@ class utils(unittest.TestCase):
             for est in com:
                 self.assertAlmostEqual(est, 0)
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test_utils.py', '-v']);
+
+if __name__ == "__main__":
+    unittest.main(argv=["test_utils.py", "-v"])

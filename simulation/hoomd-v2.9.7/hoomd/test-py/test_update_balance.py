@@ -2,14 +2,16 @@
 # Maintainer: mphoward
 
 import hoomd
+
 hoomd.context.initialize()
 import unittest
 
+
 ## Dynamic load balancing tests
-class load_balance_tests (unittest.TestCase):
+class load_balance_tests(unittest.TestCase):
     def setUp(self):
-        snap = hoomd.data.make_snapshot(N=100, box=hoomd.data.boxdim(L=10), particle_types=['A'])
-        hoomd.comm.decomposition(nx=1,ny=1,nz=2)
+        snap = hoomd.data.make_snapshot(N=100, box=hoomd.data.boxdim(L=10), particle_types=["A"])
+        hoomd.comm.decomposition(nx=1, ny=1, nz=2)
         hoomd.init.read_snapshot(snap)
 
     ## Test basic constructor succeeds
@@ -25,5 +27,6 @@ class load_balance_tests (unittest.TestCase):
     def tearDown(self):
         hoomd.context.initialize()
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

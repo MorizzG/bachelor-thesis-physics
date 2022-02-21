@@ -1,6 +1,7 @@
 # This file exists to allow the hoomd module to import from the source checkout dir
 # for use when building the sphinx documentation.
 
+
 class Messenger(object):
     def openPython(self):
         pass
@@ -8,13 +9,16 @@ class Messenger(object):
     def notice(self, i, v):
         pass
 
+
 class GetarCompression(object):
     FastCompress = 1
+
 
 class GetarDumpMode(object):
     Append = 1
     Overwrite = 1
     OneShot = 1
+
 
 class GetarProperty(object):
     AngleNames = 1
@@ -46,24 +50,31 @@ class GetarProperty(object):
     Velocity = 1
     Virial = 1
 
+
 class GetarResolution(object):
     Text = 1
     Individual = 1
     Uniform = 1
 
+
 def output_version_info():
     pass
+
 
 class SnapshotSystemData_float(object):
     pass
 
+
 class SnapshotSystemData_double(object):
     pass
+
 
 class WalltimeLimitReached(object):
     pass
 
+
 __version__ = "bogus"
+
 
 def is_MPI_available():
     pass

@@ -7,16 +7,14 @@ def test_unscoped_enum():
     assert str(m.UnscopedEnum.ETwo) == "UnscopedEnum.ETwo"
     assert str(m.EOne) == "UnscopedEnum.EOne"
     # __members__ property
-    assert m.UnscopedEnum.__members__ == \
-        {"EOne": m.UnscopedEnum.EOne, "ETwo": m.UnscopedEnum.ETwo}
+    assert m.UnscopedEnum.__members__ == {"EOne": m.UnscopedEnum.EOne, "ETwo": m.UnscopedEnum.ETwo}
     # __members__ readonly
     with pytest.raises(AttributeError):
         m.UnscopedEnum.__members__ = {}
     # __members__ returns a copy
     foo = m.UnscopedEnum.__members__
     foo["bar"] = "baz"
-    assert m.UnscopedEnum.__members__ == \
-        {"EOne": m.UnscopedEnum.EOne, "ETwo": m.UnscopedEnum.ETwo}
+    assert m.UnscopedEnum.__members__ == {"EOne": m.UnscopedEnum.EOne, "ETwo": m.UnscopedEnum.ETwo}
 
     # no TypeError exception for unscoped enum ==/!= int comparisons
     y = m.UnscopedEnum.ETwo

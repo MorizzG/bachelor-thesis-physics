@@ -3,7 +3,7 @@
 
 # Maintainer: mphoward
 
-R""" MPCD system initialization
+r""" MPCD system initialization
 
 Commands to initialize the MPCD system data. Currently, random initialization
 and snapshot initialization (see :py:mod:`hoomd.mpcd.data`) are supported.
@@ -15,11 +15,11 @@ properties and initial configuration.
 
 import hoomd
 
-from . import _mpcd
-from . import data
+from . import _mpcd, data
+
 
 def make_random(N, kT, seed):
-    R"""Initialize particles randomly
+    r"""Initialize particles randomly
 
     Args:
         N (int): Total number of MPCD particles
@@ -63,16 +63,25 @@ def make_random(N, kT, seed):
     sysdef = hoomd.context.current.system_definition
     box = sysdef.getParticleData().getBox()
     if hoomd.context.current.decomposition:
-        pdata = _mpcd.MPCDParticleData(N, box, kT, seed, sysdef.getNDimensions(), hoomd.context.exec_conf, hoomd.context.current.decomposition.cpp_dd)
+        pdata = _mpcd.MPCDParticleData(
+            N,
+            box,
+            kT,
+            seed,
+            sysdef.getNDimensions(),
+            hoomd.context.exec_conf,
+            hoomd.context.current.decomposition.cpp_dd,
+        )
     else:
         pdata = _mpcd.MPCDParticleData(N, box, kT, seed, sysdef.getNDimensions(), hoomd.context.exec_conf)
 
     # then make mpcd system
-    hoomd.context.current.mpcd = data.system(_mpcd.SystemData(sysdef,pdata))
+    hoomd.context.current.mpcd = data.system(_mpcd.SystemData(sysdef, pdata))
     return hoomd.context.current.mpcd
 
+
 def read_snapshot(snapshot):
-    R"""Initialize from a snapshot
+    r"""Initialize from a snapshot
 
     Args:
         snapshot (:py:class:`hoomd.mpcd.data.snapshot`): MPCD system data snapshot
@@ -99,7 +108,7 @@ def read_snapshot(snapshot):
         MPCD snapshot is not properly resized.
 
     """
-    hoomd.util.print_status_line();
+    hoomd.util.print_status_line()
 
     if not hoomd.init.is_initialized():
         hoomd.context.msg.error("mpcd: HOOMD system must be initialized before mpcd\n")

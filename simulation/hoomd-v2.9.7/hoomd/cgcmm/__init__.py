@@ -15,5 +15,4 @@ existing job scripts may need to be updated. **Maintainer needed!** This package
 
 """
 
-from hoomd.cgcmm import angle
-from hoomd.cgcmm import pair
+from hoomd.cgcmm import angle, pair

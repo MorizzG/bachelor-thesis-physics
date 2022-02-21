@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 120
+exclude-extend = '''
+/(
+  hoomd-v2\.9\.7
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+skip_glob = ["simulation/hoomd-v2.9.7/*"]

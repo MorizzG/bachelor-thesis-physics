@@ -1,7 +1,8 @@
 import struct
+
 import pytest
-from pybind11_tests import buffers as m
 from pybind11_tests import ConstructorStats
+from pybind11_tests import buffers as m
 
 pytestmark = pytest.requires_numpy
 
@@ -79,5 +80,5 @@ def test_pointer_to_member_fn():
     for cls in [m.Buffer, m.ConstBuffer, m.DerivedBuffer]:
         buf = cls()
         buf.value = 0x12345678
-        value = struct.unpack('i', bytearray(buf))[0]
+        value = struct.unpack("i", bytearray(buf))[0]
         assert value == 0x12345678

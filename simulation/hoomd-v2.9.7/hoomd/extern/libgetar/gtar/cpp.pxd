@@ -1,11 +1,11 @@
 # distutils: language = c++
 
+cimport numpy
+from cython.operator cimport dereference as deref
+from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.vector cimport vector
-from cython.operator cimport dereference as deref
 
-cimport numpy
-from libcpp cimport bool
 
 cdef extern from "numpy/arrayobject.h":
     cdef int PyArray_SetBaseObject(numpy.ndarray arr, obj)

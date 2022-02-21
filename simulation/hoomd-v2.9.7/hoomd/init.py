@@ -3,21 +3,22 @@
 
 # Maintainer: joaander / All Developers are free to add commands for new features
 
-R""" Data initialization commands
+r""" Data initialization commands
 
 Commands in the :py:mod:`hoomd.init` package initialize the particle system.
 
 """
 
-from hoomd import _hoomd
-import hoomd;
+import gc
+import math
+import os
+import platform
+import re
+import sys
 
-import math;
-import sys;
-import gc;
-import os;
-import re;
-import platform;
+import hoomd
+from hoomd import _hoomd
+
 
 ## Tests if the system has been initialized
 #
@@ -25,12 +26,13 @@ import platform;
 # Returns False otherwise.
 def is_initialized():
     if hoomd.context.current is None or hoomd.context.current.system is None:
-        return False;
+        return False
     else:
-        return True;
+        return True
+
 
 def create_lattice(unitcell, n):
-    R""" Create a lattice.
+    r""" Create a lattice.
 
     Args:
         unitcell (:py:class:`hoomd.lattice.unitcell`): The unit cell of the lattice.
@@ -60,38 +62,39 @@ def create_lattice(unitcell, n):
         hoomd.init.create_lattice(unitcell=hoomd.lattice.hex(a=1.0),
                                   n=[100,58]);
     """
-    hoomd.context._verify_init();
-    hoomd.util.print_status_line();
+    hoomd.context._verify_init()
+    hoomd.util.print_status_line()
 
     # check if initialization has already occurred
     if is_initialized():
-        hoomd.context.msg.error("Cannot initialize more than once\n");
-        raise RuntimeError("Error initializing");
+        hoomd.context.msg.error("Cannot initialize more than once\n")
+        raise RuntimeError("Error initializing")
 
-    hoomd.util.quiet_status();
+    hoomd.util.quiet_status()
 
-    snap = unitcell.get_snapshot();
+    snap = unitcell.get_snapshot()
     try:
-        l = len(n);
+        l = len(n)
     except TypeError:
-        l = snap.box.dimensions;
-        n = [n]*l;
+        l = snap.box.dimensions
+        n = [n] * l
 
     if l != snap.box.dimensions:
-        hoomd.context.msg.error("n must have length equal to the number of dimensions in the unit cell\n");
-        raise RuntimeError("Error initializing");
+        hoomd.context.msg.error("n must have length equal to the number of dimensions in the unit cell\n")
+        raise RuntimeError("Error initializing")
 
     if snap.box.dimensions == 3:
-        snap.replicate(n[0],n[1],n[2])
+        snap.replicate(n[0], n[1], n[2])
     if snap.box.dimensions == 2:
-        snap.replicate(n[0],n[1],1)
+        snap.replicate(n[0], n[1], 1)
 
-    read_snapshot(snapshot=snap);
+    read_snapshot(snapshot=snap)
 
-    hoomd.util.unquiet_status();
-    return hoomd.data.system_data(hoomd.context.current.system_definition);
+    hoomd.util.unquiet_status()
+    return hoomd.data.system_data(hoomd.context.current.system_definition)
 
-def read_getar(filename, modes={'any': 'any'}):
+
+def read_getar(filename, modes={"any": "any"}):
     """Initialize a system from a trajectory archive (.tar, .getar,
     .sqlite) file. Returns a HOOMD `system_data` object.
 
@@ -166,49 +169,49 @@ def read_getar(filename, modes={'any': 'any'}):
        "velocity", "float", "(N, 3)", "velocity of each particle in the system"
 
     """
-    hoomd.context._verify_init();
-    hoomd.util.print_status_line();
+    hoomd.context._verify_init()
+    hoomd.util.print_status_line()
 
     # check if initialization has already occurred
     if is_initialized():
-        hoomd.context.msg.error("Cannot initialize more than once\n");
-        raise RuntimeError("Error initializing");
+        hoomd.context.msg.error("Cannot initialize more than once\n")
+        raise RuntimeError("Error initializing")
 
-    newModes = _parse_getar_modes(modes);
+    newModes = _parse_getar_modes(modes)
     # read in the data
-    initializer = _hoomd.GetarInitializer(hoomd.context.exec_conf, filename);
-    snapshot = initializer.initialize(newModes);
+    initializer = _hoomd.GetarInitializer(hoomd.context.exec_conf, filename)
+    snapshot = initializer.initialize(newModes)
 
     # broadcast snapshot metadata so that all ranks have _global_box (the user may have set box only on rank 0)
-    snapshot._broadcast_box(hoomd.context.exec_conf);
+    snapshot._broadcast_box(hoomd.context.exec_conf)
 
     try:
-        box = snapshot._global_box;
+        box = snapshot._global_box
     except AttributeError:
-        box = snapshot.box;
+        box = snapshot.box
 
-    my_domain_decomposition = _create_domain_decomposition(box);
+    my_domain_decomposition = _create_domain_decomposition(box)
     if my_domain_decomposition is not None:
         hoomd.context.current.system_definition = _hoomd.SystemDefinition(
-            snapshot, hoomd.context.exec_conf, my_domain_decomposition);
+            snapshot, hoomd.context.exec_conf, my_domain_decomposition
+        )
     else:
-        hoomd.context.current.system_definition = _hoomd.SystemDefinition(
-            snapshot, hoomd.context.exec_conf);
+        hoomd.context.current.system_definition = _hoomd.SystemDefinition(snapshot, hoomd.context.exec_conf)
 
-    hoomd.context.current.system = _hoomd.System(
-        hoomd.context.current.system_definition, initializer.getTimestep());
+    hoomd.context.current.system = _hoomd.System(hoomd.context.current.system_definition, initializer.getTimestep())
 
-    _perform_common_init_tasks();
+    _perform_common_init_tasks()
 
-    if (hoomd.data.get_snapshot_box(snapshot).dimensions == 2 and
-        any(abs(z) > 1e-5 for z in snapshot.particles.position[:, 2])):
-        raise RuntimeWarning('Initializing a 2D system with some z '
-                             'components out-of-plane');
+    if hoomd.data.get_snapshot_box(snapshot).dimensions == 2 and any(
+        abs(z) > 1e-5 for z in snapshot.particles.position[:, 2]
+    ):
+        raise RuntimeWarning("Initializing a 2D system with some z " "components out-of-plane")
 
-    return hoomd.data.system_data(hoomd.context.current.system_definition);
+    return hoomd.data.system_data(hoomd.context.current.system_definition)
+
 
 def read_snapshot(snapshot):
-    R""" Initializes the system from a snapshot.
+    r""" Initializes the system from a snapshot.
 
     Args:
         snapshot (:py:mod:`hoomd.data` snapshot): The snapshot to initialize the system.
@@ -227,31 +230,34 @@ def read_snapshot(snapshot):
     See Also:
         :py:mod:`hoomd.data`
     """
-    hoomd.context._verify_init();
-    hoomd.util.print_status_line();
+    hoomd.context._verify_init()
+    hoomd.util.print_status_line()
 
     # check if initialization has already occurred
     if is_initialized():
-        hoomd.context.msg.error("Cannot initialize more than once\n");
-        raise RuntimeError("Error initializing");
+        hoomd.context.msg.error("Cannot initialize more than once\n")
+        raise RuntimeError("Error initializing")
 
     # broadcast snapshot metadata so that all ranks have _global_box (the user may have set box only on rank 0)
-    snapshot._broadcast_box(hoomd.context.exec_conf);
-    my_domain_decomposition = _create_domain_decomposition(snapshot._global_box);
+    snapshot._broadcast_box(hoomd.context.exec_conf)
+    my_domain_decomposition = _create_domain_decomposition(snapshot._global_box)
 
     if my_domain_decomposition is not None:
-        hoomd.context.current.system_definition = _hoomd.SystemDefinition(snapshot, hoomd.context.exec_conf, my_domain_decomposition);
+        hoomd.context.current.system_definition = _hoomd.SystemDefinition(
+            snapshot, hoomd.context.exec_conf, my_domain_decomposition
+        )
     else:
-        hoomd.context.current.system_definition = _hoomd.SystemDefinition(snapshot, hoomd.context.exec_conf);
+        hoomd.context.current.system_definition = _hoomd.SystemDefinition(snapshot, hoomd.context.exec_conf)
 
     # initialize the system
-    hoomd.context.current.system = _hoomd.System(hoomd.context.current.system_definition, 0);
+    hoomd.context.current.system = _hoomd.System(hoomd.context.current.system_definition, 0)
 
-    _perform_common_init_tasks();
-    return hoomd.data.system_data(hoomd.context.current.system_definition);
+    _perform_common_init_tasks()
+    return hoomd.data.system_data(hoomd.context.current.system_definition)
 
-def read_gsd(filename, restart = None, frame = 0, time_step = None):
-    R""" Read initial system state from an GSD file.
+
+def read_gsd(filename, restart=None, frame=0, time_step=None):
+    r""" Read initial system state from an GSD file.
 
     Args:
         filename (str): File to read.
@@ -276,45 +282,48 @@ def read_gsd(filename, restart = None, frame = 0, time_step = None):
     See Also:
         :py:class:`hoomd.dump.gsd`
     """
-    hoomd.context._verify_init();
-    hoomd.util.print_status_line();
+    hoomd.context._verify_init()
+    hoomd.util.print_status_line()
 
     # check if initialization has already occurred
     if is_initialized():
-        hoomd.context.msg.error("Cannot initialize more than once\n");
-        raise RuntimeError("Error initializing");
+        hoomd.context.msg.error("Cannot initialize more than once\n")
+        raise RuntimeError("Error initializing")
 
-    filename = _hoomd.mpi_bcast_str(filename, hoomd.context.exec_conf);
-    restart = _hoomd.mpi_bcast_str(restart, hoomd.context.exec_conf);
+    filename = _hoomd.mpi_bcast_str(filename, hoomd.context.exec_conf)
+    restart = _hoomd.mpi_bcast_str(restart, hoomd.context.exec_conf)
 
     if restart is not None and os.path.exists(restart):
-        reader = _hoomd.GSDReader(hoomd.context.exec_conf, restart, abs(frame), frame < 0);
-        time_step = reader.getTimeStep();
+        reader = _hoomd.GSDReader(hoomd.context.exec_conf, restart, abs(frame), frame < 0)
+        time_step = reader.getTimeStep()
     else:
-        reader = _hoomd.GSDReader(hoomd.context.exec_conf, filename, abs(frame), frame < 0);
+        reader = _hoomd.GSDReader(hoomd.context.exec_conf, filename, abs(frame), frame < 0)
         if time_step is None:
-            time_step = reader.getTimeStep();
+            time_step = reader.getTimeStep()
 
-    snapshot = reader.getSnapshot();
+    snapshot = reader.getSnapshot()
 
     # broadcast snapshot metadata so that all ranks have _global_box (the user may have set box only on rank 0)
-    snapshot._broadcast_box(hoomd.context.exec_conf);
-    my_domain_decomposition = _create_domain_decomposition(snapshot._global_box);
+    snapshot._broadcast_box(hoomd.context.exec_conf)
+    my_domain_decomposition = _create_domain_decomposition(snapshot._global_box)
 
     if my_domain_decomposition is not None:
-        hoomd.context.current.system_definition = _hoomd.SystemDefinition(snapshot, hoomd.context.exec_conf, my_domain_decomposition);
+        hoomd.context.current.system_definition = _hoomd.SystemDefinition(
+            snapshot, hoomd.context.exec_conf, my_domain_decomposition
+        )
     else:
-        hoomd.context.current.system_definition = _hoomd.SystemDefinition(snapshot, hoomd.context.exec_conf);
+        hoomd.context.current.system_definition = _hoomd.SystemDefinition(snapshot, hoomd.context.exec_conf)
 
     # initialize the system
-    hoomd.context.current.system = _hoomd.System(hoomd.context.current.system_definition, time_step);
+    hoomd.context.current.system = _hoomd.System(hoomd.context.current.system_definition, time_step)
 
-    _perform_common_init_tasks();
-    hoomd.context.current.state_reader = reader;
-    hoomd.context.current.state_reader.clearSnapshot();
-    return hoomd.data.system_data(hoomd.context.current.system_definition);
+    _perform_common_init_tasks()
+    hoomd.context.current.state_reader = reader
+    hoomd.context.current.state_reader.clearSnapshot()
+    return hoomd.data.system_data(hoomd.context.current.system_definition)
 
-def restore_getar(filename, modes={'any': 'any'}):
+
+def restore_getar(filename, modes={"any": "any"}):
     """Restore a subset of the current system's parameters from a
     trajectory archive (.tar, .zip, .sqlite) file. For a detailed
     discussion of arguments, see :py:func:`read_getar`.
@@ -323,16 +332,17 @@ def restore_getar(filename, modes={'any': 'any'}):
         filename (str): Name of the file to read from
         modes (dict): dictionary of {property: frame} values, as described in :py:func:`read_getar`
     """
-    hoomd.util.print_status_line();
+    hoomd.util.print_status_line()
 
     # the getar initializer opens the file on all ranks: need to broadcast the string from rank 0
-    filename_bcast = _hoomd.mpi_bcast_str(filename, hoomd.context.exec_conf);
-    initializer = _hoomd.GetarInitializer(hoomd.context.exec_conf, filename_bcast);
+    filename_bcast = _hoomd.mpi_bcast_str(filename, hoomd.context.exec_conf)
+    initializer = _hoomd.GetarInitializer(hoomd.context.exec_conf, filename_bcast)
 
-    newModes = _parse_getar_modes(modes);
+    newModes = _parse_getar_modes(modes)
 
-    initializer.restore(newModes, hoomd.context.current.system_definition);
-    del initializer;
+    initializer.restore(newModes, hoomd.context.current.system_definition)
+    del initializer
+
 
 ## Performs common initialization tasks
 #
@@ -342,17 +352,17 @@ def restore_getar(filename, modes={'any': 'any'}):
 # SFCPackUpdater, initializing the log writer, etc...
 def _perform_common_init_tasks():
     # create the sorter
-    hoomd.context.current.sorter = hoomd.update.sort();
+    hoomd.context.current.sorter = hoomd.update.sort()
 
     # create the default compute.thermo on the all group
-    hoomd.util.quiet_status();
-    all = hoomd.group.all();
-    hoomd.compute._get_unique_thermo(group=all);
-    hoomd.util.unquiet_status();
+    hoomd.util.quiet_status()
+    all = hoomd.group.all()
+    hoomd.compute._get_unique_thermo(group=all)
+    hoomd.util.unquiet_status()
 
     # set up Communicator, and register it with the System
     if _hoomd.is_MPI_available():
-        cpp_decomposition = hoomd.context.current.system_definition.getParticleData().getDomainDecomposition();
+        cpp_decomposition = hoomd.context.current.system_definition.getParticleData().getDomainDecomposition()
         if cpp_decomposition is not None:
             # create the c++ Communicator
             if not hoomd.context.exec_conf.isCUDAEnabled():
@@ -362,6 +372,7 @@ def _perform_common_init_tasks():
 
             # set Communicator in C++ System
             hoomd.context.current.system.setCommunicator(cpp_communicator)
+
 
 ## Create a DomainDecomposition object
 # \internal
@@ -382,6 +393,7 @@ def _create_domain_decomposition(box):
         hoomd.util.unquiet_status()
 
     return hoomd.context.current.decomposition._make_cpp_decomposition(box)
+
 
 def _parse_getar_modes(modes):
     newModes = {}

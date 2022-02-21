@@ -24,14 +24,10 @@ import pandas as pd
 
 def main():
     """Execute main function."""
-    comment = datetime.datetime.now().strftime(
-        "%y-%m-%d-%H-%M-%S"
-    )  # This will be written as part of the filename
+    comment = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")  # This will be written as part of the filename
     num_cycles = 105  # number of configurations to do
 
-    parser = argparse.ArgumentParser(
-        description="Run a hoomd simulation using Hi-C data"
-    )
+    parser = argparse.ArgumentParser(description="Run a hoomd simulation using Hi-C data")
 
     # arg_group = parser.add_mutually_exclusive_group(required=True)
 
@@ -80,9 +76,7 @@ def main():
     #     f"data/contact_pairs_jan/contact_pairs_cell{n_cell}.pkl"
     # )
 
-    df_contact_pairs = pd.read_pickle(
-        f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl"
-    )
+    df_contact_pairs = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")
 
     # convert that raw data to a numpy array of beads in contact
     contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].to_numpy(), axis=0)
@@ -128,16 +122,12 @@ def main():
     # connect all particles of a chromosome to a chain
     x = np.arange(N_particles)
     K = np.column_stack((x, x + 1))  # connect particle N to N+1
-    K = np.delete(
-        K, np.cumsum(lengths.values) - 1, axis=0
-    )  # delete bonds between chromosomes
+    K = np.delete(K, np.cumsum(lengths.values) - 1, axis=0)  # delete bonds between chromosomes
 
     print(f"{N_particles} {K.shape[0]} {N_chrom}")
 
     s.bonds.group[: N_particles - N_chrom] = K
-    s.bonds.group[
-        N_particles - N_chrom :
-    ] = contact_pairs  # connect all particles in contact
+    s.bonds.group[N_particles - N_chrom :] = contact_pairs  # connect all particles in contact
     s.bonds.typeid[: N_particles - N_chrom] = 0  # Set id for chain bonds (bonds)
     s.bonds.typeid[N_particles - N_chrom :] = 1  # Set id for contact bonds (contacts)
 

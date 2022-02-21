@@ -3,16 +3,17 @@
 
 # Maintainer: joaander
 
-R""" Utilities.
+r""" Utilities.
 """
 
-import sys;
-import traceback;
-import os.path;
-import linecache;
-import re;
-import hoomd;
-from hoomd import _hoomd;
+import linecache
+import os.path
+import re
+import sys
+import traceback
+
+import hoomd
+from hoomd import _hoomd
 
 ## \internal
 # \brief Compatibility definition of a basestring for python 2/3
@@ -31,12 +32,14 @@ def listify(s):
     else:
         return list(s)
 
+
 ## \internal
 # \brief Internal flag tracking if status lines should be quieted
-_status_quiet_count = 0;
+_status_quiet_count = 0
+
 
 def quiet_status():
-    R""" Quiet the status line output.
+    r""" Quiet the status line output.
 
     After calling :py:func:`hoomd.util.quiet_status()`, hoomd will no longer print out the line of
     code that executes each hoomd script command. Call :py:func:`hoomd.util.unquiet_status()` to
@@ -44,28 +47,30 @@ def quiet_status():
     :py:func:`hoomd.util.unquiet_status()` calls equal to the number of prior
     :py:func:`hoomd.util.quiet_status()` calls.
     """
-    global _status_quiet_count;
-    _status_quiet_count = _status_quiet_count+1;
+    global _status_quiet_count
+    _status_quiet_count = _status_quiet_count + 1
+
 
 def unquiet_status():
-    R""" Resume the status line output.
+    r""" Resume the status line output.
 
     See Also:
         :py:func:`hoomd.util.quiet_status()`
     """
-    global _status_quiet_count;
-    _status_quiet_count = max(0, _status_quiet_count-1);
+    global _status_quiet_count
+    _status_quiet_count = max(0, _status_quiet_count - 1)
+
 
 ## \internal
 # \brief Prints a status line tracking the execution of the current hoomd script
 def print_status_line():
     if _status_quiet_count > 0:
-        return;
+        return
 
     # get the traceback info first
-    stack = traceback.extract_stack();
+    stack = traceback.extract_stack()
     if len(stack) < 3:
-        hoomd.context.msg.notice(2, "hoomd executing unknown command\n");
+        hoomd.context.msg.notice(2, "hoomd executing unknown command\n")
 
     if sys.version_info[:3] != (3, 5, 0):
         frame = -3
@@ -73,7 +78,7 @@ def print_status_line():
         frame = -4
 
     try:
-        file_name, line, module, code = stack[frame];
+        file_name, line, module, code = stack[frame]
     except IndexError:
         # No traceback information is available.
         return
@@ -82,29 +87,30 @@ def print_status_line():
     # interpreter loop does it for us. We can make that check by testing if
     # sys.ps1 is defined (this is not a hack, the python documentation states
     # that ps1 is _only_ defined in interactive mode
-    if 'ps1' in sys.__dict__:
+    if "ps1" in sys.__dict__:
         return
 
     # piped input from stdin doesn't provide a code line, handle the situation
     if not code:
-        message = os.path.basename(file_name) + ":" + str(line).zfill(3) + "  |  <unknown code>";
-        hoomd.context.msg.notice(1, message + '\n');
+        message = os.path.basename(file_name) + ":" + str(line).zfill(3) + "  |  <unknown code>"
+        hoomd.context.msg.notice(1, message + "\n")
     else:
         # build and print the message line
         # Go upwards in the source until you match the closing paren
         # dequote ensures we ignore literal parens
-        dequote = lambda x: re.sub(r'[\'"].*?[\'"]','',x)
-        balance = lambda y: y.count('(') - y.count(')')
+        dequote = lambda x: re.sub(r'[\'"].*?[\'"]', "", x)
+        balance = lambda y: y.count("(") - y.count(")")
         message = []
         while True:
-            message.insert(0,linecache.getline(file_name,line))
+            message.insert(0, linecache.getline(file_name, line))
             if sum(balance(dequote(x)) for x in message) == 0 or line == 0:
                 break
             line = line - 1
 
-        message.insert(0,os.path.basename(file_name) + ":" + str(line).zfill(3) + "  |  ")
-        hoomd.context.msg.notice(1, ''.join(message).rstrip('\n') + '\n');
+        message.insert(0, os.path.basename(file_name) + ":" + str(line).zfill(3) + "  |  ")
+        hoomd.context.msg.notice(1, "".join(message).rstrip("\n") + "\n")
         linecache.clearcache()
+
 
 def cuda_profile_start():
     """ Start CUDA profiling.
@@ -127,11 +133,12 @@ def cuda_profile_start():
     """
     # check if initialization has occurred
     if not hoomd.init.is_initialized():
-        hoomd.context.msg.error("Cannot start profiling before initialization\n");
-        raise RuntimeError('Error starting profile');
+        hoomd.context.msg.error("Cannot start profiling before initialization\n")
+        raise RuntimeError("Error starting profile")
 
     if hoomd.context.exec_conf.isCUDAEnabled():
-        hoomd.context.exec_conf.cudaProfileStart();
+        hoomd.context.exec_conf.cudaProfileStart()
+
 
 def cuda_profile_stop():
     """ Stop CUDA profiling.
@@ -141,8 +148,8 @@ def cuda_profile_stop():
     """
     # check if initialization has occurred
     if not hoomd.init.is_initialized():
-        hoomd.context.msg.error("Cannot stop profiling before initialization\n");
-        raise RuntimeError('Error stopping profile');
+        hoomd.context.msg.error("Cannot stop profiling before initialization\n")
+        raise RuntimeError("Error stopping profile")
 
     if hoomd.context.exec_conf.isCUDAEnabled():
-        hoomd.context.exec_conf.cudaProfileStop();
+        hoomd.context.exec_conf.cudaProfileStop()

@@ -3,14 +3,16 @@
 
 # Maintainer: joaander / All Developers are free to add commands for new features
 
-R""" Apply forces to particles.
+r""" Apply forces to particles.
 """
 
-from hoomd import _hoomd
-from hoomd.md import _md;
-import sys;
-import hoomd;
+import sys
+
+import hoomd
 import numpy as np
+from hoomd import _hoomd
+from hoomd.md import _md
+
 
 ## \internal
 # \brief Base class for forces
@@ -32,25 +34,25 @@ class _force(hoomd.meta._metadata):
     def __init__(self, name=None):
         # check if initialization has occurred
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot create force before initialization\n");
-            raise RuntimeError('Error creating force');
+            hoomd.context.msg.error("Cannot create force before initialization\n")
+            raise RuntimeError("Error creating force")
 
         # Allow force to store a name.  Used for discombobulation in the logger
         if name is None:
-            self.name = "";
+            self.name = ""
         else:
-            self.name="_" + name;
+            self.name = "_" + name
 
-        self.cpp_force = None;
+        self.cpp_force = None
 
         # increment the id counter
-        id = _force.cur_id;
-        _force.cur_id += 1;
+        id = _force.cur_id
+        _force.cur_id += 1
 
-        self.force_name = "force%d" % (id);
-        self.enabled = True;
-        self.log =True;
-        hoomd.context.current.forces.append(self);
+        self.force_name = "force%d" % (id)
+        self.enabled = True
+        self.log = True
+        hoomd.context.current.forces.append(self)
 
         # base class constructor
         hoomd.meta._metadata.__init__(self)
@@ -72,11 +74,11 @@ class _force(hoomd.meta._metadata):
     def check_initialization(self):
         # check that we have been initialized properly
         if self.cpp_force is None:
-            hoomd.context.msg.error('Bug in hoomd: cpp_force not set, please report\n');
-            raise RuntimeError();
+            hoomd.context.msg.error("Bug in hoomd: cpp_force not set, please report\n")
+            raise RuntimeError()
 
     def disable(self, log=False):
-        R""" Disable the force.
+        r""" Disable the force.
 
         Args:
             log (bool): Set to True if you plan to continue logging the potential energy associated with this force.
@@ -98,24 +100,24 @@ class _force(hoomd.meta._metadata):
         available for logging.
 
         """
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         # check if we are already disabled
         if not self.enabled:
-            hoomd.context.msg.warning("Ignoring command to disable a force that is already disabled");
-            return;
+            hoomd.context.msg.warning("Ignoring command to disable a force that is already disabled")
+            return
 
-        self.enabled = False;
-        self.log = log;
+        self.enabled = False
+        self.log = log
 
         # remove the compute from the system if it is not going to be logged
         if not log:
-            hoomd.context.current.system.removeCompute(self.force_name);
+            hoomd.context.current.system.removeCompute(self.force_name)
             hoomd.context.current.forces.remove(self)
 
     def enable(self):
-        R""" Enable the force.
+        r""" Enable the force.
 
         Examples::
 
@@ -123,24 +125,24 @@ class _force(hoomd.meta._metadata):
 
         See :py:meth:`disable()`.
         """
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         # check if we are already disabled
         if self.enabled:
-            hoomd.context.msg.warning("Ignoring command to enable a force that is already enabled");
-            return;
+            hoomd.context.msg.warning("Ignoring command to enable a force that is already enabled")
+            return
 
         # add the compute back to the system if it was removed
         if not self.log:
-            hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+            hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
             hoomd.context.current.forces.append(self)
 
-        self.enabled = True;
-        self.log = True;
+        self.enabled = True
+        self.log = True
 
-    def get_energy(self,group):
-        R""" Get the energy of a particle group.
+    def get_energy(self, group):
+        r""" Get the energy of a particle group.
 
         Args:
             group (:py:mod:`hoomd.group`): The particle group to query the energy for.
@@ -155,8 +157,8 @@ class _force(hoomd.meta._metadata):
         """
         return self.cpp_force.calcEnergyGroup(group.cpp_group)
 
-    def get_net_force(self,group):
-        R""" Get the force of a particle group.
+    def get_net_force(self, group):
+        r""" Get the force of a particle group.
 
         Args:
             group (:py:mod:`hoomd.group`): The particle group to query the force for.
@@ -170,10 +172,14 @@ class _force(hoomd.meta._metadata):
             force = force.get_net_force(g)
         """
 
-        return (self.cpp_force.calcForceGroup(group.cpp_group).x, self.cpp_force.calcForceGroup(group.cpp_group).y, self.cpp_force.calcForceGroup(group.cpp_group).z)
+        return (
+            self.cpp_force.calcForceGroup(group.cpp_group).x,
+            self.cpp_force.calcForceGroup(group.cpp_group).y,
+            self.cpp_force.calcForceGroup(group.cpp_group).z,
+        )
 
-    def get_net_virial(self,group):
-        R""" Get the virial of a particle group.
+    def get_net_virial(self, group):
+        r""" Get the virial of a particle group.
 
         Args:
             group (:py:mod:`hoomd.group`): The particle group to query the virial for.
@@ -188,40 +194,39 @@ class _force(hoomd.meta._metadata):
         """
         return np.asarray(self.cpp_force.calcVirialGroup(group.cpp_group))
 
-
-
-
     ## \internal
     # \brief updates force coefficients
     def update_coeffs(self):
         pass
-        raise RuntimeError("_force.update_coeffs should not be called");
+        raise RuntimeError("_force.update_coeffs should not be called")
         # does nothing: this is for derived classes to implement
 
     ## \internal
     # \brief Returns the force data
     #
     def __forces(self):
-        return hoomd.data.force_data(self);
+        return hoomd.data.force_data(self)
 
-    forces = property(__forces);
+    forces = property(__forces)
 
     ## \internal
     # \brief Get metadata
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['enabled'] = self.enabled
-        data['log'] = self.log
+        data["enabled"] = self.enabled
+        data["log"] = self.log
         if self.name != "":
-            data['name'] = self.name
+            data["name"] = self.name
 
         return data
 
+
 # set default counter
-_force.cur_id = 0;
+_force.cur_id = 0
+
 
 class constant(_force):
-    R""" Constant force.
+    r""" Constant force.
 
     Args:
         fvec (tuple): force vector (in force units)
@@ -255,58 +260,63 @@ class constant(_force):
             const.set_force(tag=1, fvec=(1.0*timestep,2.0*timestep,3.0*timestep))
         const = force.constant(callback=update_forces)
     """
+
     def __init__(self, fx=None, fy=None, fz=None, fvec=None, tvec=None, group=None, callback=None):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if (fx is not None) and (fy is not None) and (fz is not None):
-            self.fvec = (fx,fy,fz)
-        elif (fvec is not None):
+            self.fvec = (fx, fy, fz)
+        elif fvec is not None:
             self.fvec = fvec
         else:
-            self.fvec = (0,0,0)
+            self.fvec = (0, 0, 0)
 
-        if (tvec is not None):
+        if tvec is not None:
             self.tvec = tvec
         else:
-            self.tvec = (0,0,0)
+            self.tvec = (0, 0, 0)
 
-        if (self.fvec == (0,0,0)) and (self.tvec == (0,0,0) and callback is None):
-            hoomd.context.msg.warning("The constant force specified has no non-zero components\n");
+        if (self.fvec == (0, 0, 0)) and (self.tvec == (0, 0, 0) and callback is None):
+            hoomd.context.msg.warning("The constant force specified has no non-zero components\n")
 
         # initialize the base class
-        _force.__init__(self);
+        _force.__init__(self)
 
         # create the c++ mirror class
-        if (group is not None):
-            self.cpp_force = _hoomd.ConstForceCompute(hoomd.context.current.system_definition,
+        if group is not None:
+            self.cpp_force = _hoomd.ConstForceCompute(
+                hoomd.context.current.system_definition,
                 group.cpp_group,
                 self.fvec[0],
                 self.fvec[1],
                 self.fvec[2],
                 self.tvec[0],
                 self.tvec[1],
-                self.tvec[2]);
+                self.tvec[2],
+            )
         else:
-            self.cpp_force = _hoomd.ConstForceCompute(hoomd.context.current.system_definition,
+            self.cpp_force = _hoomd.ConstForceCompute(
+                hoomd.context.current.system_definition,
                 self.fvec[0],
                 self.fvec[1],
                 self.fvec[2],
                 self.tvec[0],
                 self.tvec[1],
-                self.tvec[2]);
+                self.tvec[2],
+            )
 
         if callback is not None:
             self.cpp_force.setCallback(callback)
 
         # store metadata
-        self.metadata_fields = ['fvec', 'tvec']
+        self.metadata_fields = ["fvec", "tvec"]
         if group is not None:
-            self.metadata_fields.append('group')
+            self.metadata_fields.append("group")
             self.group = group
 
-        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
-    R""" Change the value of the constant force.
+    r""" Change the value of the constant force.
 
     Args:
         fx (float) New x-component of the force (in force units)
@@ -327,34 +337,37 @@ class constant(_force):
         const.set_force(fx=0.2, fy=0.1, fz=-0.5, group=fluid)
         const.set_force(fvec=(0.2,0.1,-0.5), tvec=(0,0,1), group=fluid)
     """
+
     def set_force(self, fx=None, fy=None, fz=None, fvec=None, tvec=None, group=None, tag=None):
 
         if (fx is not None) and (fy is not None) and (fx is not None):
-            self.fvec = (fx,fy,fz)
+            self.fvec = (fx, fy, fz)
         elif fvec is not None:
             self.fvec = fvec
         else:
-            self.fvec = (0,0,0)
+            self.fvec = (0, 0, 0)
 
         if tvec is not None:
             self.tvec = tvec
         else:
-            self.tvec = (0,0,0)
+            self.tvec = (0, 0, 0)
 
-        if (fvec==(0,0,0)) and (tvec==(0,0,0)):
+        if (fvec == (0, 0, 0)) and (tvec == (0, 0, 0)):
             hoomd.contex.msg.warning("You are setting the constant force to have no non-zero components\n")
 
-        self.check_initialization();
-        if (group is not None):
-            self.cpp_force.setGroupForce(group.cpp_group, self.fvec[0], self.fvec[1], self.fvec[2],
-                                                          self.tvec[0], self.tvec[1], self.tvec[2])
-        elif (tag is not None):
-            self.cpp_force.setParticleForce(tag, self.fvec[0], self.fvec[1], self.fvec[2],
-                                                 self.tvec[0], self.tvec[1], self.tvec[2]);
+        self.check_initialization()
+        if group is not None:
+            self.cpp_force.setGroupForce(
+                group.cpp_group, self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2]
+            )
+        elif tag is not None:
+            self.cpp_force.setParticleForce(
+                tag, self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2]
+            )
         else:
-            self.cpp_force.setForce(self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2]);
+            self.cpp_force.setForce(self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2])
 
-    R""" Set a python callback to be called before the force is evaluated
+    r""" Set a python callback to be called before the force is evaluated
 
     Args:
         callback (`callable`) The callback function
@@ -372,6 +385,7 @@ class constant(_force):
         # Reset the callback
         const.set_callback(None)
     """
+
     def set_callback(self, callback=None):
         self.cpp_force.setCallback(callback)
 
@@ -379,8 +393,9 @@ class constant(_force):
     def update_coeffs(self):
         pass
 
+
 class active(_force):
-    R""" Active force.
+    r""" Active force.
 
     Args:
         seed (int): required user-specified seed number for random number generator.
@@ -417,37 +432,48 @@ class active(_force):
         ellipsoid = update.constraint_ellipsoid(group=groupA, P=(0,0,0), rx=3, ry=4, rz=5)
         force.active( seed=7, f_list=[tuple(1,2,3) for i in range(N)], orientation_link=False, rotation_diff=100, constraint=ellipsoid)
     """
-    def __init__(self, seed, group, f_lst=None, t_lst=None, orientation_link=True, orientation_reverse_link=False, rotation_diff=0, constraint=None):
-        hoomd.util.print_status_line();
+
+    def __init__(
+        self,
+        seed,
+        group,
+        f_lst=None,
+        t_lst=None,
+        orientation_link=True,
+        orientation_reverse_link=False,
+        rotation_diff=0,
+        constraint=None,
+    ):
+        hoomd.util.print_status_line()
 
         # initialize the base class
-        _force.__init__(self);
+        _force.__init__(self)
 
         if (f_lst is None) and (t_lst is None):
-            raise RuntimeError('No forces or torques are being set')
+            raise RuntimeError("No forces or torques are being set")
 
         # input check
-        if (f_lst is not None):
+        if f_lst is not None:
             for element in f_lst:
                 if type(element) != tuple or len(element) != 3:
                     raise RuntimeError("Active force passed in should be a list of 3-tuples (fx, fy, fz)")
         else:
             f_lst = []
             for element in t_lst:
-                f_lst.append((0,0,0))
+                f_lst.append((0, 0, 0))
 
-        if (t_lst is not None):
+        if t_lst is not None:
             for element in t_lst:
                 if type(element) != tuple or len(element) != 3:
                     raise RuntimeError("Active torque passed in should be a list of 3-tuples (tx, ty, tz)")
         else:
             t_lst = []
             for element in f_lst:
-                t_lst.append((0,0,0))
+                t_lst.append((0, 0, 0))
 
         # assign constraints
-        if (constraint is not None):
-            if (constraint.__class__.__name__ == "constraint_ellipsoid"):
+        if constraint is not None:
+            if constraint.__class__.__name__ == "constraint_ellipsoid":
                 P = constraint.P
                 rx = constraint.rx
                 ry = constraint.ry
@@ -462,16 +488,39 @@ class active(_force):
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_force = _md.ActiveForceCompute(hoomd.context.current.system_definition, group.cpp_group, seed, f_lst, t_lst,
-                                                      orientation_link, orientation_reverse_link, rotation_diff, P, rx, ry, rz);
+            self.cpp_force = _md.ActiveForceCompute(
+                hoomd.context.current.system_definition,
+                group.cpp_group,
+                seed,
+                f_lst,
+                t_lst,
+                orientation_link,
+                orientation_reverse_link,
+                rotation_diff,
+                P,
+                rx,
+                ry,
+                rz,
+            )
 
         else:
-            self.cpp_force = _md.ActiveForceComputeGPU(hoomd.context.current.system_definition, group.cpp_group, seed, f_lst, t_lst,
-                                                         orientation_link, orientation_reverse_link, rotation_diff, P, rx, ry, rz);
-
+            self.cpp_force = _md.ActiveForceComputeGPU(
+                hoomd.context.current.system_definition,
+                group.cpp_group,
+                seed,
+                f_lst,
+                t_lst,
+                orientation_link,
+                orientation_reverse_link,
+                rotation_diff,
+                P,
+                rx,
+                ry,
+                rz,
+            )
 
         # store metadata
-        self.metadata_fields = ['group', 'seed', 'orientation_link', 'rotation_diff', 'constraint']
+        self.metadata_fields = ["group", "seed", "orientation_link", "rotation_diff", "constraint"]
         self.group = group
         self.seed = seed
         self.orientation_link = orientation_link
@@ -479,14 +528,15 @@ class active(_force):
         self.rotation_diff = rotation_diff
         self.constraint = constraint
 
-        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
     # there are no coeffs to update in the active force compute
     def update_coeffs(self):
         pass
 
+
 class dipole(_force):
-    R""" Treat particles as dipoles in an electric field.
+    r""" Treat particles as dipoles in an electric field.
 
     Args:
         field_x (float): x-component of the field (units?)
@@ -499,25 +549,28 @@ class dipole(_force):
         force.external_field_dipole(field_x=0.0, field_y=1.0 ,field_z=0.5, p=1.0)
         const_ext_f_dipole = force.external_field_dipole(field_x=0.0, field_y=1.0 ,field_z=0.5, p=1.0)
     """
-    def __init__(self, field_x,field_y,field_z,p):
+
+    def __init__(self, field_x, field_y, field_z, p):
         hoomd.util.print_status_line()
 
         # initialize the base class
         _force.__init__(self)
 
         # create the c++ mirror class
-        self.cpp_force = _md.ConstExternalFieldDipoleForceCompute(hoomd.context.current.system_definition, field_x, field_y, field_z, p)
+        self.cpp_force = _md.ConstExternalFieldDipoleForceCompute(
+            hoomd.context.current.system_definition, field_x, field_y, field_z, p
+        )
 
         hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
         # store metadata
-        self.metadata_fields = ['field_x', 'field_y', 'field_z']
+        self.metadata_fields = ["field_x", "field_y", "field_z"]
         self.field_x = field_x
         self.field_y = field_y
         self.field_z = field_z
 
-    def set_params(field_x, field_y,field_z,p):
-        R""" Change the constant field and dipole moment.
+    def set_params(field_x, field_y, field_z, p):
+        r""" Change the constant field and dipole moment.
 
         Args:
             field_x (float): x-component of the field (units?)
@@ -533,7 +586,7 @@ class dipole(_force):
         """
         self.check_initialization()
 
-        self.cpp_force.setParams(field_x,field_y,field_z,p)
+        self.cpp_force.setParams(field_x, field_y, field_z, p)
 
     # there are no coeffs to update in the constant ExternalFieldDipoleForceCompute
     def update_coeffs(self):

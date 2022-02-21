@@ -1,15 +1,16 @@
 # distutils: language = c++
 # cython: embedsignature=True
 
+from cython.operator cimport dereference as deref
 from libcpp.string cimport string
 from libcpp.vector cimport vector
-from cython.operator cimport dereference as deref
+
 import numpy as np
-cimport numpy as np
-from cpython cimport PyObject, Py_INCREF
 
 cimport cpp
+cimport numpy as np
 from cpp cimport GTAR as GTAR_
+from cpython cimport Py_INCREF, PyObject
 
 np.import_array()
 

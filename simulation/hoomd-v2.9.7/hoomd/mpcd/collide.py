@@ -3,7 +3,7 @@
 
 # Maintainer: mphoward
 
-R""" MPCD collision methods
+r""" MPCD collision methods
 
 An MPCD collision method is required to update the particle velocities over time.
 It is meant to be used in conjunction with an :py:class:`~hoomd.mpcd.integrator`
@@ -17,10 +17,11 @@ choice of collision rule and solvent properties determine the transport coeffici
 """
 
 import hoomd
+import numpy as np
 from hoomd.md import _md
 
 from . import _mpcd
-import numpy as np
+
 
 class _collision_method(hoomd.meta._metadata):
     """ Base collision method
@@ -34,24 +35,25 @@ class _collision_method(hoomd.meta._metadata):
     to supply signatures for common methods.
 
     """
+
     def __init__(self, seed, period):
         # check for hoomd initialization
         if not hoomd.init.is_initialized():
             hoomd.context.msg.error("mpcd.collide: system must be initialized before collision method\n")
-            raise RuntimeError('System not initialized')
+            raise RuntimeError("System not initialized")
 
         # check for mpcd initialization
         if hoomd.context.current.mpcd is None:
-            hoomd.context.msg.error('mpcd.collide: an MPCD system must be initialized before the collision method\n')
-            raise RuntimeError('MPCD system not initialized')
+            hoomd.context.msg.error("mpcd.collide: an MPCD system must be initialized before the collision method\n")
+            raise RuntimeError("MPCD system not initialized")
 
         # check for multiple collision rule initializations
         if hoomd.context.current.mpcd._collide is not None:
-            hoomd.context.msg.error('mpcd.collide: only one collision method can be created.\n')
-            raise RuntimeError('Multiple initialization of collision method')
+            hoomd.context.msg.error("mpcd.collide: only one collision method can be created.\n")
+            raise RuntimeError("Multiple initialization of collision method")
 
         hoomd.meta._metadata.__init__(self)
-        self.metadata_fields = ['period','seed','group','shift','enabled']
+        self.metadata_fields = ["period", "seed", "group", "shift", "enabled"]
 
         self.period = period
         self.seed = seed
@@ -155,8 +157,10 @@ class _collision_method(hoomd.meta._metadata):
 
         cur_tstep = hoomd.context.current.system.getCurrentTimeStep()
         if cur_tstep % self.period != 0 or cur_tstep % period != 0:
-            hoomd.context.msg.error('mpcd.collide: collision period can only be changed on multiple of current and new period.\n')
-            raise RuntimeError('collision period can only be changed on multiple of current and new period')
+            hoomd.context.msg.error(
+                "mpcd.collide: collision period can only be changed on multiple of current and new period.\n"
+            )
+            raise RuntimeError("collision period can only be changed on multiple of current and new period")
 
         self._cpp.setPeriod(cur_tstep, period)
         self.period = period
@@ -205,11 +209,12 @@ class at(_collision_method):
         collide.at(seed=77, period=50, kT=1.5, group=hoomd.group.all())
 
     """
+
     def __init__(self, seed, period, kT, group=None):
         hoomd.util.print_status_line()
 
         _collision_method.__init__(self, seed, period)
-        self.metadata_fields += ['kT']
+        self.metadata_fields += ["kT"]
         self.kT = hoomd.variant._setup_variant_input(kT)
 
         if not hoomd.context.exec_conf.isCUDAEnabled():
@@ -225,14 +230,16 @@ class at(_collision_method):
             hoomd.context.current.system.addCompute(rand_thermo, "mpcd_at_thermo")
             hoomd.context.current.mpcd._at_thermo = rand_thermo
 
-        self._cpp = collide_class(hoomd.context.current.mpcd.data,
-                                  hoomd.context.current.system.getCurrentTimeStep(),
-                                  self.period,
-                                  0,
-                                  self.seed,
-                                  hoomd.context.current.mpcd._thermo,
-                                  hoomd.context.current.mpcd._at_thermo,
-                                  self.kT.cpp_variant)
+        self._cpp = collide_class(
+            hoomd.context.current.mpcd.data,
+            hoomd.context.current.system.getCurrentTimeStep(),
+            self.period,
+            0,
+            self.seed,
+            hoomd.context.current.mpcd._thermo,
+            hoomd.context.current.mpcd._at_thermo,
+            self.kT.cpp_variant,
+        )
 
         hoomd.util.quiet_status()
         if group is not None:
@@ -262,6 +269,7 @@ class at(_collision_method):
         if kT is not None:
             self.kT = hoomd.variant._setup_variant_input(kT)
             self._cpp.setTemperature(self.kT.cpp_variant)
+
 
 class srd(_collision_method):
     r""" Stochastic rotation dynamics method
@@ -320,22 +328,25 @@ class srd(_collision_method):
         collide.srd(seed=1991, period=10, angle=90., kT=1.5)
 
     """
+
     def __init__(self, seed, period, angle, kT=False, group=None):
         hoomd.util.print_status_line()
 
         _collision_method.__init__(self, seed, period)
-        self.metadata_fields += ['angle','kT']
+        self.metadata_fields += ["angle", "kT"]
 
         if not hoomd.context.exec_conf.isCUDAEnabled():
             collide_class = _mpcd.SRDCollisionMethod
         else:
             collide_class = _mpcd.SRDCollisionMethodGPU
-        self._cpp = collide_class(hoomd.context.current.mpcd.data,
-                                  hoomd.context.current.system.getCurrentTimeStep(),
-                                  self.period,
-                                  0,
-                                  self.seed,
-                                  hoomd.context.current.mpcd._thermo)
+        self._cpp = collide_class(
+            hoomd.context.current.mpcd.data,
+            hoomd.context.current.system.getCurrentTimeStep(),
+            self.period,
+            0,
+            self.seed,
+            hoomd.context.current.mpcd._thermo,
+        )
 
         hoomd.util.quiet_status()
         self.set_params(angle=angle, kT=kT)
@@ -366,7 +377,7 @@ class srd(_collision_method):
 
         if angle is not None:
             self.angle = angle
-            self._cpp.setRotationAngle(angle * np.pi / 180.)
+            self._cpp.setRotationAngle(angle * np.pi / 180.0)
         if shift is not None:
             self.shift = shift
             self._cpp.enableGridShifting(shift)

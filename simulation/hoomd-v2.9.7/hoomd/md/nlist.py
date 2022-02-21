@@ -3,7 +3,7 @@
 
 # Maintainer: joaander
 
-R""" Neighbor list acceleration structures.
+r""" Neighbor list acceleration structures.
 
 Neighbor lists accelerate pair force calculation by maintaining a list of particles within a cutoff radius.
 Multiple pair forces can utilize the same neighbor list. Neighbors are included using a pairwise cutoff
@@ -43,12 +43,13 @@ Examples::
 
 """
 
+import hoomd
 from hoomd import _hoomd
 from hoomd.md import _md
-import hoomd;
+
 
 class nlist:
-    R""" Base class neighbor list.
+    r""" Base class neighbor list.
 
     Methods provided by this base class are available to all subclasses.
     """
@@ -56,20 +57,20 @@ class nlist:
     def __init__(self):
         # check if initialization has occurred
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot create neighbor list before initialization\n");
-            raise RuntimeError('Error creating neighbor list');
+            hoomd.context.msg.error("Cannot create neighbor list before initialization\n")
+            raise RuntimeError("Error creating neighbor list")
 
         # default exclusions
-        self.is_exclusion_overridden = False;
+        self.is_exclusion_overridden = False
         self.exclusions = None  # Excluded groups
         self.exclusion_list = []  # Specific pairs to exclude
 
         # save the parameters we set
-        self.r_cut = rcut();
-        self.r_buff = 0.4;
+        self.r_cut = rcut()
+        self.r_buff = 0.4
 
         # save a list of subscribers that may have a say in determining the maximum r_cut
-        self.subscriber_callbacks = [];
+        self.subscriber_callbacks = []
 
     ## \internal
     # \brief Adds a subscriber to the neighbor list
@@ -77,57 +78,57 @@ class nlist:
     # All \a callables will be called at the beginning of each run() to determine the maximum r_cut needed for that run.
     #
     def subscribe(self, callable):
-        self.subscriber_callbacks.append(callable);
+        self.subscriber_callbacks.append(callable)
 
     ## \internal
     # \brief Updates r_cut based on the subscriber's requests
     # \details This method is triggered every time the run command is called
     #
     def update_rcut(self):
-        r_cut_max = rcut();
+        r_cut_max = rcut()
         for c in self.subscriber_callbacks:
-            rcut_obj = c();
+            rcut_obj = c()
             if rcut_obj is not None:
-                r_cut_max.merge(rcut_obj);
+                r_cut_max.merge(rcut_obj)
 
         # ensure that all type pairs are filled
         r_cut_max.fill()
-        self.r_cut = r_cut_max;
+        self.r_cut = r_cut_max
 
         # get a list of types from the particle data
-        ntypes = hoomd.context.current.system_definition.getParticleData().getNTypes();
-        type_list = [];
-        for i in range(0,ntypes):
-            type_list.append(hoomd.context.current.system_definition.getParticleData().getNameByType(i));
+        ntypes = hoomd.context.current.system_definition.getParticleData().getNTypes()
+        type_list = []
+        for i in range(0, ntypes):
+            type_list.append(hoomd.context.current.system_definition.getParticleData().getNameByType(i))
 
         # loop over all possible pairs and require that a dictionary key exists for them
-        for i in range(0,ntypes):
-            for j in range(i,ntypes):
-                a = type_list[i];
-                b = type_list[j];
-                self.cpp_nlist.setRCutPair(i,j, self.r_cut.get_pair(a,b));
+        for i in range(0, ntypes):
+            for j in range(i, ntypes):
+                a = type_list[i]
+                b = type_list[j]
+                self.cpp_nlist.setRCutPair(i, j, self.r_cut.get_pair(a, b))
 
     ## \internal
     # \brief Sets the default bond exclusions, but only if the defaults have not been overridden
     def update_exclusions_defaults(self):
         if self.cpp_nlist.wantExclusions() and self.exclusions is not None:
-            hoomd.util.quiet_status();
+            hoomd.util.quiet_status()
             # update exclusions using stored values
             self.reset_exclusions(exclusions=self.exclusions)
-            hoomd.util.unquiet_status();
+            hoomd.util.unquiet_status()
         elif not self.is_exclusion_overridden:
-            hoomd.util.quiet_status();
-            self.reset_exclusions(exclusions=['body', 'bond','constraint']);
-            hoomd.util.unquiet_status();
+            hoomd.util.quiet_status()
+            self.reset_exclusions(exclusions=["body", "bond", "constraint"])
+            hoomd.util.unquiet_status()
 
         # Add any specific interparticle exclusions
         for i, j in self.exclusion_list:
-            hoomd.util.quiet_status();
+            hoomd.util.quiet_status()
             self.cpp_nlist.addExclusion(i, j)
-            hoomd.util.unquiet_status();
+            hoomd.util.unquiet_status()
 
     def set_params(self, r_buff=None, check_period=None, d_max=None, dist_check=True):
-        R""" Change neighbor list parameters.
+        r""" Change neighbor list parameters.
 
         Args:
 
@@ -178,25 +179,25 @@ class nlist:
             nl.set_params(r_buff = 0.7, check_period = 4)
             nl.set_params(d_max = 3.0)
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if self.cpp_nlist is None:
-            hoomd.context.msg.error('Bug in hoomd: cpp_nlist not set, please report\n');
-            raise RuntimeError('Error setting neighbor list parameters');
+            hoomd.context.msg.error("Bug in hoomd: cpp_nlist not set, please report\n")
+            raise RuntimeError("Error setting neighbor list parameters")
 
         # update the parameters
         if r_buff is not None:
-            self.cpp_nlist.setRBuff(r_buff);
-            self.r_buff = r_buff;
+            self.cpp_nlist.setRBuff(r_buff)
+            self.r_buff = r_buff
 
         if check_period is not None:
-            self.cpp_nlist.setEvery(check_period, dist_check);
+            self.cpp_nlist.setEvery(check_period, dist_check)
 
         if d_max is not None:
-            self.cpp_nlist.setMaximumDiameter(d_max);
+            self.cpp_nlist.setMaximumDiameter(d_max)
 
-    def reset_exclusions(self, exclusions = None):
-        R""" Resets all exclusions in the neighborlist.
+    def reset_exclusions(self, exclusions=None):
+        r""" Resets all exclusions in the neighborlist.
 
         Args:
             exclusions (list): Select which interactions should be excluded from the pair interaction calculation.
@@ -239,73 +240,73 @@ class nlist:
             nl.reset_exclusions(exclusions = [])
 
         """
-        hoomd.util.print_status_line();
-        self.is_exclusion_overridden = True;
+        hoomd.util.print_status_line()
+        self.is_exclusion_overridden = True
 
         if self.cpp_nlist is None:
-            hoomd.context.msg.error('Bug in hoomd: cpp_nlist not set, please report\n');
-            raise RuntimeError('Error resetting exclusions');
+            hoomd.context.msg.error("Bug in hoomd: cpp_nlist not set, please report\n")
+            raise RuntimeError("Error resetting exclusions")
 
         # clear all of the existing exclusions
-        self.cpp_nlist.clearExclusions();
-        self.cpp_nlist.setFilterBody(False);
+        self.cpp_nlist.clearExclusions()
+        self.cpp_nlist.setFilterBody(False)
 
         if exclusions is None:
             # confirm that no exclusions are left.
-            self.cpp_nlist.countExclusions();
+            self.cpp_nlist.countExclusions()
             return
 
         # store exclusions for later use
         self.exclusions = list(exclusions)
 
         # exclusions given directly in bond/angle/dihedral notation
-        if 'bond' in exclusions:
-            self.cpp_nlist.addExclusionsFromBonds();
-            exclusions.remove('bond');
+        if "bond" in exclusions:
+            self.cpp_nlist.addExclusionsFromBonds()
+            exclusions.remove("bond")
 
-        if 'angle' in exclusions:
-            self.cpp_nlist.addExclusionsFromAngles();
-            exclusions.remove('angle');
+        if "angle" in exclusions:
+            self.cpp_nlist.addExclusionsFromAngles()
+            exclusions.remove("angle")
 
-        if 'dihedral' in exclusions:
-            self.cpp_nlist.addExclusionsFromDihedrals();
-            exclusions.remove('dihedral');
+        if "dihedral" in exclusions:
+            self.cpp_nlist.addExclusionsFromDihedrals()
+            exclusions.remove("dihedral")
 
-        if 'body' in exclusions:
-            self.cpp_nlist.setFilterBody(True);
-            exclusions.remove('body');
+        if "body" in exclusions:
+            self.cpp_nlist.setFilterBody(True)
+            exclusions.remove("body")
 
-        if 'constraint' in exclusions:
-            self.cpp_nlist.addExclusionsFromConstraints();
-            exclusions.remove('constraint');
+        if "constraint" in exclusions:
+            self.cpp_nlist.addExclusionsFromConstraints()
+            exclusions.remove("constraint")
 
-        if 'pair' in exclusions:
-            self.cpp_nlist.addExclusionsFromPairs();
-            exclusions.remove('pair');
+        if "pair" in exclusions:
+            self.cpp_nlist.addExclusionsFromPairs()
+            exclusions.remove("pair")
 
         # exclusions given in 1-2/1-3/1-4 notation.
-        if '1-2' in exclusions:
-            self.cpp_nlist.addExclusionsFromBonds();
-            exclusions.remove('1-2');
+        if "1-2" in exclusions:
+            self.cpp_nlist.addExclusionsFromBonds()
+            exclusions.remove("1-2")
 
-        if '1-3' in exclusions:
-            self.cpp_nlist.addOneThreeExclusionsFromTopology();
-            exclusions.remove('1-3');
+        if "1-3" in exclusions:
+            self.cpp_nlist.addOneThreeExclusionsFromTopology()
+            exclusions.remove("1-3")
 
-        if '1-4' in exclusions:
-            self.cpp_nlist.addOneFourExclusionsFromTopology();
-            exclusions.remove('1-4');
+        if "1-4" in exclusions:
+            self.cpp_nlist.addOneFourExclusionsFromTopology()
+            exclusions.remove("1-4")
 
         # if there are any items left in the exclusion list, we have an error.
         if len(exclusions) > 0:
-            hoomd.context.msg.error('Exclusion type(s): ' + str(exclusions) +  ' are not supported\n');
-            raise RuntimeError('Error resetting exclusions');
+            hoomd.context.msg.error("Exclusion type(s): " + str(exclusions) + " are not supported\n")
+            raise RuntimeError("Error resetting exclusions")
 
         # collect and print statistics about the number of exclusions.
-        self.cpp_nlist.countExclusions();
+        self.cpp_nlist.countExclusions()
 
     def add_exclusion(self, i, j):
-        R"""Add a specific pair of particles to the exclusion list.
+        r"""Add a specific pair of particles to the exclusion list.
 
         Args:
             i (int): The tag of the first particle in the pair.
@@ -315,18 +316,18 @@ class nlist:
 
             nl.add_exclusions(system.particles[0].tag, system.particles[1].tag)
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if self.cpp_nlist is None:
-            hoomd.context.msg.error('Bug in hoomd_script: cpp_nlist not set, please report\n');
-            raise RuntimeError('Error resetting exclusions');
+            hoomd.context.msg.error("Bug in hoomd_script: cpp_nlist not set, please report\n")
+            raise RuntimeError("Error resetting exclusions")
 
         # store exclusions for later use
         self.exclusion_list.append((i, j))
-        self.cpp_nlist.addExclusion(i, j);
+        self.cpp_nlist.addExclusion(i, j)
 
     def query_update_period(self):
-        R""" Query the maximum possible check_period.
+        r""" Query the maximum possible check_period.
 
         :py:meth:`query_update_period` examines the counts of nlist rebuilds during the previous :py:func:`hoomd.run()`.
         It returns ``s-1``, where *s* is the smallest update period experienced during that time.
@@ -340,13 +341,13 @@ class nlist:
 
         """
         if self.cpp_nlist is None:
-            hoomd.context.msg.error('Bug in hoomd: cpp_nlist not set, please report\n');
-            raise RuntimeError('Error setting neighbor list parameters');
+            hoomd.context.msg.error("Bug in hoomd: cpp_nlist not set, please report\n")
+            raise RuntimeError("Error setting neighbor list parameters")
 
-        return self.cpp_nlist.getSmallestRebuild()-1;
+        return self.cpp_nlist.getSmallestRebuild() - 1
 
     def tune(self, warmup=200000, r_min=0.05, r_max=1.0, jumps=20, steps=5000, set_max_check_period=False, quiet=False):
-        R""" Make a series of short runs to determine the fastest performing r_buff setting.
+        r""" Make a series of short runs to determine the fastest performing r_buff setting.
 
         Args:
             warmup (int): Number of time steps to run() to warm up the benchmark
@@ -373,75 +374,76 @@ class nlist:
         Returns:
             (optimal_r_buff, maximum check_period)
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # check if initialization has occurred
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot tune r_buff before initialization\n");
+            hoomd.context.msg.error("Cannot tune r_buff before initialization\n")
 
         if self.cpp_nlist is None:
-            hoomd.context.msg.error('Bug in hoomd: cpp_nlist not set, please report\n')
-            raise RuntimeError('Error tuning neighbor list')
+            hoomd.context.msg.error("Bug in hoomd: cpp_nlist not set, please report\n")
+            raise RuntimeError("Error tuning neighbor list")
 
         # quiet the tuner starting here so that the user doesn't see all of the parameter set and run calls
-        hoomd.util.quiet_status();
+        hoomd.util.quiet_status()
 
         # start off at a check_period of 1
         self.set_params(check_period=1)
 
         # make the warmup run
-        hoomd.run(warmup, quiet=quiet);
+        hoomd.run(warmup, quiet=quiet)
 
         # initialize scan variables
-        dr = (r_max - r_min) / (jumps - 1);
-        r_buff_list = [];
-        tps_list = [];
+        dr = (r_max - r_min) / (jumps - 1)
+        r_buff_list = []
+        tps_list = []
 
         # loop over all desired r_buff points
-        for i in range(0,jumps):
+        for i in range(0, jumps):
             # set the current r_buff
-            r_buff = r_min + i * dr;
-            self.set_params(r_buff=r_buff);
+            r_buff = r_min + i * dr
+            self.set_params(r_buff=r_buff)
 
             # run the benchmark 3 times
-            tps = [];
-            hoomd.run(steps, quiet=quiet);
+            tps = []
+            hoomd.run(steps, quiet=quiet)
             tps.append(hoomd.context.current.system.getLastTPS())
-            hoomd.run(steps, quiet=quiet);
+            hoomd.run(steps, quiet=quiet)
             tps.append(hoomd.context.current.system.getLastTPS())
-            hoomd.run(steps, quiet=quiet);
+            hoomd.run(steps, quiet=quiet)
             tps.append(hoomd.context.current.system.getLastTPS())
 
             # record the median tps of the 3
-            tps.sort();
-            tps_list.append(tps[1]);
-            r_buff_list.append(r_buff);
+            tps.sort()
+            tps_list.append(tps[1])
+            r_buff_list.append(r_buff)
 
         # find the fastest r_buff
-        fastest = tps_list.index(max(tps_list));
-        fastest_r_buff = r_buff_list[fastest];
+        fastest = tps_list.index(max(tps_list))
+        fastest_r_buff = r_buff_list[fastest]
 
         # set the fastest and rerun the warmup steps to identify the max check period
-        self.set_params(r_buff=fastest_r_buff);
-        hoomd.run(warmup, quiet=quiet);
+        self.set_params(r_buff=fastest_r_buff)
+        hoomd.run(warmup, quiet=quiet)
 
         # all done with the parameter sets and run calls (mostly)
-        hoomd.util.unquiet_status();
+        hoomd.util.unquiet_status()
 
         # notify the user of the benchmark results
-        hoomd.context.msg.notice(2, "r_buff = " + str(r_buff_list) + '\n');
-        hoomd.context.msg.notice(2, "tps = " + str(tps_list) + '\n');
-        hoomd.context.msg.notice(2, "Optimal r_buff: " + str(fastest_r_buff) + '\n');
-        hoomd.context.msg.notice(2, "Maximum check_period: " + str(self.query_update_period()) + '\n');
+        hoomd.context.msg.notice(2, "r_buff = " + str(r_buff_list) + "\n")
+        hoomd.context.msg.notice(2, "tps = " + str(tps_list) + "\n")
+        hoomd.context.msg.notice(2, "Optimal r_buff: " + str(fastest_r_buff) + "\n")
+        hoomd.context.msg.notice(2, "Maximum check_period: " + str(self.query_update_period()) + "\n")
 
         # set the found max check period
         if set_max_check_period:
-            hoomd.util.quiet_status();
-            self.set_params(check_period=self.query_update_period());
-            hoomd.util.unquiet_status();
+            hoomd.util.quiet_status()
+            self.set_params(check_period=self.query_update_period())
+            hoomd.util.unquiet_status()
 
         # return the results to the script
-        return (fastest_r_buff, self.query_update_period());
+        return (fastest_r_buff, self.query_update_period())
+
 
 ## \internal
 # \brief %nlist r_cut matrix
@@ -452,7 +454,7 @@ class rcut:
     ## \internal
     # \brief Initializes the class
     def __init__(self):
-        self.values = {};
+        self.values = {}
 
     ## \var values
     # \internal
@@ -463,21 +465,22 @@ class rcut:
     # \details
     # \param a Atom type A
     # \param b Atom type B
-    def ensure_pair(self,a,b):
+    def ensure_pair(self, a, b):
         # create the pair if it hasn't been created yet
-        if (not (a,b) in self.values) and (not (b,a) in self.values):
-            self.values[(a,b)] = -1.0; # negative means this hasn't been set yet
+        if (not (a, b) in self.values) and (not (b, a) in self.values):
+            self.values[(a, b)] = -1.0
+            # negative means this hasn't been set yet
 
         # find the pair we seek
-        if (a,b) in self.values:
-            cur_pair = (a,b);
-        elif (b,a) in self.values:
-            cur_pair = (b,a);
+        if (a, b) in self.values:
+            cur_pair = (a, b)
+        elif (b, a) in self.values:
+            cur_pair = (b, a)
         else:
-            hoomd.context.msg.error("Bug ensuring pair exists in nlist.r_cut.ensure_pair. Please report.\n");
-            raise RuntimeError("Error fetching rcut(i,j) pair");
+            hoomd.context.msg.error("Bug ensuring pair exists in nlist.r_cut.ensure_pair. Please report.\n")
+            raise RuntimeError("Error fetching rcut(i,j) pair")
 
-        return cur_pair;
+        return cur_pair
 
     ## \internal
     # \brief Forces a change of a single r_cut
@@ -486,13 +489,13 @@ class rcut:
     # \param b Atom type B
     # \param cutoff Cutoff radius
     def set_pair(self, a, b, cutoff):
-        cur_pair = self.ensure_pair(a,b);
+        cur_pair = self.ensure_pair(a, b)
 
         if cutoff is None or cutoff is False:
             cutoff = -1.0
         else:
-            cutoff = float(cutoff);
-        self.values[cur_pair] = cutoff;
+            cutoff = float(cutoff)
+        self.values[cur_pair] = cutoff
 
     ## \internal
     # \brief Attempts to update a single r_cut
@@ -500,30 +503,30 @@ class rcut:
     # \param a Atom type A
     # \param b Atom type B
     # \param cutoff Cutoff radius
-    def merge_pair(self,a,b,cutoff):
-        cur_pair = self.ensure_pair(a,b);
+    def merge_pair(self, a, b, cutoff):
+        cur_pair = self.ensure_pair(a, b)
 
         if cutoff is None or cutoff is False:
             cutoff = -1.0
         else:
-            cutoff = float(cutoff);
-        self.values[cur_pair] = max(cutoff,self.values[cur_pair]);
+            cutoff = float(cutoff)
+        self.values[cur_pair] = max(cutoff, self.values[cur_pair])
 
     ## \internal
     # \brief Gets the value of a single pair coefficient
     # \param a First name in the type pair
     # \param b Second name in the type pair
     def get_pair(self, a, b):
-        cur_pair = self.ensure_pair(a,b);
-        return self.values[cur_pair];
+        cur_pair = self.ensure_pair(a, b)
+        return self.values[cur_pair]
 
     ## \internal
     # \brief Merges two rcut objects by maximum cutoff
     # \param rcut_obj The other rcut to merge in
-    def merge(self,rcut_obj):
+    def merge(self, rcut_obj):
         for pair in rcut_obj.values:
-            (a,b) = pair;
-            self.merge_pair(a,b,rcut_obj.values[pair]);
+            (a, b) = pair
+            self.merge_pair(a, b, rcut_obj.values[pair])
 
     ## \internal
     # \brief Fills out the rcut(i,j) dictionary to include default unset keys
@@ -532,26 +535,27 @@ class rcut:
     def fill(self):
         # first, check that the system has been initialized
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot fill rcut(i,j) before initialization\n");
-            raise RuntimeError('Error filling nlist rcut(i,j)');
+            hoomd.context.msg.error("Cannot fill rcut(i,j) before initialization\n")
+            raise RuntimeError("Error filling nlist rcut(i,j)")
 
         # get a list of types from the particle data
-        ntypes = hoomd.context.current.system_definition.getParticleData().getNTypes();
-        type_list = [];
-        for i in range(0,ntypes):
-            type_list.append(hoomd.context.current.system_definition.getParticleData().getNameByType(i));
+        ntypes = hoomd.context.current.system_definition.getParticleData().getNTypes()
+        type_list = []
+        for i in range(0, ntypes):
+            type_list.append(hoomd.context.current.system_definition.getParticleData().getNameByType(i))
 
         # loop over all possible pairs and require that a dictionary key exists for them
-        for i in range(0,ntypes):
-            for j in range(i,ntypes):
-                a = type_list[i];
-                b = type_list[j];
+        for i in range(0, ntypes):
+            for j in range(i, ntypes):
+                a = type_list[i]
+                b = type_list[j]
 
                 # ensure the pair
-                cur_pair = self.ensure_pair(a,b);
+                cur_pair = self.ensure_pair(a, b)
+
 
 class cell(nlist):
-    R""" Cell list based neighbor list
+    r""" Cell list based neighbor list
 
     Args:
         r_buff (float):  Buffer width.
@@ -583,6 +587,7 @@ class cell(nlist):
         is the only pair potential requiring this shifting, and setting *d_max* for other potentials may lead to
         significantly degraded performance or incorrect results.
     """
+
     def __init__(self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, name=None, deterministic=False):
         hoomd.util.print_status_line()
 
@@ -597,12 +602,14 @@ class cell(nlist):
         # create the C++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
             self.cpp_cl = _hoomd.CellList(hoomd.context.current.system_definition)
-            hoomd.context.current.system.addCompute(self.cpp_cl , self.name + "_cl")
-            self.cpp_nlist = _md.NeighborListBinned(hoomd.context.current.system_definition, 0.0, r_buff, self.cpp_cl )
+            hoomd.context.current.system.addCompute(self.cpp_cl, self.name + "_cl")
+            self.cpp_nlist = _md.NeighborListBinned(hoomd.context.current.system_definition, 0.0, r_buff, self.cpp_cl)
         else:
-            self.cpp_cl  = _hoomd.CellListGPU(hoomd.context.current.system_definition)
-            hoomd.context.current.system.addCompute(self.cpp_cl , self.name + "_cl")
-            self.cpp_nlist = _md.NeighborListGPUBinned(hoomd.context.current.system_definition, 0.0, r_buff, self.cpp_cl )
+            self.cpp_cl = _hoomd.CellListGPU(hoomd.context.current.system_definition)
+            hoomd.context.current.system.addCompute(self.cpp_cl, self.name + "_cl")
+            self.cpp_nlist = _md.NeighborListGPUBinned(
+                hoomd.context.current.system_definition, 0.0, r_buff, self.cpp_cl
+            )
 
         self.cpp_nlist.setEvery(check_period, dist_check)
 
@@ -617,10 +624,12 @@ class cell(nlist):
         self.set_params(r_buff, check_period, d_max, dist_check)
         hoomd.util.unquiet_status()
 
+
 cell.cur_id = 0
 
+
 class stencil(nlist):
-    R""" Cell list based neighbor list using stencils
+    r""" Cell list based neighbor list using stencils
 
     Args:
         r_buff (float):  Buffer width.
@@ -665,20 +674,25 @@ class stencil(nlist):
         is the only pair potential requiring this shifting, and setting *d_max* for other potentials may lead to
         significantly degraded performance or incorrect results.
     """
-    def __init__(self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, cell_width=None, name=None, deterministic=False):
+
+    def __init__(
+        self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, cell_width=None, name=None, deterministic=False
+    ):
         hoomd.util.print_status_line()
 
         # register the citation
-        c = hoomd.cite.article(cite_key='howard2016',
-                         author=['M P Howard', 'J A Anderson', 'A Nikoubashman', 'S C Glotzer', 'A Z Panagiotopoulos'],
-                         title='Efficient neighbor list calculation for molecular simulation of colloidal systems using graphics processing units',
-                         journal='Computer Physics Communications',
-                         volume=203,
-                         pages='45--52',
-                         month='Mar',
-                         year='2016',
-                         doi='10.1016/j.cpc.2016.02.003',
-                         feature='stenciled neighbor lists')
+        c = hoomd.cite.article(
+            cite_key="howard2016",
+            author=["M P Howard", "J A Anderson", "A Nikoubashman", "S C Glotzer", "A Z Panagiotopoulos"],
+            title="Efficient neighbor list calculation for molecular simulation of colloidal systems using graphics processing units",
+            journal="Computer Physics Communications",
+            volume=203,
+            pages="45--52",
+            month="Mar",
+            year="2016",
+            doi="10.1016/j.cpc.2016.02.003",
+            feature="stenciled neighbor lists",
+        )
         hoomd.cite._ensure_global_bib().add(c)
 
         nlist.__init__(self)
@@ -692,16 +706,20 @@ class stencil(nlist):
         # create the C++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
             self.cpp_cl = _hoomd.CellList(hoomd.context.current.system_definition)
-            hoomd.context.current.system.addCompute(self.cpp_cl , self.name + "_cl")
+            hoomd.context.current.system.addCompute(self.cpp_cl, self.name + "_cl")
             cls = _hoomd.CellListStencil(hoomd.context.current.system_definition, self.cpp_cl)
             hoomd.context.current.system.addCompute(cls, self.name + "_cls")
-            self.cpp_nlist = _md.NeighborListStencil(hoomd.context.current.system_definition, 0.0, r_buff, self.cpp_cl, cls)
+            self.cpp_nlist = _md.NeighborListStencil(
+                hoomd.context.current.system_definition, 0.0, r_buff, self.cpp_cl, cls
+            )
         else:
-            self.cpp_cl  = _hoomd.CellListGPU(hoomd.context.current.system_definition)
-            hoomd.context.current.system.addCompute(self.cpp_cl , self.name + "_cl")
+            self.cpp_cl = _hoomd.CellListGPU(hoomd.context.current.system_definition)
+            hoomd.context.current.system.addCompute(self.cpp_cl, self.name + "_cl")
             cls = _hoomd.CellListStencil(hoomd.context.current.system_definition, self.cpp_cl)
             hoomd.context.current.system.addCompute(cls, self.name + "_cls")
-            self.cpp_nlist = _md.NeighborListGPUStencil(hoomd.context.current.system_definition, 0.0, r_buff, self.cpp_cl, cls)
+            self.cpp_nlist = _md.NeighborListGPUStencil(
+                hoomd.context.current.system_definition, 0.0, r_buff, self.cpp_cl, cls
+            )
 
         self.cpp_nlist.setEvery(check_period, dist_check)
 
@@ -718,7 +736,7 @@ class stencil(nlist):
         hoomd.util.unquiet_status()
 
     def set_cell_width(self, cell_width):
-        R""" Set the cell width
+        r""" Set the cell width
 
         Args:
             cell_width (float): New cell width.
@@ -728,7 +746,7 @@ class stencil(nlist):
             self.cpp_nlist.setCellWidth(float(cell_width))
 
     def tune_cell_width(self, warmup=200000, min_width=None, max_width=None, jumps=20, steps=5000):
-        R""" Make a series of short runs to determine the fastest performing bin width.
+        r""" Make a series of short runs to determine the fastest performing bin width.
 
         Args:
             warmup (int): Number of time steps to run() to warm up the benchmark
@@ -752,73 +770,76 @@ class stencil(nlist):
 
         # check if initialization has occurred
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot tune r_buff before initialization\n");
+            hoomd.context.msg.error("Cannot tune r_buff before initialization\n")
 
         if self.cpp_nlist is None:
-            hoomd.context.msg.error('Bug in hoomd: cpp_nlist not set, please report\n')
-            raise RuntimeError('Error tuning neighbor list')
+            hoomd.context.msg.error("Bug in hoomd: cpp_nlist not set, please report\n")
+            raise RuntimeError("Error tuning neighbor list")
 
         min_cell_width = min_width
         if min_cell_width is None:
-            min_cell_width = 0.5*self.cpp_nlist.getMinRList()
+            min_cell_width = 0.5 * self.cpp_nlist.getMinRList()
         max_cell_width = max_width
         if max_cell_width is None:
             max_cell_width = self.cpp_nlist.getMaxRList()
 
         # quiet the tuner starting here so that the user doesn't see all of the parameter set and run calls
-        hoomd.util.quiet_status();
+        hoomd.util.quiet_status()
 
         # make the warmup run
-        hoomd.run(warmup);
+        hoomd.run(warmup)
 
         # initialize scan variables
-        dr = (max_cell_width - min_cell_width) / (jumps - 1);
-        width_list = [];
-        tps_list = [];
+        dr = (max_cell_width - min_cell_width) / (jumps - 1)
+        width_list = []
+        tps_list = []
 
         # loop over all desired cell width points
-        for i in range(0,jumps):
+        for i in range(0, jumps):
             # set the current cell width
-            cw = min_cell_width + i * dr;
-            hoomd.util.quiet_status();
+            cw = min_cell_width + i * dr
+            hoomd.util.quiet_status()
             self.set_cell_width(cell_width=cw)
-            hoomd.util.unquiet_status();
+            hoomd.util.unquiet_status()
 
             # run the benchmark 3 times
-            tps = [];
-            hoomd.run(steps);
+            tps = []
+            hoomd.run(steps)
             tps.append(hoomd.context.current.system.getLastTPS())
-            hoomd.run(steps);
+            hoomd.run(steps)
             tps.append(hoomd.context.current.system.getLastTPS())
-            hoomd.run(steps);
+            hoomd.run(steps)
             tps.append(hoomd.context.current.system.getLastTPS())
 
             # record the median tps of the 3
-            tps.sort();
-            tps_list.append(tps[1]);
-            width_list.append(cw);
+            tps.sort()
+            tps_list.append(tps[1])
+            width_list.append(cw)
 
         # find the fastest cell width
-        fastest = tps_list.index(max(tps_list));
-        fastest_width = width_list[fastest];
+        fastest = tps_list.index(max(tps_list))
+        fastest_width = width_list[fastest]
 
         # set the fastest cell width
         self.set_cell_width(cell_width=fastest_width)
 
         # all done with the parameter sets and run calls (mostly)
-        hoomd.util.unquiet_status();
+        hoomd.util.unquiet_status()
 
         # notify the user of the benchmark results
-        hoomd.context.msg.notice(2, "cell width = " + str(width_list) + '\n');
-        hoomd.context.msg.notice(2, "tps = " + str(tps_list) + '\n');
-        hoomd.context.msg.notice(2, "Optimal cell width: " + str(fastest_width) + '\n');
+        hoomd.context.msg.notice(2, "cell width = " + str(width_list) + "\n")
+        hoomd.context.msg.notice(2, "tps = " + str(tps_list) + "\n")
+        hoomd.context.msg.notice(2, "Optimal cell width: " + str(fastest_width) + "\n")
 
         # return the results to the script
         return fastest_width
+
+
 stencil.cur_id = 0
 
+
 class tree(nlist):
-    R""" Bounding volume hierarchy based neighbor list.
+    r""" Bounding volume hierarchy based neighbor list.
 
     Args:
         r_buff (float):  Buffer width.
@@ -852,31 +873,36 @@ class tree(nlist):
         significantly degraded performance or incorrect results.
 
     """
+
     def __init__(self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, name=None):
         hoomd.util.print_status_line()
 
         # register the citation
-        c1 = hoomd.cite.article(cite_key='howard2016',
-                         author=['M P Howard', 'J A Anderson', 'A Nikoubashman', 'S C Glotzer', 'A Z Panagiotopoulos'],
-                         title='Efficient neighbor list calculation for molecular simulation of colloidal systems using graphics processing units',
-                         journal='Computer Physics Communications',
-                         volume=203,
-                         pages='45--52',
-                         month='Mar',
-                         year='2016',
-                         doi='10.1016/j.cpc.2016.02.003',
-                         feature='tree neighbor lists')
-        c2 = hoomd.cite.article(cite_key='howard2019',
-                         author=['M P Howard', 'A Statt', 'F Madutsa', 'T M Truskett', 'A Z Panagiotopoulos'],
-                         title='Quantized bounding volume hierarchies for neighbor search in molecular simulations on graphics processing units',
-                         journal='Computational Materials Science',
-                         volume=164,
-                         pages='139--146',
-                         month='Jun',
-                         year='2019',
-                         doi='10.1016/j.commatsci.2019.04.004',
-                         feature='tree neighbor lists')
-        hoomd.cite._ensure_global_bib().add((c1,c2))
+        c1 = hoomd.cite.article(
+            cite_key="howard2016",
+            author=["M P Howard", "J A Anderson", "A Nikoubashman", "S C Glotzer", "A Z Panagiotopoulos"],
+            title="Efficient neighbor list calculation for molecular simulation of colloidal systems using graphics processing units",
+            journal="Computer Physics Communications",
+            volume=203,
+            pages="45--52",
+            month="Mar",
+            year="2016",
+            doi="10.1016/j.cpc.2016.02.003",
+            feature="tree neighbor lists",
+        )
+        c2 = hoomd.cite.article(
+            cite_key="howard2019",
+            author=["M P Howard", "A Statt", "F Madutsa", "T M Truskett", "A Z Panagiotopoulos"],
+            title="Quantized bounding volume hierarchies for neighbor search in molecular simulations on graphics processing units",
+            journal="Computational Materials Science",
+            volume=164,
+            pages="139--146",
+            month="Jun",
+            year="2019",
+            doi="10.1016/j.commatsci.2019.04.004",
+            feature="tree neighbor lists",
+        )
+        hoomd.cite._ensure_global_bib().add((c1, c2))
 
         nlist.__init__(self)
 
@@ -903,4 +929,6 @@ class tree(nlist):
         hoomd.util.quiet_status()
         self.set_params(r_buff, check_period, d_max, dist_check)
         hoomd.util.unquiet_status()
+
+
 tree.cur_id = 0

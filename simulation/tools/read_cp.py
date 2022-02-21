@@ -11,29 +11,23 @@ def calc_chrom_lens(df_contact_pairs):
         chrn_minA = min(df_contact_pairs.loc[df_contact_pairs["chr_A"] == n]["pos_A"])
         chrn_minB = min(df_contact_pairs.loc[df_contact_pairs["chr_B"] == n]["pos_B"])
 
-        chr_min_pos[n-1] = min(chrn_minA, chrn_minB)
+        chr_min_pos[n - 1] = min(chrn_minA, chrn_minB)
 
         chrn_maxA = max(df_contact_pairs.loc[df_contact_pairs["chr_A"] == n]["pos_A"])
         chrn_maxB = max(df_contact_pairs.loc[df_contact_pairs["chr_B"] == n]["pos_B"])
 
-        chr_max_pos[n-1] = max(chrn_maxA, chrn_maxB)
+        chr_max_pos[n - 1] = max(chrn_maxA, chrn_maxB)
 
         return chr_max_pos - chr_min_pos
-
-        
 
 
 def make_contact_pairs(df_contact_pairs):
     # chromosomes are initially labelled as "chr17" or "chrX" for ch 20
     # we want them labelled by numbers instead: chr17 -> 17, chrX -> 20
-    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(
-        lambda s: "chr20" if s == "chrX" else s
-    )
+    df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(lambda s: "chr20" if s == "chrX" else s)
     df_contact_pairs["chr_A"] = df_contact_pairs["chr_A"].apply(lambda s: int(s[3:]))
 
-    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(
-        lambda s: "chr20" if s == "chrX" else s
-    )
+    df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(lambda s: "chr20" if s == "chrX" else s)
     df_contact_pairs["chr_B"] = df_contact_pairs["chr_B"].apply(lambda s: int(s[3:]))
 
     chr_min_pos = {}
@@ -60,14 +54,10 @@ def make_contact_pairs(df_contact_pairs):
     # subtract the minimin position so our beads start at 0
     # which chromosome a bead belongs to will be later taken care of
     df_contact_pairs["ind_A"] = df_contact_pairs.apply(
-        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000
-        + lengths_cumsum[row["chr_A"] - 1],
-        axis=1,
+        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000 + lengths_cumsum[row["chr_A"] - 1], axis=1,
     )
     df_contact_pairs["ind_B"] = df_contact_pairs.apply(
-        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000
-        + lengths_cumsum[row["chr_B"] - 1],
-        axis=1,
+        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000 + lengths_cumsum[row["chr_B"] - 1], axis=1,
     )
 
     # df_contact_pairs["ind_A"] = df_contact_pairs.apply(

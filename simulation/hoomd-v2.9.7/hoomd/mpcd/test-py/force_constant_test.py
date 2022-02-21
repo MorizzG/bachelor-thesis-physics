@@ -4,10 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 # unit tests for mpcd constant force
 class mpcd_force_constant_test(unittest.TestCase):
@@ -16,39 +17,39 @@ class mpcd_force_constant_test(unittest.TestCase):
         hoomd.context.initialize()
 
         # default testing configuration
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.0)))
 
         # initialize the system from the starting snapshot
         snap = mpcd.data.make_snapshot(N=1)
-        snap.particles.position[:] = [[0.,-1.,1.]]
-        snap.particles.velocity[:] = [[1.,-2.,3.]]
+        snap.particles.position[:] = [[0.0, -1.0, 1.0]]
+        snap.particles.velocity[:] = [[1.0, -2.0, 3.0]]
         self.s = mpcd.init.read_snapshot(snap)
 
     # test for initializing constant force field
     def test_init(self):
         # tuple
-        f = mpcd.force.constant(F=(1.,2.1,-0.3))
-        np.testing.assert_array_almost_equal(f.F, (1,2.1,-0.3))
+        f = mpcd.force.constant(F=(1.0, 2.1, -0.3))
+        np.testing.assert_array_almost_equal(f.F, (1, 2.1, -0.3))
 
         # list
-        f = mpcd.force.constant(F=[-0.7,0,1])
-        np.testing.assert_array_almost_equal(f.F, (-0.7,0,1))
+        f = mpcd.force.constant(F=[-0.7, 0, 1])
+        np.testing.assert_array_almost_equal(f.F, (-0.7, 0, 1))
 
         # numpy array
-        f = mpcd.force.constant(F=np.array([1,2,3]))
-        np.testing.assert_array_almost_equal(f.F, (1,2,3))
+        f = mpcd.force.constant(F=np.array([1, 2, 3]))
+        np.testing.assert_array_almost_equal(f.F, (1, 2, 3))
 
         # scalar is an error
         with self.assertRaises(ValueError):
-            mpcd.force.constant(4.)
+            mpcd.force.constant(4.0)
 
         # too short is an error
         with self.assertRaises(ValueError):
-            mpcd.force.constant([1,2])
+            mpcd.force.constant([1, 2])
 
         # too long is an error
         with self.assertRaises(ValueError):
-            mpcd.force.constant([1,2,3,4])
+            mpcd.force.constant([1, 2, 3, 4])
 
     # test for stepping with constant force
     # (this is also an implicit test that the base integrator is implementing the force correctly)
@@ -57,7 +58,7 @@ class mpcd_force_constant_test(unittest.TestCase):
         bulk = mpcd.stream.bulk(period=1)
 
         # run 1 step and check updated velocity
-        f = mpcd.force.constant((1.,0.,-1.))
+        f = mpcd.force.constant((1.0, 0.0, -1.0))
         bulk.set_force(f)
         hoomd.run(1)
         snap = self.s.take_snapshot()
@@ -76,5 +77,6 @@ class mpcd_force_constant_test(unittest.TestCase):
     def tearDown(self):
         del self.s
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

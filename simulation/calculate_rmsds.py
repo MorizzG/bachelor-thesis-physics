@@ -5,10 +5,9 @@ Created on Wed Jan 19 20:12:34 2022.
 
 @author: mg
 """
+import gsd.hoomd
 import matplotlib.pyplot as plt
 import numpy as np
-import gsd.hoomd
-
 import tools.rmsd as rmsd
 from tools import scc
 from tools.constants import NUM_PARTICLES
@@ -40,7 +39,7 @@ np.set_printoptions(precision=3)
 
 # %% Plot RMSD to last config for all cells
 
-# fig, axes = plt.subplots(3, 3, figsize=(10, 10))
+# fig, axes = plt.subplots(3, 3, figsize=(10, 10), sharey=True)
 
 # axes_flat = axes.ravel()
 
@@ -59,12 +58,12 @@ np.set_printoptions(precision=3)
 
 #     ax.set_xlabel(f"Configurations Cell {n_cell}")
 #     ax.set_ylabel("RMSD")
-# y_max = np.max([ax.get_ylim()[1] for ax in axes_flat])
+# # y_max = np.max([ax.get_ylim()[1] for ax in axes_flat])
 
 # fig.show()
 
-# for ax in axes_flat:
-#     ax.set_ylim(0, y_max)
+# # for ax in axes_flat:
+# #     ax.set_ylim(0, y_max)
 
 # %% rmsd grouping
 
@@ -123,9 +122,7 @@ for group in groups:
     print(group)
 for i in range(len(groups)):
     for j in range(i):
-        assert not (
-            set(groups[i]) & set(groups[j])
-        ), f"Intersection between groups {i} and {j}!"
+        assert not (set(groups[i]) & set(groups[j])), f"Intersection between groups {i} and {j}!"
 # %% Plot RMSD grouping
 
 rmsds = np.load(f"data/rmsds/rmsds_cell{n_cell}.npy")
@@ -171,9 +168,7 @@ for idx, group in enumerate(groups):
     #     continue
     ref_idx = group[len(group) // 2]  # int(np.median(group))
     assert ref_idx in group, f"Ref_idx {ref_idx} not in group {idx}!"
-    ax.plot(
-        rmsds[ref_idx, :].squeeze(), f"C{idx}-"
-    )  # , label=f"Group {idx} as reference", zorder=-1
+    ax.plot(rmsds[ref_idx, :].squeeze(), f"C{idx}-")  # , label=f"Group {idx} as reference", zorder=-1
     for idx2, group2 in enumerate(groups):
         ax.plot(
             group2,

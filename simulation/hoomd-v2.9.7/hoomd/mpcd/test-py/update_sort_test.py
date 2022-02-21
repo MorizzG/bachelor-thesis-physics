@@ -4,10 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 # unit tests for mpcd.update.sort
 class mpcd_update_sort_test(unittest.TestCase):
@@ -16,7 +17,7 @@ class mpcd_update_sort_test(unittest.TestCase):
         hoomd.context.initialize()
 
         # default testing configuration
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.0)))
 
         # initialize the system from the starting snapshot
         self.s = mpcd.init.read_snapshot(mpcd.data.make_snapshot(N=1))
@@ -58,5 +59,6 @@ class mpcd_update_sort_test(unittest.TestCase):
     def tearDown(self):
         del self.s
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

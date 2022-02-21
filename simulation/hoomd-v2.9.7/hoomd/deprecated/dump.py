@@ -1,16 +1,17 @@
 # Copyright (c) 2009-2019 The Regents of the University of Michigan
 # This file is part of the HOOMD-blue project, released under the BSD 3-Clause License.
 
-R""" Deprecated trajectory file writers.
+r""" Deprecated trajectory file writers.
 
 """
 
-from hoomd.analyze import _analyzer;
-from hoomd.deprecated import _deprecated;
-import hoomd;
+import hoomd
+from hoomd.analyze import _analyzer
+from hoomd.deprecated import _deprecated
+
 
 class xml(hoomd.analyze._analyzer):
-    R""" Writes simulation snapshots in the HOOMD XML format.
+    r""" Writes simulation snapshots in the HOOMD XML format.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles to dump
@@ -62,62 +63,67 @@ class xml(hoomd.analyze._analyzer):
     *filename* is written immediately. *time_step* is passed on to write()
 
     """
+
     def __init__(self, group, filename="dump", period=None, time_step=None, phase=0, restart=False, **params):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # initialize base class
-        hoomd.analyze._analyzer.__init__(self);
+        hoomd.analyze._analyzer.__init__(self)
 
         # check restart options
-        self.restart = restart;
+        self.restart = restart
         if restart and period is None:
-            raise ValueError("a period must be specified with restart=True");
+            raise ValueError("a period must be specified with restart=True")
 
         # create the c++ mirror class
         self.group = group
-        self.cpp_analyzer = _deprecated.HOOMDDumpWriter(hoomd.context.current.system_definition, filename, self.group.cpp_group, restart);
-        hoomd.util.quiet_status();
-        self.set_params(**params);
-        hoomd.util.unquiet_status();
+        self.cpp_analyzer = _deprecated.HOOMDDumpWriter(
+            hoomd.context.current.system_definition, filename, self.group.cpp_group, restart
+        )
+        hoomd.util.quiet_status()
+        self.set_params(**params)
+        hoomd.util.unquiet_status()
 
         if period is not None:
-            self.setupAnalyzer(period, phase);
-            self.enabled = True;
-            self.prev_period = 1;
+            self.setupAnalyzer(period, phase)
+            self.enabled = True
+            self.prev_period = 1
         elif filename != "dump":
-            hoomd.util.quiet_status();
-            self.write(filename, time_step);
-            hoomd.util.unquiet_status();
+            hoomd.util.quiet_status()
+            self.write(filename, time_step)
+            hoomd.util.unquiet_status()
         else:
-            self.enabled = False;
+            self.enabled = False
 
         # store metadata
         self.filename = filename
         self.period = period
-        self.metadata_fields = ['group','filename','period']
+        self.metadata_fields = ["group", "filename", "period"]
 
-    def set_params(self,
-                   all=None,
-                   vis=None,
-                   position=None,
-                   image=None,
-                   velocity=None,
-                   mass=None,
-                   diameter=None,
-                   type=None,
-                   body=None,
-                   bond=None,
-                   angle=None,
-                   dihedral=None,
-                   improper=None,
-                   constraint=None,
-                   acceleration=None,
-                   charge=None,
-                   orientation=None,
-                   angmom=None,
-                   inertia=None,
-                   vizsigma=None):
-        R""" Change xml write parameters.
+    def set_params(
+        self,
+        all=None,
+        vis=None,
+        position=None,
+        image=None,
+        velocity=None,
+        mass=None,
+        diameter=None,
+        type=None,
+        body=None,
+        bond=None,
+        angle=None,
+        dihedral=None,
+        improper=None,
+        constraint=None,
+        acceleration=None,
+        charge=None,
+        orientation=None,
+        angmom=None,
+        inertia=None,
+        vizsigma=None,
+    ):
+        r""" Change xml write parameters.
 
         Args:
             all (bool): (if True) Enables the output of all optional parameters below
@@ -156,15 +162,17 @@ class xml(hoomd.analyze._analyzer):
             be raised.
         """
 
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         if all:
-            position = image = velocity = mass = diameter = type = bond = angle = dihedral = improper = constraint = True;
-            acceleration = charge = body = orientation = angmom = inertia = True;
+            position = (
+                image
+            ) = velocity = mass = diameter = type = bond = angle = dihedral = improper = constraint = True
+            acceleration = charge = body = orientation = angmom = inertia = True
 
         if vis:
-            position = mass = diameter = type = body = bond = angle = dihedral = improper = charge = True;
+            position = mass = diameter = type = body = bond = angle = dihedral = improper = charge = True
 
         # validate that
         if bond or angle or dihedral or improper or constraint:
@@ -176,61 +184,61 @@ class xml(hoomd.analyze._analyzer):
                 raise ValueError("Cannot output topology when not all particles are dumped!")
 
         if position is not None:
-            self.cpp_analyzer.setOutputPosition(position);
+            self.cpp_analyzer.setOutputPosition(position)
 
         if image is not None:
-            self.cpp_analyzer.setOutputImage(image);
+            self.cpp_analyzer.setOutputImage(image)
 
         if velocity is not None:
-            self.cpp_analyzer.setOutputVelocity(velocity);
+            self.cpp_analyzer.setOutputVelocity(velocity)
 
         if mass is not None:
-            self.cpp_analyzer.setOutputMass(mass);
+            self.cpp_analyzer.setOutputMass(mass)
 
         if diameter is not None:
-            self.cpp_analyzer.setOutputDiameter(diameter);
+            self.cpp_analyzer.setOutputDiameter(diameter)
 
         if type is not None:
-            self.cpp_analyzer.setOutputType(type);
+            self.cpp_analyzer.setOutputType(type)
 
         if body is not None:
-            self.cpp_analyzer.setOutputBody(body);
+            self.cpp_analyzer.setOutputBody(body)
 
         if bond is not None:
-            self.cpp_analyzer.setOutputBond(bond);
+            self.cpp_analyzer.setOutputBond(bond)
 
         if angle is not None:
-            self.cpp_analyzer.setOutputAngle(angle);
+            self.cpp_analyzer.setOutputAngle(angle)
 
         if dihedral is not None:
-            self.cpp_analyzer.setOutputDihedral(dihedral);
+            self.cpp_analyzer.setOutputDihedral(dihedral)
 
         if improper is not None:
-            self.cpp_analyzer.setOutputImproper(improper);
+            self.cpp_analyzer.setOutputImproper(improper)
 
         if constraint is not None:
-            self.cpp_analyzer.setOutputConstraint(constraint);
+            self.cpp_analyzer.setOutputConstraint(constraint)
 
         if acceleration is not None:
-            self.cpp_analyzer.setOutputAccel(acceleration);
+            self.cpp_analyzer.setOutputAccel(acceleration)
 
         if charge is not None:
-            self.cpp_analyzer.setOutputCharge(charge);
+            self.cpp_analyzer.setOutputCharge(charge)
 
         if orientation is not None:
-            self.cpp_analyzer.setOutputOrientation(orientation);
+            self.cpp_analyzer.setOutputOrientation(orientation)
 
         if angmom is not None:
-            self.cpp_analyzer.setOutputAngularMomentum(angmom);
+            self.cpp_analyzer.setOutputAngularMomentum(angmom)
 
         if inertia is not None:
-            self.cpp_analyzer.setOutputMomentInertia(inertia);
+            self.cpp_analyzer.setOutputMomentInertia(inertia)
 
         if vizsigma is not None:
-            self.cpp_analyzer.setVizSigma(vizsigma);
+            self.cpp_analyzer.setVizSigma(vizsigma)
 
-    def write(self, filename, time_step = None):
-        R""" Write a file at the current time step.
+    def write(self, filename, time_step=None):
+        r""" Write a file at the current time step.
 
         Args:
             filename (str): File name to write to
@@ -248,29 +256,30 @@ class xml(hoomd.analyze._analyzer):
             xml.write(filename="start.xml", time_step=0)
 
         """
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         if time_step is None:
             time_step = hoomd.context.current.system.getCurrentTimeStep()
 
-        self.cpp_analyzer.writeFile(filename, time_step);
+        self.cpp_analyzer.writeFile(filename, time_step)
 
     def write_restart(self):
-        R""" Write a restart file at the current time step.
+        r""" Write a restart file at the current time step.
 
         This only works when dump.xml() is in **restart** mode. write_restart() writes out a restart file at the current
         time step. Put it at the end of a script to ensure that the system state is written out before exiting.
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if not self.restart:
-            raise ValueError("Cannot write_restart() when restart=False");
+            raise ValueError("Cannot write_restart() when restart=False")
 
-        self.cpp_analyzer.analyze(hoomd.context.current.system.getCurrentTimeStep());
+        self.cpp_analyzer.analyze(hoomd.context.current.system.getCurrentTimeStep())
+
 
 class pos(hoomd.analyze._analyzer):
-    R""" Writes simulation snapshots in the POS format
+    r""" Writes simulation snapshots in the POS format
 
     Args:
         filename (str): File name to write
@@ -298,43 +307,44 @@ class pos(hoomd.analyze._analyzer):
         pos = dump.pos(filename="particles.pos", period=1e5)
 
     """
+
     def __init__(self, filename, period=None, unwrap_rigid=False, phase=0, addInfo=None):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # initialize base class
-        hoomd.analyze._analyzer.__init__(self);
+        hoomd.analyze._analyzer.__init__(self)
 
         # create the c++ mirror class
-        self.cpp_analyzer = _deprecated.POSDumpWriter(hoomd.context.current.system_definition, filename);
-        self.cpp_analyzer.setUnwrapRigid(unwrap_rigid);
+        self.cpp_analyzer = _deprecated.POSDumpWriter(hoomd.context.current.system_definition, filename)
+        self.cpp_analyzer.setUnwrapRigid(unwrap_rigid)
 
         if addInfo is not None:
-            self.cpp_analyzer.setAddInfo(addInfo);
+            self.cpp_analyzer.setAddInfo(addInfo)
 
         if period is not None:
-            self.setupAnalyzer(period, phase);
-            self.enabled = True;
-            self.prev_period = 1;
+            self.setupAnalyzer(period, phase)
+            self.enabled = True
+            self.prev_period = 1
         else:
-            self.enabled = False;
+            self.enabled = False
 
         # store metadata
         self.filename = filename
         self.period = period
         self.unwrap_rigid = unwrap_rigid
-        self.metadata_fields = ['filename', 'period', 'unwrap_rigid']
+        self.metadata_fields = ["filename", "period", "unwrap_rigid"]
 
     def set_def(self, typ, shape):
-        R""" Set a pos def string for a given type
+        r""" Set a pos def string for a given type
 
         Args:
             typ (str): Type name to set shape def
             shape (str): Shape def string to set
 
         """
-        v = hoomd.context.current.system_definition.getParticleData().getTypeByName(typ);
+        v = hoomd.context.current.system_definition.getParticleData().getTypeByName(typ)
         self.cpp_analyzer.setDef(v, shape)
 
     def set_info(self, addInfo):
         if addInfo is not None:
-            self.cpp_analyzer.setAddInfo(addInfo);
+            self.cpp_analyzer.setAddInfo(addInfo)

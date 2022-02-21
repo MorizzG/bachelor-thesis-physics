@@ -3,7 +3,7 @@
 
 # Maintainer: mphoward
 
-R""" MPCD data structures
+r""" MPCD data structures
 
 .. rubric:: MPCD and HOOMD
 
@@ -106,11 +106,12 @@ following particle properties are recorded:
 
 import hoomd
 from hoomd import _hoomd
-from . import _mpcd
-from . import update
+
+from . import _mpcd, update
+
 
 class snapshot(hoomd.meta._metadata):
-    R""" MPCD system snapshot
+    r""" MPCD system snapshot
 
     Args:
         sys_snap (object): The C++ representation of the system data snapshot
@@ -122,6 +123,7 @@ class snapshot(hoomd.meta._metadata):
     :py:meth:`~hoomd.mpcd.data.system.take_snapshot()`.
 
     """
+
     def __init__(self, sys_snap):
         hoomd.meta._metadata.__init__(self)
 
@@ -133,12 +135,12 @@ class snapshot(hoomd.meta._metadata):
 
     @property
     def particles(self):
-        R""" MPCD particle data snapshot
+        r""" MPCD particle data snapshot
         """
         return self.sys_snap.particles
 
     def replicate(self, nx=1, ny=1, nz=1):
-        R""" Replicate the MPCD system snapshot
+        r""" Replicate the MPCD system snapshot
 
         Args:
             nx (int): Number of times to replicate snapshot in *x*
@@ -164,14 +166,15 @@ class snapshot(hoomd.meta._metadata):
         if nx == ny == nz == 1:
             hoomd.context.msg.warning("mpcd: all replication factors are one, ignoring.\n")
             return
-        elif nx <= 0 or ny <=0 or nz <= 0:
+        elif nx <= 0 or ny <= 0 or nz <= 0:
             hoomd.context.msg.error("mpcd: all replication factors must be positive.\n")
             raise ValueError("Replication factors must be positive integers")
 
         self.sys_snap.replicate(nx, ny, nz)
 
+
 class system(hoomd.meta._metadata):
-    R""" MPCD system data
+    r""" MPCD system data
 
     Args:
         sysdata (object): C++ representation of the MPCD system data
@@ -180,6 +183,7 @@ class system(hoomd.meta._metadata):
     returned by :py:mod:`hoomd.mpcd.init`.
 
     """
+
     def __init__(self, sysdata):
         hoomd.meta._metadata.__init__(self)
 
@@ -224,7 +228,7 @@ class system(hoomd.meta._metadata):
         return self.data.getCellList()
 
     def restore_snapshot(self, snapshot):
-        R""" Replaces the current MPCD system state
+        r""" Replaces the current MPCD system state
 
         Args:
             snapshot (:py:class:`hoomd.mpcd.data.snapshot`): MPCD system snapshot
@@ -243,7 +247,7 @@ class system(hoomd.meta._metadata):
         self.data.initializeFromSnapshot(snapshot.sys_snap)
 
     def set_params(self, cell=None):
-        R""" Set parameters of the MPCD system
+        r""" Set parameters of the MPCD system
 
         Args:
             cell (float): Edge length of an MPCD cell.
@@ -261,7 +265,7 @@ class system(hoomd.meta._metadata):
             self.cell.cell_size = cell
 
     def take_snapshot(self, particles=True):
-        R""" Takes a snapshot of the current state of the MPCD system
+        r""" Takes a snapshot of the current state of the MPCD system
 
         Args:
             particles (bool): If true, include particle data in snapshot
@@ -274,8 +278,9 @@ class system(hoomd.meta._metadata):
         hoomd.util.print_status_line()
         return snapshot(self.data.takeSnapshot(particles))
 
+
 def make_snapshot(N=0):
-    R"""Creates an empty MPCD system snapshot
+    r"""Creates an empty MPCD system snapshot
 
     Args:
         N (int): Number of MPCD particles in the snapshot

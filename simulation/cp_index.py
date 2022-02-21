@@ -57,10 +57,7 @@ def min_chr_ind(df_cps, n_chr):
 
     return np.min(
         [
-            (
-                np.min(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]),
-                np.min(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),
-            )
+            (np.min(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]), np.min(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),)
             for df_cp in df_cps
         ]
     )
@@ -87,10 +84,7 @@ def max_chr_ind(df_cps, n_chr):
 
     return np.max(
         [
-            (
-                np.max(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]),
-                np.max(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),
-            )
+            (np.max(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]), np.max(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),)
             for df_cp in df_cps
         ]
     )
@@ -101,9 +95,7 @@ def max_chr_ind(df_cps, n_chr):
 df_cps = []
 
 for n_cell in range(1, 9):
-    df_cp = pd.read_csv(
-        f"data/contact_pairs_raw/Cell{n_cell}_contact_pairs.txt", sep="\t"
-    )
+    df_cp = pd.read_csv(f"data/contact_pairs_raw/Cell{n_cell}_contact_pairs.txt", sep="\t")
 
     df_cp["chr_A"] = df_cp["chr_A"].apply(lambda s: "chr20" if s == "chrX" else s)
     df_cp["chr_A"] = df_cp["chr_A"].apply(lambda s: int(s[3:]))
@@ -121,18 +113,11 @@ for df_cp in df_cps:
     remove_neighbour_contacts(df_cp)
 # %% Calculate minimum and maximum index and length for each chromosome
 
-chr_mins = pd.Series(
-    [min_chr_ind(df_cps, n_chr) for n_chr in range(1, 21)], index=range(1, 21)
-)
+chr_mins = pd.Series([min_chr_ind(df_cps, n_chr) for n_chr in range(1, 21)], index=range(1, 21))
 
-chr_maxs = pd.Series(
-    [max_chr_ind(df_cps, n_chr) for n_chr in range(1, 21)], index=range(1, 21)
-)
+chr_maxs = pd.Series([max_chr_ind(df_cps, n_chr) for n_chr in range(1, 21)], index=range(1, 21))
 
-chr_lens = pd.Series(
-    [chr_maxs[n_chr] - chr_mins[n_chr] + 1 for n_chr in range(1, 21)],
-    index=range(1, 21),
-)
+chr_lens = pd.Series([chr_maxs[n_chr] - chr_mins[n_chr] + 1 for n_chr in range(1, 21)], index=range(1, 21),)
 
 
 chr_lens.to_pickle("data/chromosome_lengths.pkl")
@@ -156,14 +141,10 @@ chr_cum_lens = pd.Series(np.insert(chr_cum_lens, 0, 0)[:-1], index=range(1, 21))
 for df_cp in df_cps:
     for n_chr in range(1, 21):
         df_cp.loc[df_cp["chr_A"] == n_chr, "ind_A"] = (
-            df_cp[df_cp["chr_A"] == n_chr]["ind_A"]
-            - chr_mins[n_chr]
-            + chr_cum_lens[n_chr]
+            df_cp[df_cp["chr_A"] == n_chr]["ind_A"] - chr_mins[n_chr] + chr_cum_lens[n_chr]
         )
         df_cp.loc[df_cp["chr_B"] == n_chr, "ind_B"] = (
-            df_cp[df_cp["chr_B"] == n_chr]["ind_B"]
-            - chr_mins[n_chr]
-            + chr_cum_lens[n_chr]
+            df_cp[df_cp["chr_B"] == n_chr]["ind_B"] - chr_mins[n_chr] + chr_cum_lens[n_chr]
         )
     df_cp.sort_values(["chr_A", "chr_B", "ind_A", "ind_B"], inplace=True)
 # %% Write contact pairs to pickle

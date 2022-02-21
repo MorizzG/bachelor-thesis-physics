@@ -3,7 +3,7 @@
 
 # Maintainer: jglaser / All Developers are free to add commands for new features
 
-R""" Potentials between special pairs of particles
+r""" Potentials between special pairs of particles
 
 Special pairs are used to implement interactions between designated pairs of particles.
 They act much like bonds, except that the interaction potential is typically a pair potential,
@@ -14,17 +14,16 @@ specify an force (i.e. special_pairs.lj), are forces actually calculated between
 listed particles.
 """
 
-from hoomd import _hoomd
-from hoomd.md import _md
-from hoomd.md import force;
-from hoomd.md import bond;
-import hoomd;
+import math
+import sys
 
-import math;
-import sys;
+import hoomd
+from hoomd import _hoomd
+from hoomd.md import _md, bond, force
+
 
 class coeff:
-    R""" Define special_pair coefficients.
+    r""" Define special_pair coefficients.
 
     The coefficients for all special pair potentials are specified using this class. Coefficients are
     specified per pair type.
@@ -52,7 +51,7 @@ class coeff:
     # The main task to be performed during initialization is just to init some variables
     # \param self Python required class instance variable
     def __init__(self):
-        self.values = {};
+        self.values = {}
         self.default_coeff = {}
 
     ## \var values
@@ -72,10 +71,10 @@ class coeff:
     # Some coefficients have reasonable default values and the user should not be burdened with typing them in
     # all the time. set_default_coeff() sets
     def set_default_coeff(self, name, value):
-        self.default_coeff[name] = value;
+        self.default_coeff[name] = value
 
     def set(self, type, **coeffs):
-        R""" Sets parameters for special_pair types.
+        r""" Sets parameters for special_pair types.
 
         Args:
             type (str): Type of special_pair (or a list of type names)
@@ -102,34 +101,34 @@ class coeff:
             parameters as they were previously set.
 
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # listify the input
         type = hoomd.util.listify(type)
 
         for typei in type:
-            self.set_single(typei, coeffs);
+            self.set_single(typei, coeffs)
 
     ## \internal
     # \brief Sets a single parameter
     def set_single(self, type, coeffs):
-        type = str(type);
+        type = str(type)
 
         # create the type identifier if it hasn't been created yet
-        if (not type in self.values):
-            self.values[type] = {};
+        if not type in self.values:
+            self.values[type] = {}
 
         # update each of the values provided
         if len(coeffs) == 0:
-            hoomd.context.msg.error("No coefficients specified\n");
+            hoomd.context.msg.error("No coefficients specified\n")
         for name, val in coeffs.items():
-            self.values[type][name] = val;
+            self.values[type][name] = val
 
         # set the default values
         for name, val in self.default_coeff.items():
             # don't override a coeff if it is already set
             if not name in self.values[type]:
-                self.values[type][name] = val;
+                self.values[type][name] = val
 
     ## \internal
     # \brief Verifies that all values are set
@@ -141,39 +140,45 @@ class coeff:
     def verify(self, required_coeffs):
         # first, check that the system has been initialized
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot verify special_pair coefficients before initialization\n");
-            raise RuntimeError('Error verifying force coefficients');
+            hoomd.context.msg.error("Cannot verify special_pair coefficients before initialization\n")
+            raise RuntimeError("Error verifying force coefficients")
 
         # get a list of types from the particle data
-        ntypes = hoomd.context.current.system_definition.getPairData().getNTypes();
-        type_list = [];
-        for i in range(0,ntypes):
-            type_list.append(hoomd.context.current.system_definition.getPairData().getNameByType(i));
+        ntypes = hoomd.context.current.system_definition.getPairData().getNTypes()
+        type_list = []
+        for i in range(0, ntypes):
+            type_list.append(hoomd.context.current.system_definition.getPairData().getNameByType(i))
 
-        valid = True;
+        valid = True
         # loop over all possible types and verify that all required variables are set
-        for i in range(0,ntypes):
-            type = type_list[i];
+        for i in range(0, ntypes):
+            type = type_list[i]
 
             if type not in self.values.keys():
-                hoomd.context.msg.error("Pair type " +str(type) + " not found in pair coeff\n");
-                valid = False;
-                continue;
+                hoomd.context.msg.error("Pair type " + str(type) + " not found in pair coeff\n")
+                valid = False
+                continue
 
             # verify that all required values are set by counting the matches
-            count = 0;
+            count = 0
             for coeff_name in self.values[type].keys():
                 if not coeff_name in required_coeffs:
-                    hoomd.context.msg.notice(2, "Notice: Possible typo? Force coeff " + str(coeff_name) + " is specified for type " + str(type) + \
-                          ", but is not used by the special pair force\n");
+                    hoomd.context.msg.notice(
+                        2,
+                        "Notice: Possible typo? Force coeff "
+                        + str(coeff_name)
+                        + " is specified for type "
+                        + str(type)
+                        + ", but is not used by the special pair force\n",
+                    )
                 else:
-                    count += 1;
+                    count += 1
 
             if count != len(required_coeffs):
-                hoomd.context.msg.error("Special pair type " + str(type) + " is missing required coefficients\n");
-                valid = False;
+                hoomd.context.msg.error("Special pair type " + str(type) + " is missing required coefficients\n")
+                valid = False
 
-        return valid;
+        return valid
 
     ## \internal
     # \brief Gets the value of a single %special_pair %force coefficient
@@ -182,10 +187,10 @@ class coeff:
     # \param coeff_name Coefficient to get
     def get(self, type, coeff_name):
         if type not in self.values.keys():
-            hoomd.context.msg.error("Bug detected in force.coeff. Please report\n");
-            raise RuntimeError("Error setting special_pair coeff");
+            hoomd.context.msg.error("Bug detected in force.coeff. Please report\n")
+            raise RuntimeError("Error setting special_pair coeff")
 
-        return self.values[type][coeff_name];
+        return self.values[type][coeff_name]
 
     ## \internal
     # \brief Return metadata
@@ -212,36 +217,36 @@ class _special_pair(force._force):
     # Assigns a name to the force in force_name;
     def __init__(self, name=None):
         # initialize the base class
-        force._force.__init__(self, name);
+        force._force.__init__(self, name)
 
-        self.cpp_force = None;
+        self.cpp_force = None
 
         # setup the coefficient vector (use bond coefficients for that)
-        self.pair_coeff = coeff();
+        self.pair_coeff = coeff()
 
-        self.enabled = True;
+        self.enabled = True
 
     def update_coeffs(self):
-        coeff_list = self.required_coeffs;
+        coeff_list = self.required_coeffs
         # check that the force coefficients are valid
         if not self.pair_coeff.verify(coeff_list):
-           hoomd.context.msg.error("Not all force coefficients are set\n");
-           raise RuntimeError("Error updating force coefficients");
+            hoomd.context.msg.error("Not all force coefficients are set\n")
+            raise RuntimeError("Error updating force coefficients")
 
         # set all the params
-        ntypes = hoomd.context.current.system_definition.getPairData().getNTypes();
-        type_list = [];
-        for i in range(0,ntypes):
-            type_list.append(hoomd.context.current.system_definition.getPairData().getNameByType(i));
+        ntypes = hoomd.context.current.system_definition.getPairData().getNTypes()
+        type_list = []
+        for i in range(0, ntypes):
+            type_list.append(hoomd.context.current.system_definition.getPairData().getNameByType(i))
 
-        for i in range(0,ntypes):
+        for i in range(0, ntypes):
             # build a dict of the coeffs to pass to proces_coeff
-            coeff_dict = {};
+            coeff_dict = {}
             for name in coeff_list:
-                coeff_dict[name] = self.pair_coeff.get(type_list[i], name);
+                coeff_dict[name] = self.pair_coeff.get(type_list[i], name)
 
-            param = self.process_coeff(coeff_dict);
-            self.cpp_force.setParams(i, param);
+            param = self.process_coeff(coeff_dict)
+            self.cpp_force.setParams(i, param)
 
     ## \internal
     # \brief Get metadata
@@ -251,11 +256,12 @@ class _special_pair(force._force):
         # make sure coefficients are up-to-date
         self.update_coeffs()
 
-        data['pair_coeff'] = self.pair_coeff
+        data["pair_coeff"] = self.pair_coeff
         return data
 
+
 class lj(_special_pair):
-    R""" LJ special pair potential.
+    r""" LJ special pair potential.
 
     Args:
         name (str): Name of the special_pair instance.
@@ -297,43 +303,44 @@ class lj(_special_pair):
     .. versionadded:: 2.1
 
     """
-    def __init__(self,name=None):
-        hoomd.util.print_status_line();
+
+    def __init__(self, name=None):
+        hoomd.util.print_status_line()
 
         # initialize the base class
-        _special_pair.__init__(self);
+        _special_pair.__init__(self)
 
         # check that some bonds are defined
         if hoomd.context.current.system_definition.getPairData().getNGlobal() == 0:
-            hoomd.context.msg.error("No pairs are defined.\n");
-            raise RuntimeError("Error creating special pair forces");
+            hoomd.context.msg.error("No pairs are defined.\n")
+            raise RuntimeError("Error creating special pair forces")
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_force = _md.PotentialSpecialPairLJ(hoomd.context.current.system_definition,self.name);
+            self.cpp_force = _md.PotentialSpecialPairLJ(hoomd.context.current.system_definition, self.name)
         else:
-            self.cpp_force = _md.PotentialSpecialPairLJGPU(hoomd.context.current.system_definition,self.name);
+            self.cpp_force = _md.PotentialSpecialPairLJGPU(hoomd.context.current.system_definition, self.name)
 
-        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
         # setup the coefficient options
-        self.required_coeffs = ['epsilon','sigma','alpha','r_cut'];
-        self.pair_coeff.set_default_coeff('alpha', 1.0);
+        self.required_coeffs = ["epsilon", "sigma", "alpha", "r_cut"]
+        self.pair_coeff.set_default_coeff("alpha", 1.0)
 
     def process_coeff(self, coeff):
-        r_cut = coeff['r_cut'];
-        epsilon = coeff['epsilon'];
-        sigma = coeff['sigma'];
-        alpha = coeff['alpha'];
+        r_cut = coeff["r_cut"]
+        epsilon = coeff["epsilon"]
+        sigma = coeff["sigma"]
+        alpha = coeff["alpha"]
 
-        lj1 = 4.0 * epsilon * math.pow(sigma, 12.0);
-        lj2 = alpha * 4.0 * epsilon * math.pow(sigma, 6.0);
+        lj1 = 4.0 * epsilon * math.pow(sigma, 12.0)
+        lj2 = alpha * 4.0 * epsilon * math.pow(sigma, 6.0)
         r_cut_squared = r_cut * r_cut
-        return _hoomd.make_scalar3(lj1, lj2, r_cut_squared);
+        return _hoomd.make_scalar3(lj1, lj2, r_cut_squared)
 
 
 class coulomb(_special_pair):
-    R""" Coulomb special pair potential.
+    r""" Coulomb special pair potential.
 
     Args:
         name (str): Name of the special_pair instance.
@@ -373,33 +380,33 @@ class coulomb(_special_pair):
     .. versionchanged:: 2.2
 
     """
+
     def __init__(self, name=None):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # initialize the base class
-        _special_pair.__init__(self);
+        _special_pair.__init__(self)
 
         # check that some bonds are defined
         if hoomd.context.current.system_definition.getPairData().getNGlobal() == 0:
-            hoomd.context.msg.error("No pairs are defined.\n");
-            raise RuntimeError("Error creating special pair forces");
+            hoomd.context.msg.error("No pairs are defined.\n")
+            raise RuntimeError("Error creating special pair forces")
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_force = _md.PotentialSpecialPairCoulomb(hoomd.context.current.system_definition,self.name);
+            self.cpp_force = _md.PotentialSpecialPairCoulomb(hoomd.context.current.system_definition, self.name)
         else:
-            self.cpp_force = _md.PotentialSpecialPairCoulombGPU(hoomd.context.current.system_definition,self.name);
+            self.cpp_force = _md.PotentialSpecialPairCoulombGPU(hoomd.context.current.system_definition, self.name)
 
-        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
         # setup the coefficient options
-        self.required_coeffs = ['alpha', 'r_cut'];
-        self.pair_coeff.set_default_coeff('alpha', 1.0);
+        self.required_coeffs = ["alpha", "r_cut"]
+        self.pair_coeff.set_default_coeff("alpha", 1.0)
 
     def process_coeff(self, coeff):
-        r_cut = coeff['r_cut'];
-        alpha = coeff['alpha'];
+        r_cut = coeff["r_cut"]
+        alpha = coeff["alpha"]
 
-        r_cut_squared = r_cut * r_cut;
-        return _hoomd.make_scalar2(alpha, r_cut_squared);
-
+        r_cut_squared = r_cut * r_cut
+        return _hoomd.make_scalar2(alpha, r_cut_squared)

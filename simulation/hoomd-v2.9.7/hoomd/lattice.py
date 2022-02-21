@@ -1,7 +1,7 @@
 # Copyright (c) 2009-2019 The Regents of the University of Michigan
 # This file is part of the HOOMD-blue project, released under the BSD 3-Clause License.
 
-R""" Define lattices.
+r""" Define lattices.
 
 :py:mod:`hoomd.lattice` provides a general interface to define lattices to initialize systems.
 
@@ -9,9 +9,11 @@ See Also:
     :py:func:`hoomd.init.create_lattice`.
 """
 
-import numpy
-import hoomd
 import math
+
+import hoomd
+import numpy
+
 
 # Multiply two quaternions
 # Apply quaternion multiplication per http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
@@ -25,9 +27,10 @@ def _quatMult(q1, q2):
     t = q2[0]
     w = q2[1:]
     q = numpy.empty((4,), dtype=numpy.float64)
-    q[0] = s*t - numpy.dot(v, w)
-    q[1:] = s*w + t*v + numpy.cross(v,w)
+    q[0] = s * t - numpy.dot(v, w)
+    q[1:] = s * w + t * v + numpy.cross(v, w)
     return q
+
 
 # Rotate a vector by a unit quaternion
 # Quaternion rotation per http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
@@ -42,8 +45,9 @@ def _quatRot(q, v):
     w = q[0]
     r = q[1:]
     vnew = numpy.empty((3,), dtype=v.dtype)
-    vnew = v + 2*numpy.cross(r, numpy.cross(r,v) + w*v)
+    vnew = v + 2 * numpy.cross(r, numpy.cross(r, v) + w * v)
     return vnew
+
 
 # Given a set of lattice vectors, rotate to produce an upper triangular right-handed box
 # as a hoomd boxdim object and a rotation quaternion that brings particles in the original coordinate system to the new one.
@@ -54,45 +58,45 @@ def _quatRot(q, v):
 # \param a2 second lattice vector
 # \param a3 third lattice vector
 # \returns (box, q) tuple of boxdim object and rotation quaternion
-def _latticeToHoomd(a1, a2, a3=[0.,0.,1.], ndim=3):
+def _latticeToHoomd(a1, a2, a3=[0.0, 0.0, 1.0], ndim=3):
     a1 = numpy.array(a1, dtype=numpy.float64)
     a2 = numpy.array(a2, dtype=numpy.float64)
     a3 = numpy.array(a3, dtype=numpy.float64)
     a1.resize((3,))
     a2.resize((3,))
     a3.resize((3,))
-    xhat = numpy.array([1.,0.,0.])
-    yhat = numpy.array([0.,1.,0.])
-    zhat = numpy.array([0.,0.,1.])
+    xhat = numpy.array([1.0, 0.0, 0.0])
+    yhat = numpy.array([0.0, 1.0, 0.0])
+    zhat = numpy.array([0.0, 0.0, 1.0])
 
     # Find quaternion to rotate first lattice vector to x axis
-    a1mag = numpy.sqrt(numpy.dot(a1,a1))
-    v1 = a1/a1mag + xhat
-    v1mag = numpy.sqrt(numpy.dot(v1,v1))
+    a1mag = numpy.sqrt(numpy.dot(a1, a1))
+    v1 = a1 / a1mag + xhat
+    v1mag = numpy.sqrt(numpy.dot(v1, v1))
     if v1mag > 1e-6:
-        u1 = v1/v1mag
+        u1 = v1 / v1mag
     else:
         # a1 is antialigned with xhat, so rotate around any unit vector perpendicular to xhat
         u1 = yhat
-    q1 = numpy.concatenate(([numpy.cos(numpy.pi/2)], numpy.sin(numpy.pi/2)*u1))
+    q1 = numpy.concatenate(([numpy.cos(numpy.pi / 2)], numpy.sin(numpy.pi / 2) * u1))
 
     # Find quaternion to rotate second lattice vector to xy plane after applying above rotation
     a2prime = _quatRot(q1, a2)
-    angle = -1*numpy.arctan2(a2prime[2], a2prime[1])
-    q2 = numpy.concatenate(([numpy.cos(angle/2)], numpy.sin(angle/2)*xhat))
+    angle = -1 * numpy.arctan2(a2prime[2], a2prime[1])
+    q2 = numpy.concatenate(([numpy.cos(angle / 2)], numpy.sin(angle / 2) * xhat))
 
-    q = _quatMult(q2,q1)
+    q = _quatMult(q2, q1)
 
     Lx = numpy.sqrt(numpy.dot(a1, a1))
     a2x = numpy.dot(a1, a2) / Lx
-    Ly = numpy.sqrt(numpy.dot(a2,a2) - a2x*a2x)
+    Ly = numpy.sqrt(numpy.dot(a2, a2) - a2x * a2x)
     xy = a2x / Ly
     v0xv1 = numpy.cross(a1, a2)
     v0xv1mag = numpy.sqrt(numpy.dot(v0xv1, v0xv1))
     Lz = numpy.dot(a3, v0xv1) / v0xv1mag
     a3x = numpy.dot(a1, a3) / Lx
     xz = a3x / Lz
-    yz = (numpy.dot(a2, a3) - a2x*a3x) / (Ly*Lz)
+    yz = (numpy.dot(a2, a3) - a2x * a3x) / (Ly * Lz)
 
     box = hoomd.data.boxdim(Lx=Lx, Ly=Ly, Lz=Lz, xy=xy, xz=xz, yz=yz, dimensions=ndim)
 
@@ -100,7 +104,7 @@ def _latticeToHoomd(a1, a2, a3=[0.,0.,1.], ndim=3):
 
 
 class unitcell(object):
-    R""" Define a unit cell.
+    r""" Define a unit cell.
 
     Args:
         N (int): Number of particles in the unit cell.
@@ -144,108 +148,110 @@ class unitcell(object):
 
     """
 
-    def __init__(self,
-                 N,
-                 a1,
-                 a2,
-                 a3,
-                 dimensions = 3,
-                 position = None,
-                 type_name = None,
-                 mass = None,
-                 charge = None,
-                 diameter = None,
-                 moment_inertia = None,
-                 orientation = None):
+    def __init__(
+        self,
+        N,
+        a1,
+        a2,
+        a3,
+        dimensions=3,
+        position=None,
+        type_name=None,
+        mass=None,
+        charge=None,
+        diameter=None,
+        moment_inertia=None,
+        orientation=None,
+    ):
 
-        self.N = N;
-        self.a1 = a1;
-        self.a2 = a2;
-        self.a3 = a3;
-        self.dimensions = dimensions;
+        self.N = N
+        self.a1 = a1
+        self.a2 = a2
+        self.a3 = a3
+        self.dimensions = dimensions
 
         if position is None:
-            self.position = numpy.array([(0,0,0)] * self.N, dtype=numpy.float64);
+            self.position = numpy.array([(0, 0, 0)] * self.N, dtype=numpy.float64)
         else:
-            self.position = numpy.asarray(position, dtype=numpy.float64);
+            self.position = numpy.asarray(position, dtype=numpy.float64)
             if len(self.position) != N:
-                raise ValueError("Particle properties must have length N");
+                raise ValueError("Particle properties must have length N")
 
         if type_name is None:
-            self.type_name = ['A'] * self.N
+            self.type_name = ["A"] * self.N
         else:
-            self.type_name = type_name;
+            self.type_name = type_name
             if len(self.type_name) != N:
-                raise ValueError("Particle properties must have length N");
+                raise ValueError("Particle properties must have length N")
 
         if mass is None:
-            self.mass = numpy.array([1.0] * self.N, dtype=numpy.float64);
+            self.mass = numpy.array([1.0] * self.N, dtype=numpy.float64)
         else:
-            self.mass = numpy.asarray(mass, dtype=numpy.float64);
+            self.mass = numpy.asarray(mass, dtype=numpy.float64)
             if len(self.mass) != N:
-                raise ValueError("Particle properties must have length N");
+                raise ValueError("Particle properties must have length N")
 
         if charge is None:
-            self.charge = numpy.array([0.0] * self.N, dtype=numpy.float64);
+            self.charge = numpy.array([0.0] * self.N, dtype=numpy.float64)
         else:
-            self.charge = numpy.asarray(charge, dtype=numpy.float64);
+            self.charge = numpy.asarray(charge, dtype=numpy.float64)
             if len(self.charge) != N:
-                raise ValueError("Particle properties must have length N");
+                raise ValueError("Particle properties must have length N")
 
         if diameter is None:
-            self.diameter = numpy.array([1.0] * self.N, dtype=numpy.float64);
+            self.diameter = numpy.array([1.0] * self.N, dtype=numpy.float64)
         else:
-            self.diameter = numpy.asarray(diameter, dtype=numpy.float64);
+            self.diameter = numpy.asarray(diameter, dtype=numpy.float64)
             if len(self.diameter) != N:
-                raise ValueError("Particle properties must have length N");
+                raise ValueError("Particle properties must have length N")
 
         if moment_inertia is None:
-            self.moment_inertia = numpy.array([(0,0,0)] * self.N, dtype=numpy.float64);
+            self.moment_inertia = numpy.array([(0, 0, 0)] * self.N, dtype=numpy.float64)
         else:
-            self.moment_inertia = numpy.asarray(moment_inertia, dtype=numpy.float64);
+            self.moment_inertia = numpy.asarray(moment_inertia, dtype=numpy.float64)
             if len(self.moment_inertia) != N:
-                raise ValueError("Particle properties must have length N");
+                raise ValueError("Particle properties must have length N")
 
         if orientation is None:
-            self.orientation = numpy.array([(1,0,0,0)] * self.N, dtype=numpy.float64);
+            self.orientation = numpy.array([(1, 0, 0, 0)] * self.N, dtype=numpy.float64)
         else:
-            self.orientation = numpy.asarray(orientation, dtype=numpy.float64);
+            self.orientation = numpy.asarray(orientation, dtype=numpy.float64)
             if len(self.orientation) != N:
-                raise ValueError("Particle properties must have length N");
+                raise ValueError("Particle properties must have length N")
 
     def get_type_list(self):
-        R""" Get a list of the unique type names in the unit cell.
+        r""" Get a list of the unique type names in the unit cell.
 
         Returns:
             A :py:class:`list` of the unique type names present in the unit cell.
         """
 
-        type_list = [];
+        type_list = []
         for name in self.type_name:
             if not name in type_list:
-                type_list.append(name);
+                type_list.append(name)
 
-        return type_list;
+        return type_list
 
     def get_typeid_mapping(self):
-        R""" Get a type name to typeid mapping.
+        r""" Get a type name to typeid mapping.
 
         Returns:
             A :py:class:`dict` that maps type names to integer type ids.
         """
 
-        mapping = {};
-        idx = 0;
+        mapping = {}
+        idx = 0
 
         for name in self.type_name:
             if not name in mapping:
-                mapping[name] = idx;
-                idx = idx + 1;
+                mapping[name] = idx
+                idx = idx + 1
 
-        return mapping;
+        return mapping
 
     def get_snapshot(self):
-        R""" Get a snapshot.
+        r""" Get a snapshot.
 
         Returns:
             A snapshot representing the lattice.
@@ -257,26 +263,27 @@ class unitcell(object):
         """
 
         box, q = _latticeToHoomd(self.a1, self.a2, self.a3, ndim=self.dimensions)
-        snap = hoomd.data.make_snapshot(N=self.N, box=box, dtype='double');
-        mapping = self.get_typeid_mapping();
+        snap = hoomd.data.make_snapshot(N=self.N, box=box, dtype="double")
+        mapping = self.get_typeid_mapping()
 
         if hoomd.comm.get_rank() == 0:
-            snap.particles.types = self.get_type_list();
-            snap.particles.typeid[:] = [mapping[name] for name in self.type_name];
-            snap.particles.mass[:] = self.mass[:];
-            snap.particles.charge[:] = self.charge[:];
-            snap.particles.diameter[:] = self.diameter[:];
-            snap.particles.moment_inertia[:] = self.moment_inertia[:];
+            snap.particles.types = self.get_type_list()
+            snap.particles.typeid[:] = [mapping[name] for name in self.type_name]
+            snap.particles.mass[:] = self.mass[:]
+            snap.particles.charge[:] = self.charge[:]
+            snap.particles.diameter[:] = self.diameter[:]
+            snap.particles.moment_inertia[:] = self.moment_inertia[:]
 
             for i in range(self.N):
                 snap.particles.position[i] = _quatRot(q, self.position[i])
                 snap.particles.position[i], img = box.wrap(snap.particles.position[i])
                 snap.particles.orientation[i] = _quatMult(q, self.orientation[i])
 
-        return snap;
+        return snap
 
-def sc(a, type_name='A'):
-    R""" Create a simple cubic lattice (3D).
+
+def sc(a, type_name="A"):
+    r""" Create a simple cubic lattice (3D).
 
     Args:
         a (float): Lattice constant.
@@ -304,11 +311,12 @@ def sc(a, type_name='A'):
                              \end{array}\right)
         \end{eqnarray*}
     """
-    hoomd.util.print_status_line();
-    return unitcell(N=1, type_name=[type_name], a1=[a,0,0], a2=[0,a,0], a3=[0,0,a], dimensions=3);
+    hoomd.util.print_status_line()
+    return unitcell(N=1, type_name=[type_name], a1=[a, 0, 0], a2=[0, a, 0], a3=[0, 0, a], dimensions=3)
 
-def bcc(a, type_name='A'):
-    R""" Create a body centered cubic lattice (3D).
+
+def bcc(a, type_name="A"):
+    r""" Create a body centered cubic lattice (3D).
 
     Args:
         a (float): Lattice constant.
@@ -337,17 +345,20 @@ def bcc(a, type_name='A'):
                              \end{array}\right)
         \end{eqnarray*}
     """
-    hoomd.util.print_status_line();
-    return unitcell(N=2,
-                    type_name=[type_name, type_name],
-                    position=[[0,0,0],[a/2,a/2,a/2]],
-                    a1=[a,0,0],
-                    a2=[0,a,0],
-                    a3=[0,0,a],
-                    dimensions=3);
+    hoomd.util.print_status_line()
+    return unitcell(
+        N=2,
+        type_name=[type_name, type_name],
+        position=[[0, 0, 0], [a / 2, a / 2, a / 2]],
+        a1=[a, 0, 0],
+        a2=[0, a, 0],
+        a3=[0, 0, a],
+        dimensions=3,
+    )
 
-def fcc(a, type_name='A'):
-    R""" Create a face centered cubic lattice (3D).
+
+def fcc(a, type_name="A"):
+    r""" Create a face centered cubic lattice (3D).
 
     Args:
         a (float): Lattice constant.
@@ -378,17 +389,20 @@ def fcc(a, type_name='A'):
                              \end{array}\right)
         \end{eqnarray*}
     """
-    hoomd.util.print_status_line();
-    return unitcell(N=4,
-                    type_name=[type_name]*4,
-                    position=[[0,0,0],[0,a/2,a/2],[a/2,0,a/2],[a/2,a/2,0]],
-                    a1=[a,0,0],
-                    a2=[0,a,0],
-                    a3=[0,0,a],
-                    dimensions=3);
+    hoomd.util.print_status_line()
+    return unitcell(
+        N=4,
+        type_name=[type_name] * 4,
+        position=[[0, 0, 0], [0, a / 2, a / 2], [a / 2, 0, a / 2], [a / 2, a / 2, 0]],
+        a1=[a, 0, 0],
+        a2=[0, a, 0],
+        a3=[0, 0, a],
+        dimensions=3,
+    )
 
-def sq(a, type_name='A'):
-    R""" Create a square lattice (2D).
+
+def sq(a, type_name="A"):
+    r""" Create a square lattice (2D).
 
     Args:
         a (float): Lattice constant.
@@ -415,11 +429,12 @@ def sq(a, type_name='A'):
                              \end{array}\right)
         \end{eqnarray*}
     """
-    hoomd.util.print_status_line();
-    return unitcell(N=1, type_name=[type_name], a1=[a,0,0], a2=[0,a,0], a3=[0,0,1], dimensions=2);
+    hoomd.util.print_status_line()
+    return unitcell(N=1, type_name=[type_name], a1=[a, 0, 0], a2=[0, a, 0], a3=[0, 0, 1], dimensions=2)
 
-def hex(a, type_name='A'):
-    R""" Create a hexagonal lattice (2D).
+
+def hex(a, type_name="A"):
+    r""" Create a hexagonal lattice (2D).
 
     Args:
         a (float): Lattice constant.
@@ -451,11 +466,13 @@ def hex(a, type_name='A'):
         \end{eqnarray*}
     """
 
-    hoomd.util.print_status_line();
-    return unitcell(N=2,
-                    type_name=[type_name, type_name],
-                    position=[[0,0,0],[a/2,math.sqrt(3)*a/2,0]],
-                    a1=[a,0,0],
-                    a2=[0,math.sqrt(3)*a,0],
-                    a3=[0,0,1],
-                    dimensions=2);
+    hoomd.util.print_status_line()
+    return unitcell(
+        N=2,
+        type_name=[type_name, type_name],
+        position=[[0, 0, 0], [a / 2, math.sqrt(3) * a / 2, 0]],
+        a1=[a, 0, 0],
+        a2=[0, math.sqrt(3) * a, 0],
+        a3=[0, 0, 1],
+        dimensions=2,
+    )

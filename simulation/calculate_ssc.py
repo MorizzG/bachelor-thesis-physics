@@ -66,13 +66,11 @@ def make_hic_contact_matrix(n_cell: int) -> sp.csr_matrix:
         CSR sparse contact matrix
     """
     cps = np.unique(
-        pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")[["ind_A", "ind_B"]].to_numpy(),
-        axis=0,
+        pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")[["ind_A", "ind_B"]].to_numpy(), axis=0,
     )
 
     hic_contact_mat = sp.coo_matrix(
-        (np.repeat(1, cps.shape[0]), (cps[:, 0], cps[:, 1])),
-        shape=(N_PARTICLES, N_PARTICLES),
+        (np.repeat(1, cps.shape[0]), (cps[:, 0], cps[:, 1])), shape=(N_PARTICLES, N_PARTICLES),
     ).tocsr()
 
     # cps = cps[cps.argsort(axis=0)[:, 0]]  # sort by first entry
@@ -131,14 +129,7 @@ def _f(h):
             sim_contact_mat1 = load_sim_contact_matrix(n_cell1)
             sim_contact_mat2 = load_sim_contact_matrix(n_cell2)
 
-            s = scc.genome_scc(
-                sim_contact_mat1,
-                sim_contact_mat2,
-                BIN_SIZE,
-                chroms_lengths,
-                MAX_DIST,
-                h,
-            )
+            s = scc.genome_scc(sim_contact_mat1, sim_contact_mat2, BIN_SIZE, chroms_lengths, MAX_DIST, h,)
 
             mat[i, j] = s
             mat[j, i] = s
@@ -221,72 +212,72 @@ if __name__ == "__main__":
 
 # %% Many h-values test
 
-    # scc_hic = np.empty((8, 8))
+# scc_hic = np.empty((8, 8))
 
-    # h_vec = [1, 3, 5, 8, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+# h_vec = [1, 3, 5, 8, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
-    # scc_sim = np.empty((len(h_vec), 8, 8))
+# scc_sim = np.empty((len(h_vec), 8, 8))
 
-    # for n_h, h in enumerate(h_vec):
-    #     for i in range(8):
-    #         for j in range(i + 1):
-    #             n_cell1 = i + 1
-    #             n_cell2 = j + 1
+# for n_h, h in enumerate(h_vec):
+#     for i in range(8):
+#         for j in range(i + 1):
+#             n_cell1 = i + 1
+#             n_cell2 = j + 1
 
-    #             # hic cross sccs
-    #             # hic_contact_mat1 = make_hic_contact_matrix(n_cell1)
-    #             # hic_contact_mat2 = make_hic_contact_matrix(n_cell2)
+#             # hic cross sccs
+#             # hic_contact_mat1 = make_hic_contact_matrix(n_cell1)
+#             # hic_contact_mat2 = make_hic_contact_matrix(n_cell2)
 
-    #             # s = scc.genome_scc(
-    #             #     hic_contact_mat1, hic_contact_mat2, BIN_SIZE, chrom_lengths, MAX_DIST, H_VAL
-    #             # )
+#             # s = scc.genome_scc(
+#             #     hic_contact_mat1, hic_contact_mat2, BIN_SIZE, chrom_lengths, MAX_DIST, H_VAL
+#             # )
 
-    #             # scc_hic[i, j] = s
-    #             # scc_hic[j, i] = s
+#             # scc_hic[i, j] = s
+#             # scc_hic[j, i] = s
 
-    #             # sim cross sccs
-    #             sim_contact_mat1 = load_sim_contact_matrix(n_cell1)
-    #             sim_contact_mat2 = load_sim_contact_matrix(n_cell2)
+#             # sim cross sccs
+#             sim_contact_mat1 = load_sim_contact_matrix(n_cell1)
+#             sim_contact_mat2 = load_sim_contact_matrix(n_cell2)
 
-    #             s = scc.genome_scc(
-    #                 sim_contact_mat1,
-    #                 sim_contact_mat2,
-    #                 BIN_SIZE,
-    #                 chroms_lengths,
-    #                 MAX_DIST,
-    #                 h,
-    #             )
+#             s = scc.genome_scc(
+#                 sim_contact_mat1,
+#                 sim_contact_mat2,
+#                 BIN_SIZE,
+#                 chroms_lengths,
+#                 MAX_DIST,
+#                 h,
+#             )
 
-    #             scc_sim[n_h, i, j] = s
-    #             scc_sim[n_h, j, i] = s
-    #         print(
-    #             f"Progess: {(((i+1) * (i+2)) / 2  + n_h * 8*7) / (len(h_vec)*8*7):.3%}"
-    #         )
-    # scc_means = scc_sim.mean(axis=(1, 2))
+#             scc_sim[n_h, i, j] = s
+#             scc_sim[n_h, j, i] = s
+#         print(
+#             f"Progess: {(((i+1) * (i+2)) / 2  + n_h * 8*7) / (len(h_vec)*8*7):.3%}"
+#         )
+# scc_means = scc_sim.mean(axis=(1, 2))
 
-    # p = Pool(8)
+# p = Pool(8)
 
-    # mats = p.map(_f, h_vec)
+# mats = p.map(_f, h_vec)
 
-    # scc_means = [mat.mean() for mat in mats]
+# scc_means = [mat.mean() for mat in mats]
 
-    # np.save("data/scc/scc_hic.npy", scc_hic)
-    # np.save("data/scc/scc_sim.npy", scc_sim)
+# np.save("data/scc/scc_hic.npy", scc_hic)
+# np.save("data/scc/scc_sim.npy", scc_sim)
 
-    # scc_hic = np.load("data/scc/scc_hic.npy")
-    # scc_sim = np.load("data/scc/scc_sim.npy")
+# scc_hic = np.load("data/scc/scc_hic.npy")
+# scc_sim = np.load("data/scc/scc_sim.npy")
 
-    # print()
+# print()
 
-    # print(scc_hic)
+# print(scc_hic)
 
-    # for n_h in range(len(h_vec)):
-    #     print(scc_sim[n_h, :, :])
-    #     print()
+# for n_h in range(len(h_vec)):
+#     print(scc_sim[n_h, :, :])
+#     print()
 
-    # plt.plot(h_vec, scc_means, "C0-o")
+# plt.plot(h_vec, scc_means, "C0-o")
 
-    # plt.figure()
+# plt.figure()
 
 # %%
 #     print()
@@ -328,4 +319,4 @@ if __name__ == "__main__":
 
 #     print(scc_mat)
 
-    # input()
+# input()

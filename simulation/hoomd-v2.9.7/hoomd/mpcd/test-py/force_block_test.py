@@ -4,10 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 # unit tests for mpcd block force
 class mpcd_force_block_test(unittest.TestCase):
@@ -16,11 +17,11 @@ class mpcd_force_block_test(unittest.TestCase):
         hoomd.context.initialize()
 
         # default testing configuration
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.0)))
 
         # initialize the system from the starting snapshot
         snap = mpcd.data.make_snapshot(N=3)
-        snap.particles.position[:] = [[0.,-1.,2.],[1.,1.,-2.],[0.,0.,0.]]
+        snap.particles.position[:] = [[0.0, -1.0, 2.0], [1.0, 1.0, -2.0], [0.0, 0.0, 0.0]]
         self.s = mpcd.init.read_snapshot(snap)
 
     # test for initializing block force field
@@ -64,8 +65,8 @@ class mpcd_force_block_test(unittest.TestCase):
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.velocity, ((0.2,0,0),(-0.2,0,0),(0.2,0,0)))
-            snap.particles.velocity[:] = 0.
+            np.testing.assert_array_almost_equal(snap.particles.velocity, ((0.2, 0, 0), (-0.2, 0, 0), (0.2, 0, 0)))
+            snap.particles.velocity[:] = 0.0
         self.s.restore_snapshot(snap)
 
         # run another step, but now the particle at the origin is outside the blocks
@@ -75,8 +76,8 @@ class mpcd_force_block_test(unittest.TestCase):
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.velocity, ((0.2,0,0),(-0.2,0,0),(0,0,0)))
-            snap.particles.velocity[:] = 0.
+            np.testing.assert_array_almost_equal(snap.particles.velocity, ((0.2, 0, 0), (-0.2, 0, 0), (0, 0, 0)))
+            snap.particles.velocity[:] = 0.0
         self.s.restore_snapshot(snap)
 
         # remove force and stream freely
@@ -84,10 +85,11 @@ class mpcd_force_block_test(unittest.TestCase):
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.velocity, ((0,0,0),(0,0,0),(0,0,0)))
+            np.testing.assert_array_almost_equal(snap.particles.velocity, ((0, 0, 0), (0, 0, 0), (0, 0, 0)))
 
     def tearDown(self):
         del self.s
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

@@ -1,7 +1,7 @@
 # Copyright (c) 2009-2019 The Regents of the University of Michigan
 # This file is part of the HOOMD-blue project, released under the BSD 3-Clause License.
 
-R""" Commands that require the h5py package at runtime.
+r""" Commands that require the h5py package at runtime.
 
 All commands that are part of this module require the h5py package a
 python API for hdf5. In addition, this module is an opt-in. As a
@@ -9,11 +9,12 @@ consequence you'll need to import it via `import hoomd.hdf5` before
 you can use any command.
 
 """
-from hoomd import _hoomd
-from hoomd.analyze import _analyzer
+import os
+
 import hoomd
 import numpy
-import os
+from hoomd import _hoomd
+from hoomd.analyze import _analyzer
 
 try:
     import h5py
@@ -25,7 +26,7 @@ except ImportError as error:
 
 
 class File(h5py.File):
-    R""" Thin wrapper of the h5py.File class.
+    r""" Thin wrapper of the h5py.File class.
 
     This class ensures, that opening and close operations within a
     context manager are only executed on the root MPI rank.
@@ -45,7 +46,7 @@ class File(h5py.File):
 
 
 class log(hoomd.analyze._analyzer):
-    R""" Log a number of calculated quantities or matrices to a hdf5 file.
+    r""" Log a number of calculated quantities or matrices to a hdf5 file.
 
     Args:
         h5file(:py:class:`hoomd.hdf5.File`): Instance describing the opened h5file.
@@ -92,10 +93,12 @@ class log(hoomd.analyze._analyzer):
     def __init__(self, h5file, period, quantities=list(), matrix_quantities=list(), phase=0):
         hoomd.util.print_status_line()
         if not isinstance(h5file, hoomd.hdf5.File):
-            hoomd.context.msg.error("HDF5 file descriptor is no instance of h5py.File, which is the hoomd thin wrapper for hdf5 file descriptors.")
+            hoomd.context.msg.error(
+                "HDF5 file descriptor is no instance of h5py.File, which is the hoomd thin wrapper for hdf5 file descriptors."
+            )
             raise RuntimeError("Error creating hoomd.hdf5.log")
         # store metadata
-        self.metadata_fields = ['h5file', 'period']
+        self.metadata_fields = ["h5file", "period"]
         self.h5file = h5file
         self.period = period
 
@@ -115,7 +118,7 @@ class log(hoomd.analyze._analyzer):
         hoomd.context.current.loggers.append(self)
 
     def set_params(self, quantities=None, matrix_quantities=None):
-        R""" Change the parameters of the log.
+        r""" Change the parameters of the log.
 
         Warning:
            Do not change the number or order of logged non-matrix quantities compared to values stored in the file.
@@ -137,7 +140,7 @@ class log(hoomd.analyze._analyzer):
             self.cpp_analyzer.setLoggedMatrixQuantities(matrix_quantity_list)
 
     def query(self, quantity, force_matrix=False):
-        R"""
+        r"""
             Get the last logged value of a quantity which has been written to the file.
             If quantity is registered as a non-matrix quantity, its value is returned.
             If it is not registered as a non-matrix quantity, it is assumed to be a matrix quantity.
@@ -155,7 +158,7 @@ class log(hoomd.analyze._analyzer):
         matrix = False
         if not force_matrix:
             logged_quantities = self.cpp_analyzer.getLoggedQuantities()
-            logged_quantities.append('timestep')
+            logged_quantities.append("timestep")
             matrix = quantity not in logged_quantities
         else:
             matrix = True
@@ -169,7 +172,7 @@ class log(hoomd.analyze._analyzer):
             return self.cpp_analyzer.getMatrixQuantity(quantity, timestep)
 
     def register_callback(self, name, callback, matrix=False):
-        R""" Register a callback to produce a logged quantity.
+        r""" Register a callback to produce a logged quantity.
 
         Args:
             name (str): Name of the quantity
@@ -210,7 +213,7 @@ class log(hoomd.analyze._analyzer):
         hoomd.context.current.system.registerLogger(self.cpp_analyzer)
 
     def disable(self):
-        R""" Disable the logger.
+        r""" Disable the logger.
 
         Examples::
 
@@ -229,7 +232,7 @@ class log(hoomd.analyze._analyzer):
         hoomd.context.current.loggers.remove(self)
 
     def enable(self):
-        R""" Enables the logger
+        r""" Enables the logger
 
         Examples::
 
@@ -273,12 +276,14 @@ class log(hoomd.analyze._analyzer):
             old_size = data_set.shape[0]
 
             if data_set.shape[1] != new_array.shape[0]:
-                hoomd.context.msg.error("The number of logged quantities does not match"
-                                        " with the number of quantities stored in the file.")
+                hoomd.context.msg.error(
+                    "The number of logged quantities does not match"
+                    " with the number of quantities stored in the file."
+                )
                 raise RuntimeError("Error write quantities with log_hdf5.")
 
             data_set.resize(old_size + 1, axis=0)
-            data_set[old_size, ] = new_array
+            data_set[old_size,] = new_array
 
     # \internal
     # \brief Writes the logged matrix quantities to file
@@ -331,7 +336,7 @@ class log(hoomd.analyze._analyzer):
                 old_size = data_set.shape[0]
 
                 data_set.resize(old_size + 1, axis=0)
-                data_set[old_size, ] = new_matrix
+                data_set[old_size,] = new_matrix
 
     # \internal
     # \brief prepare and check the hdf5 file for non-matrix quantity dump
@@ -347,8 +352,10 @@ class log(hoomd.analyze._analyzer):
                         for key in data_set.attrs.keys():
                             del data_set.attrs[key]
                     else:
-                        hoomd.context.msg.error("Changing the number of logged quantities is impossible"
-                                                " if there are already logged quantities.")
+                        hoomd.context.msg.error(
+                            "Changing the number of logged quantities is impossible"
+                            " if there are already logged quantities."
+                        )
                         raise RuntimeError("Error updating quantities with log_hdf5.")
             else:
                 data_set = f.create_dataset("quantities", shape=(0, len(quantities)), maxshape=(None, len(quantities)))
@@ -357,8 +364,10 @@ class log(hoomd.analyze._analyzer):
             for i in range(len(quantities)):
                 try:
                     if i != data_set.attrs[quantities[i]]:
-                        hoomd.context.msg.error("Quantity " + quantities[i] + " is not stored in the correct position."
-                                                " stored: " + str(data_set.attrs[quantities[i]]) + " new: " + str(i))
+                        hoomd.context.msg.error(
+                            "Quantity " + quantities[i] + " is not stored in the correct position."
+                            " stored: " + str(data_set.attrs[quantities[i]]) + " new: " + str(i)
+                        )
                         raise RuntimeError("Error updating quantities with log_hdf5.")
                 except KeyError:
                     for key in data_set.attrs.keys():

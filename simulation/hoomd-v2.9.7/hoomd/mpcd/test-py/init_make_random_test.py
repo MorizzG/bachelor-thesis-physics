@@ -4,16 +4,18 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
+import numpy as np
 from hoomd import mpcd
+
 
 # unit tests for snapshots with mpcd particle data
 class mpcd_init_make_random(unittest.TestCase):
     def setUp(self):
         hoomd.context.initialize()
         # initialize an empty snapshot
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.0)))
 
     def test_init(self):
         s = mpcd.init.make_random(N=3, kT=1.0, seed=7)
@@ -52,22 +54,23 @@ class mpcd_init_make_random(unittest.TestCase):
         if hoomd.comm.get_rank() == 0:
             # histogram particles long x, y, and z and check uniform with loose tol
             pos = snap.particles.position
-            hist,_ = np.histogram(pos[:,0], bins=10, range=(-5.,5.))
-            np.testing.assert_allclose(hist, 10000., rtol=0.05)
-            hist,_ = np.histogram(pos[:,1], bins=10, range=(-5.,5.))
-            np.testing.assert_allclose(hist, 10000., rtol=0.05)
-            hist,_ = np.histogram(pos[:,2], bins=10, range=(-5.,5.))
-            np.testing.assert_allclose(hist, 10000., rtol=0.05)
+            hist, _ = np.histogram(pos[:, 0], bins=10, range=(-5.0, 5.0))
+            np.testing.assert_allclose(hist, 10000.0, rtol=0.05)
+            hist, _ = np.histogram(pos[:, 1], bins=10, range=(-5.0, 5.0))
+            np.testing.assert_allclose(hist, 10000.0, rtol=0.05)
+            hist, _ = np.histogram(pos[:, 2], bins=10, range=(-5.0, 5.0))
+            np.testing.assert_allclose(hist, 10000.0, rtol=0.05)
 
             # check velocities are distributed OK using loose tolerance on mean and variance
             vel = snap.particles.velocity
-            vel = np.reshape(vel, (3*snap.particles.N, 1))
+            vel = np.reshape(vel, (3 * snap.particles.N, 1))
             self.assertAlmostEqual(np.mean(vel), 0.0, places=5)
             # sigma^2 = kT / m
-            self.assertAlmostEqual(np.mean(vel**2), 0.5, places=2)
+            self.assertAlmostEqual(np.mean(vel ** 2), 0.5, places=2)
 
     def tearDown(self):
         pass
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

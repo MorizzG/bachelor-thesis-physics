@@ -4,10 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 # unit tests for mpcd.collide.srd
 class mpcd_collide_srd_test(unittest.TestCase):
@@ -16,7 +17,7 @@ class mpcd_collide_srd_test(unittest.TestCase):
         hoomd.context.initialize()
 
         # default testing configuration
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.0)))
 
         # initialize the system from the starting snapshot
         mpcd.init.read_snapshot(mpcd.data.make_snapshot(N=1))
@@ -26,7 +27,7 @@ class mpcd_collide_srd_test(unittest.TestCase):
 
     # test basic creation
     def test_create(self):
-        srd = mpcd.collide.srd(seed=42, period=5, angle=90.)
+        srd = mpcd.collide.srd(seed=42, period=5, angle=90.0)
         self.assertEqual(srd.enabled, True)
         self.assertEqual(hoomd.context.current.mpcd._collide, srd)
 
@@ -41,11 +42,11 @@ class mpcd_collide_srd_test(unittest.TestCase):
     # test for setting of embedded group
     def test_embed(self):
         group = hoomd.group.all()
-        srd = mpcd.collide.srd(seed=42, period=5, angle=90., group=group)
+        srd = mpcd.collide.srd(seed=42, period=5, angle=90.0, group=group)
         self.assertEqual(srd.group, group)
         srd.disable()
 
-        srd2 = mpcd.collide.srd(seed=7, period=10, angle=130.)
+        srd2 = mpcd.collide.srd(seed=7, period=10, angle=130.0)
         srd2.embed(group)
         self.assertEqual(srd2.group, group)
 
@@ -53,29 +54,29 @@ class mpcd_collide_srd_test(unittest.TestCase):
     def test_multiple(self):
         # after a collision rule has been set, another cannot be created without
         # removing the first one
-        srd = mpcd.collide.srd(seed=42, period=5, angle=90.)
+        srd = mpcd.collide.srd(seed=42, period=5, angle=90.0)
         with self.assertRaises(RuntimeError):
-            mpcd.collide.srd(seed=7, period=10, angle=130.)
+            mpcd.collide.srd(seed=7, period=10, angle=130.0)
 
         # okay, now it should work
         srd.disable()
-        mpcd.collide.srd(seed=7, period=10, angle=130.)
+        mpcd.collide.srd(seed=7, period=10, angle=130.0)
 
     def test_set_params(self):
-        srd = mpcd.collide.srd(seed=42, period=5, angle=130.)
-        self.assertEqual(srd.angle, 130.)
+        srd = mpcd.collide.srd(seed=42, period=5, angle=130.0)
+        self.assertEqual(srd.angle, 130.0)
         self.assertEqual(srd.shift, True)
 
-        srd.set_params(angle=90.)
-        self.assertEqual(srd.angle, 90.)
+        srd.set_params(angle=90.0)
+        self.assertEqual(srd.angle, 90.0)
         self.assertEqual(srd.shift, True)
 
         srd.set_params(shift=False)
-        self.assertEqual(srd.angle, 90.)
+        self.assertEqual(srd.angle, 90.0)
         self.assertEqual(srd.shift, False)
 
-        srd.set_params(angle=85., shift=True)
-        self.assertEqual(srd.angle, 85.)
+        srd.set_params(angle=85.0, shift=True)
+        self.assertEqual(srd.angle, 85.0)
         self.assertEqual(srd.shift, True)
 
     # test common initialization errors
@@ -85,27 +86,27 @@ class mpcd_collide_srd_test(unittest.TestCase):
 
         # it is an error to make a collision rule without initializing first
         with self.assertRaises(RuntimeError):
-            mpcd.collide.srd(seed=42, period=5, angle=90.)
+            mpcd.collide.srd(seed=42, period=5, angle=90.0)
 
         # it is an error to make a collision rule without initializing MPCD first
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.0)))
         with self.assertRaises(RuntimeError):
-            mpcd.collide.srd(seed=42, period=5, angle=90.)
+            mpcd.collide.srd(seed=42, period=5, angle=90.0)
 
         # OK, now it should go
         mpcd.init.read_snapshot(mpcd.data.make_snapshot(N=1))
-        mpcd.collide.srd(seed=42, period=5, angle=90.)
+        mpcd.collide.srd(seed=42, period=5, angle=90.0)
 
     # test thermostat
     def test_thermostat(self):
-        srd = mpcd.collide.srd(seed=42, period=5, angle=90., kT=1.0)
+        srd = mpcd.collide.srd(seed=42, period=5, angle=90.0, kT=1.0)
         self.assertTrue(srd.kT is not False)
         srd.disable()
 
-        srd = mpcd.collide.srd(seed=42, period=5, angle=90.)
+        srd = mpcd.collide.srd(seed=42, period=5, angle=90.0)
         self.assertTrue(srd.kT is False)
 
-        srd.set_params(kT=hoomd.variant.linear_interp([[0,2.0],[10,1.0]]))
+        srd.set_params(kT=hoomd.variant.linear_interp([[0, 2.0], [10, 1.0]]))
         self.assertTrue(srd.kT is not False)
 
         srd.set_params(kT=False)
@@ -113,7 +114,7 @@ class mpcd_collide_srd_test(unittest.TestCase):
 
     # test methods for setting the collision period
     def test_set_period(self):
-        srd = mpcd.collide.srd(seed=42, period=5, angle=130.)
+        srd = mpcd.collide.srd(seed=42, period=5, angle=130.0)
         # can change period right away
         srd.set_period(2)
 
@@ -134,5 +135,6 @@ class mpcd_collide_srd_test(unittest.TestCase):
     def tearDown(self):
         pass
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

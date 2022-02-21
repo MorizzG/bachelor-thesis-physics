@@ -1,16 +1,18 @@
 # -*- coding: iso-8859-1 -*-
 # Maintainer: Pengji Zhou
 
-import numpy as np
+import math as m
 import os
 import unittest
-import math as m
+
+import numpy as np
 from hoomd import *
 from hoomd import md
+
 context.initialize()
 
 # md.pair.fourier
-class pair_fourier_test (unittest.TestCase):
+class pair_fourier_test(unittest.TestCase):
     def setUp(self):
         print
         snapshot = data.make_snapshot(N=2, box=data.boxdim(L=100))
@@ -26,7 +28,7 @@ class pair_fourier_test (unittest.TestCase):
         fourier = md.pair.fourier(r_cut=3.0, nlist=self.nl)
         fourier_a = [0.08658918, -0.00177933, -0.0886236]
         fourier_b = [-0.18217308, -0.04460936, 0.06499778]
-        fourier.pair_coeff.set('A', 'A', fourier_a=fourier_a, fourier_b=fourier_b)
+        fourier.pair_coeff.set("A", "A", fourier_a=fourier_a, fourier_b=fourier_b)
         md.integrate.mode_standard(dt=0.0)
         md.integrate.nve(group=group.all())
         run(1)
@@ -57,5 +59,5 @@ class pair_fourier_test (unittest.TestCase):
         context.initialize()
 
 
-if __name__ == '__main__':
-    unittest.main(argv=['test.py', '-v'])
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

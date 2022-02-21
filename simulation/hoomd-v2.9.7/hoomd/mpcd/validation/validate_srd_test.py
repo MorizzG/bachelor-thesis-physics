@@ -4,11 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
 
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 class mpcd_srd_validation(unittest.TestCase):
     def setUp(self):
@@ -16,7 +16,7 @@ class mpcd_srd_validation(unittest.TestCase):
 
         # box size L and solvent density 5
         L = 20
-        self.density = 5.
+        self.density = 5.0
 
         # solute initially on simple cubic lattice
         self.solute = hoomd.init.create_lattice(hoomd.lattice.sc(a=1.0), L)
@@ -26,9 +26,9 @@ class mpcd_srd_validation(unittest.TestCase):
         self.solute.restore_snapshot(snap)
 
         # srd
-        self.solvent = mpcd.init.make_random(N=int(self.density*L**3), kT=1.0, seed=42)
+        self.solvent = mpcd.init.make_random(N=int(self.density * L ** 3), kT=1.0, seed=42)
         mpcd.integrator(dt=0.1)
-        self.srd = mpcd.collide.srd(seed=791, period=1, angle=130., kT=1.0)
+        self.srd = mpcd.collide.srd(seed=791, period=1, angle=130.0, kT=1.0)
         mpcd.stream.bulk(period=1)
         md.integrate.nve(hoomd.group.all())
 
@@ -40,9 +40,9 @@ class mpcd_srd_validation(unittest.TestCase):
         slt = self.solute.take_snapshot()
         if hoomd.comm.get_rank() == 0:
             slv_p0 = np.sum(slv.particles.velocity, axis=0)
-            slt_p0 = self.density*np.sum(slt.particles.velocity, axis=0)
-            np.testing.assert_allclose(slv_p0, [0,0,0], atol=1.e-6)
-            np.testing.assert_allclose(slt_p0, [0,0,0], atol=1.e-6)
+            slt_p0 = self.density * np.sum(slt.particles.velocity, axis=0)
+            np.testing.assert_allclose(slv_p0, [0, 0, 0], atol=1.0e-6)
+            np.testing.assert_allclose(slt_p0, [0, 0, 0], atol=1.0e-6)
 
         hoomd.run(100)
 
@@ -51,9 +51,9 @@ class mpcd_srd_validation(unittest.TestCase):
         slt = self.solute.take_snapshot()
         if hoomd.comm.get_rank() == 0:
             slv_p1 = np.sum(slv.particles.velocity, axis=0)
-            slt_p1 = self.density*np.sum(slt.particles.velocity, axis=0)
-            np.testing.assert_allclose(slv_p1, [0,0,0], atol=1.e-6)
-            np.testing.assert_allclose(slt_p1, [0,0,0], atol=1.e-6)
+            slt_p1 = self.density * np.sum(slt.particles.velocity, axis=0)
+            np.testing.assert_allclose(slv_p1, [0, 0, 0], atol=1.0e-6)
+            np.testing.assert_allclose(slt_p1, [0, 0, 0], atol=1.0e-6)
 
     def test_embed(self):
         """Test momentum conservation for SRD solvent + embedded particles."""
@@ -65,9 +65,9 @@ class mpcd_srd_validation(unittest.TestCase):
         slt = self.solute.take_snapshot()
         if hoomd.comm.get_rank() == 0:
             slv_p0 = np.sum(slv.particles.velocity, axis=0)
-            slt_p0 = self.density*np.sum(slt.particles.velocity, axis=0)
-            np.testing.assert_allclose(slv_p0, [0,0,0], atol=1.e-6)
-            np.testing.assert_allclose(slt_p0, [0,0,0], atol=1.e-6)
+            slt_p0 = self.density * np.sum(slt.particles.velocity, axis=0)
+            np.testing.assert_allclose(slv_p0, [0, 0, 0], atol=1.0e-6)
+            np.testing.assert_allclose(slt_p0, [0, 0, 0], atol=1.0e-6)
 
         hoomd.run(100)
 
@@ -76,13 +76,14 @@ class mpcd_srd_validation(unittest.TestCase):
         slt = self.solute.take_snapshot()
         if hoomd.comm.get_rank() == 0:
             slv_p1 = np.sum(slv.particles.velocity, axis=0)
-            slt_p1 = self.density*np.sum(slt.particles.velocity, axis=0)
-            self.assertFalse(np.allclose(slv_p1, [0,0,0]))
-            self.assertFalse(np.allclose(slt_p1, [0,0,0]))
-            np.testing.assert_allclose(slv_p1 + slt_p1, [0,0,0], atol=1.e-3)
+            slt_p1 = self.density * np.sum(slt.particles.velocity, axis=0)
+            self.assertFalse(np.allclose(slv_p1, [0, 0, 0]))
+            self.assertFalse(np.allclose(slt_p1, [0, 0, 0]))
+            np.testing.assert_allclose(slv_p1 + slt_p1, [0, 0, 0], atol=1.0e-3)
 
     def tearDown(self):
         del self.solute, self.solvent, self.srd
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

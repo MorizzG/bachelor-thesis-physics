@@ -49,9 +49,7 @@ def smooth(signal: "sp.coo_matrix", h: int) -> "sp.coo_matrix":
     # pad signal matrix with h zeros all around
     rows, cols = signal.row + h, signal.col + h
     sm, sn = signal.shape
-    signal = sp.coo_matrix(
-        (signal.data, (rows, cols)), shape=(sm + 2 * h, sn + 2 * h), dtype=np.float64
-    )
+    signal = sp.coo_matrix((signal.data, (rows, cols)), shape=(sm + 2 * h, sn + 2 * h), dtype=np.float64)
 
     sm, sn = signal.shape
 
@@ -67,12 +65,8 @@ def smooth(signal: "sp.coo_matrix", h: int) -> "sp.coo_matrix":
     constant_kernel = kernel[0, 0]
 
     # Simplified convolution for the special case where kernel is constant:
-    l_subkernel_sp = sp.diags(
-        np.ones(km), np.arange(km), shape=(sm - km + 1, sm), format="csr"
-    )
-    r_subkernel_sp = sp.diags(
-        np.ones(km), -np.arange(km), shape=(sn, sn - km + 1), format="csr"
-    )
+    l_subkernel_sp = sp.diags(np.ones(km), np.arange(km), shape=(sm - km + 1, sm), format="csr")
+    r_subkernel_sp = sp.diags(np.ones(km), -np.arange(km), shape=(sn, sn - km + 1), format="csr")
     out = (l_subkernel_sp @ signal) @ r_subkernel_sp
     out *= constant_kernel
     # Resize matrix: increment rows and cols by half kernel and set shape to input
@@ -143,9 +137,7 @@ def subsample_contacts(M: "sp.coo_matrix", n_contacts: float) -> "sp.coo_matrix"
     tot_contacts = int(cum_counts[-1])
 
     # Sample desired number of contacts from the range(0, n_contacts) array
-    sampled_contacts = np.random.choice(
-        int(tot_contacts), size=int(n_contacts), replace=False
-    )
+    sampled_contacts = np.random.choice(int(tot_contacts), size=int(n_contacts), replace=False)
 
     # Get indices of sampled contacts in the cum_counts array
     idx = np.searchsorted(cum_counts, sampled_contacts, side="right")
@@ -159,14 +151,10 @@ def subsample_contacts(M: "sp.coo_matrix", n_contacts: float) -> "sp.coo_matrix"
     sampled_rows = M.row[nnz_mask]
     sampled_cols = M.col[nnz_mask]
 
-    return sp.coo_matrix(
-        (sampled_counts, (sampled_rows, sampled_cols)), shape=(M.shape[0], M.shape[1]),
-    )
+    return sp.coo_matrix((sampled_counts, (sampled_rows, sampled_cols)), shape=(M.shape[0], M.shape[1]),)
 
 
-def diag_trim(
-    mat: Union["sp.dia_matrix", "np.ndarray"], n: int
-) -> Union["sp.dia_matrix", "np.ndarray"]:
+def diag_trim(mat: Union["sp.dia_matrix", "np.ndarray"], n: int) -> Union["sp.dia_matrix", "np.ndarray"]:
     """
     Trim an upper triangle sparse matrix so that only the first n diagonals are kept.
 
@@ -194,9 +182,7 @@ def diag_trim(
     # Create a new matrix from the diagonals below max dist (faster than removing them)
     keep_offsets = np.flatnonzero((mat.offsets <= n) & (mat.offsets >= 0))
 
-    trimmed = sp.dia_matrix(
-        (mat.data[keep_offsets], mat.offsets[keep_offsets]), shape=mat.shape
-    )
+    trimmed = sp.dia_matrix((mat.data[keep_offsets], mat.offsets[keep_offsets]), shape=mat.shape)
 
     return trimmed
 

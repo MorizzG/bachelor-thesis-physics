@@ -4,10 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 # unit tests for mpcd integrator
 class mpcd_integrator_test(unittest.TestCase):
@@ -20,7 +21,7 @@ class mpcd_integrator_test(unittest.TestCase):
             hoomd.comm.decomposition(nz=2)
 
         # default testing configuration
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.0)))
 
         # initialize the system from the starting snapshot
         mpcd.init.read_snapshot(mpcd.data.make_snapshot(N=1))
@@ -69,24 +70,24 @@ class mpcd_integrator_test(unittest.TestCase):
         bulk = mpcd.stream.bulk(period=5)
 
         # period cannot be less than integrator's period
-        srd = mpcd.collide.srd(seed=42, period=1, angle=130.)
+        srd = mpcd.collide.srd(seed=42, period=1, angle=130.0)
         with self.assertRaises(ValueError):
             ig.update_methods()
         srd.disable()
 
         # being equal is OK
-        srd = mpcd.collide.srd(seed=42, period=5, angle=130.)
+        srd = mpcd.collide.srd(seed=42, period=5, angle=130.0)
         ig.update_methods()
         srd.disable()
 
         # period being greater but not a multiple is also an error
-        srd = mpcd.collide.srd(seed=42, period=7, angle=130.)
+        srd = mpcd.collide.srd(seed=42, period=7, angle=130.0)
         with self.assertRaises(ValueError):
             ig.update_methods()
         srd.disable()
 
         # being greater and a multiple is OK
-        srd = mpcd.collide.srd(seed=42, period=10, angle=130.)
+        srd = mpcd.collide.srd(seed=42, period=10, angle=130.0)
         ig.update_methods()
 
         # using set_period interface should also cause a problem now though
@@ -108,7 +109,7 @@ class mpcd_integrator_test(unittest.TestCase):
             mpcd.integrator(dt=0.001)
 
         # calling after HOOMD initialization but not MPCD initialization must also fail
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.0)))
         with self.assertRaises(RuntimeError):
             mpcd.integrator(dt=0.001)
 
@@ -116,5 +117,6 @@ class mpcd_integrator_test(unittest.TestCase):
         mpcd.init.read_snapshot(mpcd.data.make_snapshot(N=1))
         mpcd.integrator(dt=0.001)
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

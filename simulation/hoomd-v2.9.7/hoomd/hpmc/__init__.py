@@ -1,7 +1,7 @@
 # -*- coding: iso-8859-1 -*-
 # this file exists to mark this directory as a python module
 
-R""" Hard particle Monte Carlo
+r""" Hard particle Monte Carlo
 
 HPMC performs hard particle Monte Carlo simulations of a variety of classes of shapes.
 
@@ -94,26 +94,23 @@ existing job scripts that follow *documented* interfaces for functions and class
 will not require any modifications. **Maintainer:** Joshua A. Anderson
 """
 
-# need to import all submodules defined in this directory
-from hoomd.hpmc import integrate
-from hoomd.hpmc import update
-from hoomd.hpmc import analyze
-from hoomd.hpmc import compute
-from hoomd.hpmc import util
-from hoomd.hpmc import field
-
 # add HPMC article citation notice
 import hoomd
-_citation = hoomd.cite.article(cite_key='anderson2016',
-                               author=['J A Anderson', 'M E Irrgang', 'S C Glotzer'],
-                               title='Scalable Metropolis Monte Carlo for simulation of hard shapes',
-                               journal='Computer Physics Communications',
-                               volume=204,
-                               pages='21--30',
-                               month='July',
-                               year='2016',
-                               doi='10.1016/j.cpc.2016.02.024',
-                               feature='HPMC')
+# need to import all submodules defined in this directory
+from hoomd.hpmc import analyze, compute, field, integrate, update, util
+
+_citation = hoomd.cite.article(
+    cite_key="anderson2016",
+    author=["J A Anderson", "M E Irrgang", "S C Glotzer"],
+    title="Scalable Metropolis Monte Carlo for simulation of hard shapes",
+    journal="Computer Physics Communications",
+    volume=204,
+    pages="21--30",
+    month="July",
+    year="2016",
+    doi="10.1016/j.cpc.2016.02.024",
+    feature="HPMC",
+)
 
 if hoomd.context.bib is None:
     hoomd.cite._extra_default_entries.append(_citation)

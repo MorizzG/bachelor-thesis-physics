@@ -14,6 +14,4 @@ package is not provided. These legacy functions will remain as long as they requ
 code modifications to maintain. **Maintainer:** *not maintained*.
 """
 
-from hoomd.deprecated import analyze
-from hoomd.deprecated import dump
-from hoomd.deprecated import init
+from hoomd.deprecated import analyze, dump, init

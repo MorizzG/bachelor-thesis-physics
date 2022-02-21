@@ -3,16 +3,18 @@
 
 # Maintainer: joaander / All Developers are free to add commands for new features
 
-R""" Specify values that vary over time.
+r""" Specify values that vary over time.
 
 This package contains various commands for creating quantities that can vary
 smoothly over the course of a simulation. For example, set the temperature in
 a NVT simulation to slowly heat or cool the system over a long simulation.
 """
 
-from hoomd import _hoomd;
-import hoomd;
-import sys;
+import sys
+
+import hoomd
+from hoomd import _hoomd
+
 
 ## \internal
 # \brief Base class for variant type
@@ -25,10 +27,11 @@ class _variant:
     def __init__(self):
         # check if initialization has occurred
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot create a variant before initialization\n");
-            raise RuntimeError('Error creating variant');
+            hoomd.context.msg.error("Cannot create a variant before initialization\n")
+            raise RuntimeError("Error creating variant")
 
-        self.cpp_variant = None;
+        self.cpp_variant = None
+
 
 ## \internal
 # \brief A constant "variant"
@@ -44,21 +47,22 @@ class _constant(_variant):
     #
     def __init__(self, val):
         # initialize the base class
-        _variant.__init__(self);
+        _variant.__init__(self)
 
         self.val = val
 
         # create the c++ mirror class
-        self.cpp_variant = _hoomd.VariantConst(val);
-        self.cpp_variant.setOffset(hoomd.context.current.system.getCurrentTimeStep());
+        self.cpp_variant = _hoomd.VariantConst(val)
+        self.cpp_variant.setOffset(hoomd.context.current.system.getCurrentTimeStep())
 
     ## \internal
     # \brief return metadata
     def get_metadata(self):
         return self.val
 
+
 class linear_interp(_variant):
-    R""" Linearly interpolated variant.
+    r""" Linearly interpolated variant.
 
     Args:
         points (list): Set points in the linear interpolation (see below)
@@ -93,37 +97,38 @@ class linear_interp(_variant):
         integrate.nvt(group=all, tau = 0.5,
             T = variant.linear_interp(points = [(0, 1.0), (1e5, 2.0)])
     """
-    def __init__(self, points, zero='now'):
+
+    def __init__(self, points, zero="now"):
         # initialize the base class
-        _variant.__init__(self);
+        _variant.__init__(self)
 
         # create the c++ mirror class
-        self.cpp_variant = _hoomd.VariantLinear();
-        if zero == 'now':
-            self.cpp_variant.setOffset(hoomd.context.current.system.getCurrentTimeStep());
+        self.cpp_variant = _hoomd.VariantLinear()
+        if zero == "now":
+            self.cpp_variant.setOffset(hoomd.context.current.system.getCurrentTimeStep())
         else:
             # validate zero
             if zero < 0:
-                hoomd.context.msg.error("Cannot create a linear_interp variant with a negative zero\n");
-                raise RuntimeError('Error creating variant');
+                hoomd.context.msg.error("Cannot create a linear_interp variant with a negative zero\n")
+                raise RuntimeError("Error creating variant")
             if zero > hoomd.context.current.system.getCurrentTimeStep():
-                hoomd.context.msg.error("Cannot create a linear_interp variant with a zero in the future\n");
-                raise RuntimeError('Error creating variant');
+                hoomd.context.msg.error("Cannot create a linear_interp variant with a zero in the future\n")
+                raise RuntimeError("Error creating variant")
 
             zero = int(zero)
-            self.cpp_variant.setOffset(zero);
+            self.cpp_variant.setOffset(zero)
 
         # set the points
         if len(points) == 0:
-            hoomd.context.msg.error("Cannot create a linear_interp variant with 0 points\n");
-            raise RuntimeError('Error creating variant');
+            hoomd.context.msg.error("Cannot create a linear_interp variant with 0 points\n")
+            raise RuntimeError("Error creating variant")
 
         for (t, v) in points:
             if t < 0:
-                hoomd.context.msg.error("Negative times are not allowed in variant.linear_interp\n");
-                raise RuntimeError('Error creating variant');
+                hoomd.context.msg.error("Negative times are not allowed in variant.linear_interp\n")
+                raise RuntimeError("Error creating variant")
 
-            self.cpp_variant.setPoint(int(t), v);
+            self.cpp_variant.setPoint(int(t), v)
 
         # store metadata
         self.points = points
@@ -132,6 +137,7 @@ class linear_interp(_variant):
     # \brief return metadata
     def get_metadata(self):
         return self.points
+
 
 ## \internal
 # \brief Internal helper function to aid in setting up variants
@@ -142,10 +148,10 @@ class linear_interp(_variant):
 # it will return the variant unchanged.
 def _setup_variant_input(v):
     if isinstance(v, _variant):
-        return v;
+        return v
     else:
         try:
-            return _constant(float(v));
+            return _constant(float(v))
         except ValueError:
-            hoomd.context.msg.error("Value must either be a scalar value or a the result of a variant command\n");
-            raise RuntimeError('Error creating variant');
+            hoomd.context.msg.error("Value must either be a scalar value or a the result of a variant command\n")
+            raise RuntimeError("Error creating variant")

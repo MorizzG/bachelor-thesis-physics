@@ -1,21 +1,20 @@
 # Copyright (c) 2009-2019 The Regents of the University of Michigan
 # This file is part of the HOOMD-blue project, released under the BSD 3-Clause License.
 
-from hoomd import _hoomd
-from hoomd.jit import _jit
-from hoomd.hpmc import field
-from hoomd.hpmc import integrate
-import hoomd
-
-import tempfile
+import os
 import shutil
 import subprocess
-import os
+import tempfile
 
+import hoomd
 import numpy as np
+from hoomd import _hoomd
+from hoomd.hpmc import field, integrate
+from hoomd.jit import _jit
+
 
 class user(field._external):
-    R''' Define an external field imposed on all particles in the system.
+    r''' Define an external field imposed on all particles in the system.
 
     Args:
         code (str): C++ code to compile
@@ -86,61 +85,61 @@ class user(field._external):
 
     .. versionadded:: 2.5
     '''
+
     def __init__(self, mc, code=None, llvm_ir_file=None, clang_exec=None):
         super(user, self).__init__()
 
         # raise an error if this run is on the GPU
-        cls = None;
+        cls = None
         if hoomd.context.exec_conf.isCUDAEnabled():
-            hoomd.context.msg.error("JIT forces are not supported on the GPU\n");
-            raise RuntimeError("Error initializing force energy");
+            hoomd.context.msg.error("JIT forces are not supported on the GPU\n")
+            raise RuntimeError("Error initializing force energy")
         else:
             if isinstance(mc, integrate.sphere):
-                cls = _jit.ExternalFieldJITSphere;
+                cls = _jit.ExternalFieldJITSphere
             elif isinstance(mc, integrate.convex_polygon):
-                cls = _jit.ExternalFieldJITConvexPolygon;
+                cls = _jit.ExternalFieldJITConvexPolygon
             elif isinstance(mc, integrate.simple_polygon):
-                cls = _jit.ExternalFieldJITSimplePolygon;
+                cls = _jit.ExternalFieldJITSimplePolygon
             elif isinstance(mc, integrate.convex_polyhedron):
-                cls = _jit.ExternalFieldJITConvexPolyhedron;
+                cls = _jit.ExternalFieldJITConvexPolyhedron
             elif isinstance(mc, integrate.convex_spheropolyhedron):
-                cls = _jit.ExternalFieldJITSpheropolyhedron;
+                cls = _jit.ExternalFieldJITSpheropolyhedron
             elif isinstance(mc, integrate.ellipsoid):
-                cls = _jit.ExternalFieldJITEllipsoid;
+                cls = _jit.ExternalFieldJITEllipsoid
             elif isinstance(mc, integrate.convex_spheropolygon):
-                cls =_jit.ExternalFieldJITSpheropolygon;
+                cls = _jit.ExternalFieldJITSpheropolygon
             elif isinstance(mc, integrate.faceted_ellipsoid):
-                cls =_jit.ExternalFieldJITFacetedEllipsoid;
+                cls = _jit.ExternalFieldJITFacetedEllipsoid
             elif isinstance(mc, integrate.polyhedron):
-                cls =_jit.ExternalFieldJITPolyhedron;
+                cls = _jit.ExternalFieldJITPolyhedron
             elif isinstance(mc, integrate.sphinx):
-                cls =_jit.ExternalFieldJITSphinx;
+                cls = _jit.ExternalFieldJITSphinx
             elif isinstance(mc, integrate.sphere_union):
-                cls = _jit.ExternalFieldJITSphereUnion;
+                cls = _jit.ExternalFieldJITSphereUnion
             elif isinstance(mc, integrate.convex_polyhedron_union):
-                cls = _jit.ExternalFieldJITConvexPolyhedronUnion;
+                cls = _jit.ExternalFieldJITConvexPolyhedronUnion
             else:
-                hoomd.context.msg.error("jit.field.user: Unsupported integrator.\n");
-                raise RuntimeError("Error initializing compute.position_lattice_field");
+                hoomd.context.msg.error("jit.field.user: Unsupported integrator.\n")
+                raise RuntimeError("Error initializing compute.position_lattice_field")
 
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # Find a clang executable if none is provided
         if clang_exec is not None:
-            clang = clang_exec;
+            clang = clang_exec
         else:
-            clang = 'clang'
+            clang = "clang"
 
         if code is not None:
             llvm_ir = self.compile_user(code, clang)
         else:
             # IR is a text file
-            with open(llvm_ir_file,'r') as f:
+            with open(llvm_ir_file, "r") as f:
                 llvm_ir = f.read()
 
         self.compute_name = "external_field_jit"
-        self.cpp_compute = cls(hoomd.context.current.system_definition,
-            hoomd.context.exec_conf, llvm_ir);
+        self.cpp_compute = cls(hoomd.context.current.system_definition, hoomd.context.exec_conf, llvm_ir)
         hoomd.context.current.system.addCompute(self.cpp_compute, self.compute_name)
 
         self.mc = mc
@@ -148,7 +147,7 @@ class user(field._external):
         self.log = False
 
     def compile_user(self, code, clang_exec, fn=None):
-        R'''Helper function to compile the provided code into an executable
+        r"""Helper function to compile the provided code into an executable
 
         Args:
             code (str): C++ code to compile
@@ -157,7 +156,7 @@ class user(field._external):
 
 
         .. versionadded:: 2.3
-        '''
+        """
         cpp_function = """
 #include "hoomd/HOOMDMath.h"
 #include "hoomd/VectorMath.h"
@@ -181,28 +180,60 @@ Scalar charge
 }
 """
 
-        include_path = os.path.dirname(hoomd.__file__) + '/include';
-        include_patsource = hoomd._hoomd.__hoomd_source_dir__;
+        include_path = os.path.dirname(hoomd.__file__) + "/include"
+        include_patsource = hoomd._hoomd.__hoomd_source_dir__
 
         if clang_exec is not None:
-            clang = clang_exec;
+            clang = clang_exec
         else:
-            clang = 'clang';
+            clang = "clang"
 
         if fn is not None:
-            cmd = [clang, '-O3', '--std=c++11', '-DHOOMD_LLVMJIT_BUILD', '-I', include_path, '-I', include_patsource, '-S', '-emit-llvm','-x','c++', '-o',fn,'-']
+            cmd = [
+                clang,
+                "-O3",
+                "--std=c++11",
+                "-DHOOMD_LLVMJIT_BUILD",
+                "-I",
+                include_path,
+                "-I",
+                include_patsource,
+                "-S",
+                "-emit-llvm",
+                "-x",
+                "c++",
+                "-o",
+                fn,
+                "-",
+            ]
         else:
-            cmd = [clang, '-O3', '--std=c++11', '-DHOOMD_LLVMJIT_BUILD', '-I', include_path, '-I', include_patsource, '-S', '-emit-llvm','-x','c++', '-o','-','-']
-        p = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            cmd = [
+                clang,
+                "-O3",
+                "--std=c++11",
+                "-DHOOMD_LLVMJIT_BUILD",
+                "-I",
+                include_path,
+                "-I",
+                include_patsource,
+                "-S",
+                "-emit-llvm",
+                "-x",
+                "c++",
+                "-o",
+                "-",
+                "-",
+            ]
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # pass C++ function to stdin
-        output = p.communicate(cpp_function.encode('utf-8'))
+        output = p.communicate(cpp_function.encode("utf-8"))
         llvm_ir = output[0].decode()
 
         if p.returncode != 0:
-            hoomd.context.msg.error("Error compiling provided code\n");
-            hoomd.context.msg.error("Command "+' '.join(cmd)+"\n");
-            hoomd.context.msg.error(output[1].decode()+"\n");
-            raise RuntimeError("Error initializing force.");
+            hoomd.context.msg.error("Error compiling provided code\n")
+            hoomd.context.msg.error("Command " + " ".join(cmd) + "\n")
+            hoomd.context.msg.error(output[1].decode() + "\n")
+            raise RuntimeError("Error initializing force.")
 
         return llvm_ir

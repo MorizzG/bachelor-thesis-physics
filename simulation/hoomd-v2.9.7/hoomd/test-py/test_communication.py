@@ -1,14 +1,15 @@
-
 # -*- coding: iso-8859-1 -*-
 # Maintainer: mphoward
 
+import hoomd
 from hoomd import *
-import hoomd;
+
 context.initialize()
 import unittest
 
+
 ## Domain decomposition balancing tests
-class decomposition_tests (unittest.TestCase):
+class decomposition_tests(unittest.TestCase):
     ## Test that no errors are raised if a uniform decomposition should be done
     def test_uniform(self):
         if comm.get_num_ranks() > 1:
@@ -145,7 +146,7 @@ class decomposition_tests (unittest.TestCase):
             self.assertAlmostEquals(dd.getCumulativeFractions(2)[1], 0.2)
             self.assertAlmostEquals(dd.getCumulativeFractions(2)[2], 1.0)
 
-            comm.decomposition(x=[0.2,0.3,0.1], y=0.3)
+            comm.decomposition(x=[0.2, 0.3, 0.1], y=0.3)
             dd = hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
             self.assertEquals(len(dd.getCumulativeFractions(0)), 5)
             self.assertEquals(len(dd.getCumulativeFractions(1)), 3)
@@ -172,7 +173,7 @@ class decomposition_tests (unittest.TestCase):
 
             # this is wrong to set both, so it should fail
             with self.assertRaises(RuntimeError):
-                comm.decomposition(x=[0.2,0.3,0.1], nx=2)
+                comm.decomposition(x=[0.2, 0.3, 0.1], nx=2)
 
             # set a global value, and try with nx arg set
             hoomd.context.options.nx = 8
@@ -200,11 +201,11 @@ class decomposition_tests (unittest.TestCase):
             self.assertAlmostEquals(dd.getCumulativeFractions(0)[6], 0.75)
             self.assertAlmostEquals(dd.getCumulativeFractions(0)[7], 0.875)
             self.assertAlmostEquals(dd.getCumulativeFractions(0)[8], 1.0)
-            hoomd.context.options.nx = None # undo this so that it doesn't contaminate other dimensions
+            hoomd.context.options.nx = None  # undo this so that it doesn't contaminate other dimensions
 
             # this is wrong to set both, so it should fail
             with self.assertRaises(RuntimeError):
-                comm.decomposition(y=[0.2,0.3,0.1], ny=2)
+                comm.decomposition(y=[0.2, 0.3, 0.1], ny=2)
 
             # set a global value, and try with ny arg set
             hoomd.context.options.ny = 8
@@ -232,11 +233,11 @@ class decomposition_tests (unittest.TestCase):
             self.assertAlmostEquals(dd.getCumulativeFractions(1)[6], 0.75)
             self.assertAlmostEquals(dd.getCumulativeFractions(1)[7], 0.875)
             self.assertAlmostEquals(dd.getCumulativeFractions(1)[8], 1.0)
-            hoomd.context.options.ny = None # undo this so that it doesn't contaminate other dimensions
+            hoomd.context.options.ny = None  # undo this so that it doesn't contaminate other dimensions
 
             # this is wrong to set both, so it should fail
             with self.assertRaises(RuntimeError):
-                comm.decomposition(z=[0.2,0.3,0.1], nz=2)
+                comm.decomposition(z=[0.2, 0.3, 0.1], nz=2)
 
             # set a global value, and try with nz arg set
             hoomd.context.options.nz = 8
@@ -288,7 +289,8 @@ class decomposition_tests (unittest.TestCase):
 
     ## Test that balancing fails after initialization
     def test_wrong_order(self):
-        init.create_lattice(lattice.sc(a=2.1878096788957757),n=[5,5,4]); #target a packing fraction of 0.05
+        init.create_lattice(lattice.sc(a=2.1878096788957757), n=[5, 5, 4])
+        # target a packing fraction of 0.05
         with self.assertRaises(RuntimeError):
             comm.decomposition(y=0.3)
         context.initialize()
@@ -307,11 +309,11 @@ class decomposition_tests (unittest.TestCase):
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
             with self.assertRaises(RuntimeError):
-                comm.decomposition(x=[0.2,0.9])
+                comm.decomposition(x=[0.2, 0.9])
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
             with self.assertRaises(RuntimeError):
-                comm.decomposition(x=[0.3,-0.1])
+                comm.decomposition(x=[0.3, -0.1])
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
             with self.assertRaises(RuntimeError):
@@ -323,11 +325,11 @@ class decomposition_tests (unittest.TestCase):
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
             with self.assertRaises(RuntimeError):
-                comm.decomposition(y=[0.2,0.9])
+                comm.decomposition(y=[0.2, 0.9])
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
             with self.assertRaises(RuntimeError):
-                comm.decomposition(y=[0.3,-0.1])
+                comm.decomposition(y=[0.3, -0.1])
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
             with self.assertRaises(RuntimeError):
@@ -339,17 +341,17 @@ class decomposition_tests (unittest.TestCase):
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
             with self.assertRaises(RuntimeError):
-                comm.decomposition(z=[0.2,0.9])
+                comm.decomposition(z=[0.2, 0.9])
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
             with self.assertRaises(RuntimeError):
-                comm.decomposition(z=[0.3,-0.1])
+                comm.decomposition(z=[0.3, -0.1])
                 hoomd.context.current.decomposition._make_cpp_decomposition(boxdim)
 
     ## Test that parameters are set correctly
     def test_set_params(self):
         if comm.get_num_ranks() > 1:
-            dd = comm.decomposition(x=[0.3],y=[0.4],z=[0.6])
+            dd = comm.decomposition(x=[0.3], y=[0.4], z=[0.6])
 
             # check that the grid was set correctly in the constructor (via set_params)
             self.assertFalse(hoomd.context.current.decomposition.uniform_x)
@@ -391,7 +393,7 @@ class decomposition_tests (unittest.TestCase):
             self.assertAlmostEqual(hoomd.context.current.decomposition.z[0], 0.3)
 
             # do it all at once
-            dd.set_params(x=[0.2,0.3], y=[0.4,0.1], z=[0.25,0.25])
+            dd.set_params(x=[0.2, 0.3], y=[0.4, 0.1], z=[0.25, 0.25])
             self.assertFalse(hoomd.context.current.decomposition.uniform_x)
             self.assertFalse(hoomd.context.current.decomposition.uniform_y)
             self.assertFalse(hoomd.context.current.decomposition.uniform_z)
@@ -418,13 +420,15 @@ class decomposition_tests (unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 dd.set_params(z=0.2, nz=4)
 
+
 ## Test for MPI barriers
 class barrier_tests(unittest.TestCase):
     def test_barrier(self):
-        comm.barrier();
+        comm.barrier()
 
     def test_barrier_all(self):
-        comm.barrier_all();
+        comm.barrier_all()
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

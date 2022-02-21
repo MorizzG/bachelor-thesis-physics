@@ -4,11 +4,13 @@
 # Maintainer: mphoward
 
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+from hoomd import md, mpcd
+
 hoomd.context.initialize()
 import unittest
+
 import numpy as np
+
 
 # unit tests for slit pore bounce back geometry
 class integrate_slit_pore_tests(unittest.TestCase):
@@ -18,6 +20,7 @@ class integrate_slit_pore_tests(unittest.TestCase):
     these unit tests are focused on the python API.
 
     """
+
     def setUp(self):
         # establish the simulation context
         hoomd.context.initialize()
@@ -27,11 +30,11 @@ class integrate_slit_pore_tests(unittest.TestCase):
             hoomd.comm.decomposition(nz=2)
 
         # default testing configuration
-        snap = hoomd.data.make_snapshot(N=2, box=hoomd.data.boxdim(L=10.))
+        snap = hoomd.data.make_snapshot(N=2, box=hoomd.data.boxdim(L=10.0))
         if hoomd.comm.get_rank() == 0:
-            snap.particles.position[:] = [[4.95,-4.95,3.85],[0.,0.,-3.8]]
-            snap.particles.velocity[:] = [[1.,-1.,1.],[-1.,-1.,-1.]]
-            snap.particles.mass[:] = [1.,2.]
+            snap.particles.position[:] = [[4.95, -4.95, 3.85], [0.0, 0.0, -3.8]]
+            snap.particles.velocity[:] = [[1.0, -1.0, 1.0], [-1.0, -1.0, -1.0]]
+            snap.particles.mass[:] = [1.0, 2.0]
         self.s = hoomd.init.read_snapshot(snap)
         self.group = hoomd.group.all()
 
@@ -39,31 +42,31 @@ class integrate_slit_pore_tests(unittest.TestCase):
 
     # test creation can happen (with all parameters set)
     def test_create(self):
-        mpcd.integrate.slit_pore(group=self.group, H=4., L=2., boundary="no_slip")
+        mpcd.integrate.slit_pore(group=self.group, H=4.0, L=2.0, boundary="no_slip")
 
     # test for setting parameters
     def test_set_params(self):
-        slit_pore = mpcd.integrate.slit_pore(group=self.group, H=4., L=2.)
-        self.assertAlmostEqual(slit_pore.H, 4.)
-        self.assertAlmostEqual(slit_pore.L, 2.)
+        slit_pore = mpcd.integrate.slit_pore(group=self.group, H=4.0, L=2.0)
+        self.assertAlmostEqual(slit_pore.H, 4.0)
+        self.assertAlmostEqual(slit_pore.L, 2.0)
         self.assertEqual(slit_pore.boundary, "no_slip")
-        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getH(), 4.)
-        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getL(), 2.)
+        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getH(), 4.0)
+        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getL(), 2.0)
         self.assertEqual(slit_pore.cpp_method.geometry.getBoundaryCondition(), hoomd.mpcd._mpcd.boundary.no_slip)
 
         # change H and also ensure other parameters stay the same
-        slit_pore.set_params(H=2.)
-        self.assertAlmostEqual(slit_pore.H, 2.)
-        self.assertAlmostEqual(slit_pore.L, 2.)
+        slit_pore.set_params(H=2.0)
+        self.assertAlmostEqual(slit_pore.H, 2.0)
+        self.assertAlmostEqual(slit_pore.L, 2.0)
         self.assertEqual(slit_pore.boundary, "no_slip")
-        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getH(), 2.)
-        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getL(), 2.)
+        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getH(), 2.0)
+        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getL(), 2.0)
         self.assertEqual(slit_pore.cpp_method.geometry.getBoundaryCondition(), hoomd.mpcd._mpcd.boundary.no_slip)
 
         # change L
-        slit_pore.set_params(L=3.)
-        self.assertAlmostEqual(slit_pore.L, 3.)
-        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getL(), 3.)
+        slit_pore.set_params(L=3.0)
+        self.assertAlmostEqual(slit_pore.L, 3.0)
+        self.assertAlmostEqual(slit_pore.cpp_method.geometry.getL(), 3.0)
 
         # change BCs
         slit_pore.set_params(boundary="slip")
@@ -72,7 +75,7 @@ class integrate_slit_pore_tests(unittest.TestCase):
 
     # test for invalid boundary conditions being set
     def test_bad_boundary(self):
-        slit_pore = mpcd.integrate.slit_pore(group=self.group, H=4., L=2.)
+        slit_pore = mpcd.integrate.slit_pore(group=self.group, H=4.0, L=2.0)
         slit_pore.set_params(boundary="no_slip")
         slit_pore.set_params(boundary="slip")
 
@@ -82,5 +85,6 @@ class integrate_slit_pore_tests(unittest.TestCase):
     def tearDown(self):
         del self.s, self.group
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

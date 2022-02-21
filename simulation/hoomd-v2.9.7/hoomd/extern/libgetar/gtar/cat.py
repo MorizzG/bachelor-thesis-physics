@@ -19,17 +19,15 @@ input file take precedence.
 """
 
 import argparse
-from collections import defaultdict
 import os
+from collections import defaultdict
 
 import gtar
 
-parser = argparse.ArgumentParser(
-    description='Command-line archive concatenation')
-parser.add_argument('inputs', nargs=argparse.REMAINDER,
-                    help='Input files to read')
-parser.add_argument('-o', '--output', required=True,
-                    help='File to write to')
+parser = argparse.ArgumentParser(description="Command-line archive concatenation")
+parser.add_argument("inputs", nargs=argparse.REMAINDER, help="Input files to read")
+parser.add_argument("-o", "--output", required=True, help="File to write to")
+
 
 def main(inputs, output):
     """Take all records from a set of getar-formatted files and output them to another.
@@ -42,12 +40,12 @@ def main(inputs, output):
     tempName = output
 
     while os.path.exists(tempName):
-        nameHalves = (nameHalves[0] + '_', nameHalves[1])
+        nameHalves = (nameHalves[0] + "_", nameHalves[1])
         tempName = nameHalves[0] + nameHalves[1]
 
     recordFiles = {}
     for input in inputs:
-        with gtar.GTAR(input, 'r') as inpFile:
+        with gtar.GTAR(input, "r") as inpFile:
             recs = {rec: inpFile.queryFrames(rec) for rec in inpFile.getRecordTypes()}
 
             for rec in recs:
@@ -61,10 +59,10 @@ def main(inputs, output):
         sourceRecords[recordFiles[path]].append(path)
 
     try:
-        with gtar.GTAR(tempName, 'w') as out:
+        with gtar.GTAR(tempName, "w") as out:
             for source in sourceRecords:
                 allPaths = sorted(sourceRecords[source])
-                with gtar.GTAR(source, 'r') as inp:
+                with gtar.GTAR(source, "r") as inp:
                     for path in allPaths:
                         out.writePath(path, inp.readPath(path))
 
@@ -74,4 +72,6 @@ def main(inputs, output):
         if os.path.exists(tempName) and not os.path.samefile(tempName, output):
             os.remove(tempName)
 
-if __name__ == '__main__': main(**vars(parser.parse_args()))
+
+if __name__ == "__main__":
+    main(**vars(parser.parse_args()))

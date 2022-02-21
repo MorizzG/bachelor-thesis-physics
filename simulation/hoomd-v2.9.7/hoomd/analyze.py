@@ -3,17 +3,19 @@
 
 # Maintainer: joaander / All Developers are free to add commands for new features
 
-R""" Commands that analyze the system and provide some output.
+r""" Commands that analyze the system and provide some output.
 
 An analyzer examines the system state in some way every *period* time steps and generates
 some form of output based on the analysis. Check the documentation for individual analyzers
 to see what they do.
 """
 
-from hoomd import _hoomd;
-import hoomd;
-import sys;
+import sys
+
+import hoomd
 import numpy
+from hoomd import _hoomd
+
 
 ## \internal
 # \brief Base class for analyzers
@@ -32,17 +34,17 @@ class _analyzer(hoomd.meta._metadata):
     def __init__(self):
         # check if initialization has occurred
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot create analyzer before initialization\n");
-            raise RuntimeError('Error creating analyzer');
+            hoomd.context.msg.error("Cannot create analyzer before initialization\n")
+            raise RuntimeError("Error creating analyzer")
 
-        self.cpp_analyzer = None;
+        self.cpp_analyzer = None
 
         # increment the id counter
-        id = _analyzer.cur_id;
-        _analyzer.cur_id += 1;
+        id = _analyzer.cur_id
+        _analyzer.cur_id += 1
 
-        self.analyzer_name = "analyzer%d" % (id);
-        self.enabled = True;
+        self.analyzer_name = "analyzer%d" % (id)
+        self.enabled = True
 
         # Store a reference in global simulation variables
         hoomd.context.current.analyzers.append(self)
@@ -61,18 +63,22 @@ class _analyzer(hoomd.meta._metadata):
     # to the integer period and the variable period is enabled
     #
     def setupAnalyzer(self, period, phase=0):
-        self.phase = phase;
+        self.phase = phase
 
         if type(period) == type(1.0):
-            hoomd.context.current.system.addAnalyzer(self.cpp_analyzer, self.analyzer_name, int(period), phase);
+            hoomd.context.current.system.addAnalyzer(self.cpp_analyzer, self.analyzer_name, int(period), phase)
         elif type(period) == type(1):
-            hoomd.context.current.system.addAnalyzer(self.cpp_analyzer, self.analyzer_name, period, phase);
-        elif type(period) == type(lambda n: n*2):
-            hoomd.context.current.system.addAnalyzer(self.cpp_analyzer, self.analyzer_name, 1000, -1);
-            hoomd.context.current.system.setAnalyzerPeriodVariable(self.analyzer_name, period);
+            hoomd.context.current.system.addAnalyzer(self.cpp_analyzer, self.analyzer_name, period, phase)
+        elif type(period) == type(lambda n: n * 2):
+            hoomd.context.current.system.addAnalyzer(self.cpp_analyzer, self.analyzer_name, 1000, -1)
+            hoomd.context.current.system.setAnalyzerPeriodVariable(self.analyzer_name, period)
         else:
-            hoomd.context.msg.error("I don't know what to do with a period of type " + str(type(period)) + " expecting an int or a function\n");
-            raise RuntimeError('Error creating analyzer');
+            hoomd.context.msg.error(
+                "I don't know what to do with a period of type "
+                + str(type(period))
+                + " expecting an int or a function\n"
+            )
+            raise RuntimeError("Error creating analyzer")
 
     ## \var enabled
     # \internal
@@ -95,11 +101,11 @@ class _analyzer(hoomd.meta._metadata):
     def check_initialization(self):
         # check that we have been initialized properly
         if self.cpp_analyzer is None:
-            hoomd.context.msg.error('Bug in hoomd: cpp_analyzer not set, please report\n');
-            raise RuntimeError();
+            hoomd.context.msg.error("Bug in hoomd: cpp_analyzer not set, please report\n")
+            raise RuntimeError()
 
     def disable(self):
-        R""" Disable the analyzer.
+        r""" Disable the analyzer.
 
         Examples::
 
@@ -111,21 +117,21 @@ class _analyzer(hoomd.meta._metadata):
         analyzer during the simulation. A disabled analyzer can be re-enabled
         with :py:meth:`enable()`.
         """
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         # check if we are already disabled
         if not self.enabled:
-            hoomd.context.msg.warning("Ignoring command to disable an analyzer that is already disabled");
-            return;
+            hoomd.context.msg.warning("Ignoring command to disable an analyzer that is already disabled")
+            return
 
-        self.prev_period = hoomd.context.current.system.getAnalyzerPeriod(self.analyzer_name);
-        hoomd.context.current.system.removeAnalyzer(self.analyzer_name);
+        self.prev_period = hoomd.context.current.system.getAnalyzerPeriod(self.analyzer_name)
+        hoomd.context.current.system.removeAnalyzer(self.analyzer_name)
         hoomd.context.current.analyzers.remove(self)
-        self.enabled = False;
+        self.enabled = False
 
     def enable(self):
-        R""" Enables the analyzer
+        r""" Enables the analyzer
 
         Examples::
 
@@ -133,20 +139,20 @@ class _analyzer(hoomd.meta._metadata):
 
         See :py:meth:`disable()`.
         """
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         # check if we are already disabled
         if self.enabled:
-            hoomd.context.msg.warning("Ignoring command to enable an analyzer that is already enabled");
-            return;
+            hoomd.context.msg.warning("Ignoring command to enable an analyzer that is already enabled")
+            return
 
-        hoomd.context.current.system.addAnalyzer(self.cpp_analyzer, self.analyzer_name, self.prev_period, self.phase);
+        hoomd.context.current.system.addAnalyzer(self.cpp_analyzer, self.analyzer_name, self.prev_period, self.phase)
         hoomd.context.current.analyzers.append(self)
-        self.enabled = True;
+        self.enabled = True
 
     def set_period(self, period):
-        R""" Changes the period between analyzer executions
+        r""" Changes the period between analyzer executions
 
         Args:
             period (int): New period to set (in time steps)
@@ -161,55 +167,65 @@ class _analyzer(hoomd.meta._metadata):
         is executed every *period* time steps. Changing the period does not change the phase set when the analyzer
         was first created.
         """
-        hoomd.util.print_status_line();
-        self.period = period;
+        hoomd.util.print_status_line()
+        self.period = period
 
         if type(period) == type(1):
             if self.enabled:
-                hoomd.context.current.system.setAnalyzerPeriod(self.analyzer_name, period, self.phase);
+                hoomd.context.current.system.setAnalyzerPeriod(self.analyzer_name, period, self.phase)
             else:
-                self.prev_period = period;
-        elif type(period) == type(lambda n: n*2):
-            hoomd.context.msg.warning("A period cannot be changed to a variable one");
+                self.prev_period = period
+        elif type(period) == type(lambda n: n * 2):
+            hoomd.context.msg.warning("A period cannot be changed to a variable one")
         else:
-            hoomd.context.msg.warning("I don't know what to do with a period of type " + str(type(period)) + " expecting an int or a function");
+            hoomd.context.msg.warning(
+                "I don't know what to do with a period of type " + str(type(period)) + " expecting an int or a function"
+            )
 
     ## \internal
     # \brief Get metadata
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['enabled'] = self.enabled
+        data["enabled"] = self.enabled
         return data
 
     @classmethod
     def _gsd_state_name(cls):
-        raise NotImplementedError("GSD Schema is not implemented for {}".format(cls.__name__));
+        raise NotImplementedError("GSD Schema is not implemented for {}".format(cls.__name__))
 
     def _connect_gsd(self, gsd):
         # This is an internal method, and should not be called directly. See gsd.dump_state() instead
         if isinstance(gsd, hoomd.dump.gsd) and hasattr(self.cpp_analyzer, "connectGSDStateSignal"):
-            self.cpp_analyzer.connectGSDStateSignal(gsd.cpp_analyzer, self._gsd_state_name());
+            self.cpp_analyzer.connectGSDStateSignal(gsd.cpp_analyzer, self._gsd_state_name())
         else:
-            raise NotImplementedError("GSD Schema is not implemented for {}".format(self.__class__.__name__));
+            raise NotImplementedError("GSD Schema is not implemented for {}".format(self.__class__.__name__))
 
     def restore_state(self):
         """ Restore the state information from the file used to initialize the simulations
         """
-        hoomd.util.print_status_line();
-        if isinstance(hoomd.context.current.state_reader, _hoomd.GSDReader) and hasattr(self.cpp_analyzer, "restoreStateGSD"):
-            self.cpp_analyzer.restoreStateGSD(hoomd.context.current.state_reader, self._gsd_state_name());
+        hoomd.util.print_status_line()
+        if isinstance(hoomd.context.current.state_reader, _hoomd.GSDReader) and hasattr(
+            self.cpp_analyzer, "restoreStateGSD"
+        ):
+            self.cpp_analyzer.restoreStateGSD(hoomd.context.current.state_reader, self._gsd_state_name())
         else:
             if hoomd.context.current.state_reader is None:
-                hoomd.context.msg.error("Can only restore after the state reader has been initialized.\n");
+                hoomd.context.msg.error("Can only restore after the state reader has been initialized.\n")
             else:
-                hoomd.context.msg.error("Restoring state from {reader_name} is not currently supported for {name}\n".format(reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__));
-            raise RuntimeError("Can not restore state information!");
+                hoomd.context.msg.error(
+                    "Restoring state from {reader_name} is not currently supported for {name}\n".format(
+                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__
+                    )
+                )
+            raise RuntimeError("Can not restore state information!")
+
 
 # set default counter
-_analyzer.cur_id = 0;
+_analyzer.cur_id = 0
+
 
 class imd(_analyzer):
-    R""" Send simulation snapshots to VMD in real-time.
+    r""" Send simulation snapshots to VMD in real-time.
 
     Args:
         port (int): TCP/IP port to listen on.
@@ -240,25 +256,26 @@ class imd(_analyzer):
         analyze.imd(port=54321, rate=100, pause=True)
         imd = analyze.imd(port=12345, rate=1000)
     """
+
     def __init__(self, port, period=1, rate=1, pause=False, force=None, force_scale=0.1, phase=0):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # initialize base class
-        _analyzer.__init__(self);
+        _analyzer.__init__(self)
 
         # get the cpp force
         if force is not None:
-            cpp_force = force.cpp_force;
+            cpp_force = force.cpp_force
         else:
-            cpp_force = None;
+            cpp_force = None
 
         # create the c++ mirror class
-        self.cpp_analyzer = _hoomd.IMDInterface(hoomd.context.current.system_definition, port, pause, rate, cpp_force);
-        self.setupAnalyzer(period, phase);
+        self.cpp_analyzer = _hoomd.IMDInterface(hoomd.context.current.system_definition, port, pause, rate, cpp_force)
+        self.setupAnalyzer(period, phase)
 
 
 class log(_analyzer):
-    R""" Log a number of calculated quantities to a file.
+    r""" Log a number of calculated quantities to a file.
 
     Args:
         filename (str): File to write the log to, or *None* for no file output.
@@ -426,36 +443,38 @@ class log(_analyzer):
         to log and in the same order for all runs of hoomd that append to the same log.
     """
 
-    def __init__(self, filename, quantities, period, header_prefix='', overwrite=False, phase=0):
-        hoomd.util.print_status_line();
+    def __init__(self, filename, quantities, period, header_prefix="", overwrite=False, phase=0):
+        hoomd.util.print_status_line()
 
         # initialize base class
-        _analyzer.__init__(self);
+        _analyzer.__init__(self)
 
         if filename is None or filename == "":
-            filename = "";
-            period = 1;
+            filename = ""
+            period = 1
 
         # create the c++ mirror class
-        self.cpp_analyzer = _hoomd.LogPlainTXT(hoomd.context.current.system_definition, filename, header_prefix, overwrite);
-        self.setupAnalyzer(period, phase);
+        self.cpp_analyzer = _hoomd.LogPlainTXT(
+            hoomd.context.current.system_definition, filename, header_prefix, overwrite
+        )
+        self.setupAnalyzer(period, phase)
 
         # set the logged quantities
-        quantity_list = _hoomd.std_vector_string();
+        quantity_list = _hoomd.std_vector_string()
         for item in quantities:
-            quantity_list.append(str(item));
-        self.cpp_analyzer.setLoggedQuantities(quantity_list);
+            quantity_list.append(str(item))
+        self.cpp_analyzer.setLoggedQuantities(quantity_list)
 
         # add the logger to the list of loggers
-        hoomd.context.current.loggers.append(self);
+        hoomd.context.current.loggers.append(self)
 
         # store metadata
-        self.metadata_fields = ['filename','period']
+        self.metadata_fields = ["filename", "period"]
         self.filename = filename
         self.period = period
 
     def set_params(self, quantities=None, delimiter=None):
-        R""" Change the parameters of the log.
+        r""" Change the parameters of the log.
 
         Args:
             quantities (list): New list of quantities to log (if specified)
@@ -468,20 +487,20 @@ class log(_analyzer):
             logger.set_params(quantities=['bond_harmonic_energy'], delimiter=',');
         """
 
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if quantities is not None:
             # set the logged quantities
-            quantity_list = _hoomd.std_vector_string();
+            quantity_list = _hoomd.std_vector_string()
             for item in quantities:
-                quantity_list.append(str(item));
-            self.cpp_analyzer.setLoggedQuantities(quantity_list);
+                quantity_list.append(str(item))
+            self.cpp_analyzer.setLoggedQuantities(quantity_list)
 
         if delimiter:
-            self.cpp_analyzer.setDelimiter(delimiter);
+            self.cpp_analyzer.setDelimiter(delimiter)
 
     def query(self, quantity):
-        R""" Get the current value of a logged quantity.
+        r""" Get the current value of a logged quantity.
 
         Args:
             quantity (str): Name of the quantity to return.
@@ -497,14 +516,14 @@ class log(_analyzer):
             U = log.query('potential_energy')
 
         """
-        use_cache=True;
+        use_cache = True
         if self.filename == "":
-            use_cache = False;
+            use_cache = False
 
-        return self.cpp_analyzer.getQuantity(quantity, hoomd.context.current.system.getCurrentTimeStep(), use_cache);
+        return self.cpp_analyzer.getQuantity(quantity, hoomd.context.current.system.getCurrentTimeStep(), use_cache)
 
     def register_callback(self, name, callback):
-        R""" Register a callback to produce a logged quantity.
+        r""" Register a callback to produce a logged quantity.
 
         Args:
             name (str): Name of the quantity
@@ -524,19 +543,19 @@ class log(_analyzer):
             logger.register_callback('cosm', lambda timestep: math.cos(logger.query('my_quantity')))
 
         """
-        self.cpp_analyzer.registerCallback(name, callback);
+        self.cpp_analyzer.registerCallback(name, callback)
 
     ## \internal
     # \brief Re-registers all computes and updaters with the logger
     def update_quantities(self):
         # remove all registered quantities
-        self.cpp_analyzer.removeAll();
+        self.cpp_analyzer.removeAll()
 
         # re-register all computes and updater
-        hoomd.context.current.system.registerLogger(self.cpp_analyzer);
+        hoomd.context.current.system.registerLogger(self.cpp_analyzer)
 
     def disable(self):
-        R""" Disable the logger.
+        r""" Disable the logger.
 
         Examples::
 
@@ -557,7 +576,7 @@ class log(_analyzer):
         hoomd.context.current.loggers.remove(self)
 
     def enable(self):
-        R""" Enables the logger
+        r""" Enables the logger
 
         Examples::
 
@@ -573,8 +592,9 @@ class log(_analyzer):
 
         hoomd.context.current.loggers.append(self)
 
+
 class callback(_analyzer):
-    R""" Callback analyzer.
+    r""" Callback analyzer.
 
     Args:
         callback (`callable`): The python callback object
@@ -590,12 +610,13 @@ class callback(_analyzer):
 
         analyze.callback(callback = my_callback, period = 100)
     """
+
     def __init__(self, callback, period, phase=0):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # initialize base class
-        _analyzer.__init__(self);
+        _analyzer.__init__(self)
 
         # create the c++ mirror class
         self.cpp_analyzer = _hoomd.CallbackAnalyzer(hoomd.context.current.system_definition, callback)
-        self.setupAnalyzer(period, phase);
+        self.setupAnalyzer(period, phase)

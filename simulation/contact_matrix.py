@@ -26,7 +26,6 @@ import scipy.spatial
 # from tools.mg_plot import new_fig, set_styling
 
 
-
 NUM_THREADS = 8
 
 
@@ -35,12 +34,7 @@ NUM_THREADS = 8
 parser = argparse.ArgumentParser(description="Calculate chromosome contactivity")
 
 arg_group = parser.add_argument(
-    "cell_n",
-    action="store",
-    nargs="?",
-    type=int,
-    default=1,
-    help="Which cell to calculate",
+    "cell_n", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",
 )
 
 args = parser.parse_args()

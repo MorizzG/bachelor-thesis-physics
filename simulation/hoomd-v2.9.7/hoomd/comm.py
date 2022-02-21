@@ -8,10 +8,11 @@
 Use methods in this module to query the number of MPI ranks, the current rank, etc...
 """
 
-from hoomd import _hoomd
-import hoomd;
+import sys
 
-import sys;
+import hoomd
+from hoomd import _hoomd
+
 
 def get_num_ranks():
     """ Get the number of ranks in this partition.
@@ -23,11 +24,12 @@ def get_num_ranks():
         Returns 1 in non-mpi builds.
     """
 
-    hoomd.context._verify_init();
+    hoomd.context._verify_init()
     if _hoomd.is_MPI_available():
-        return hoomd.context.mpi_conf.getNRanks();
+        return hoomd.context.mpi_conf.getNRanks()
     else:
-        return 1;
+        return 1
+
 
 def get_rank():
     """ Get the current rank.
@@ -39,12 +41,13 @@ def get_rank():
         Always returns 0 in non-mpi builds.
     """
 
-    hoomd.context._verify_init();
+    hoomd.context._verify_init()
 
     if _hoomd.is_MPI_available():
         return hoomd.context.mpi_conf.getRank()
     else:
-        return 0;
+        return 0
+
 
 def get_partition():
     """ Get the current partition index.
@@ -55,12 +58,13 @@ def get_partition():
     Note:
         Always returns 0 in non-mpi builds.
     """
-    hoomd.context._verify_init();
+    hoomd.context._verify_init()
 
     if _hoomd.is_MPI_available():
         return hoomd.context.mpi_conf.getPartition()
     else:
-        return 0;
+        return 0
+
 
 def barrier_all():
     """ Perform a MPI barrier synchronization across the whole MPI run.
@@ -69,7 +73,8 @@ def barrier_all():
         Does nothing in in non-MPI builds.
     """
     if _hoomd.is_MPI_available():
-        _hoomd.mpi_barrier_world();
+        _hoomd.mpi_barrier_world()
+
 
 def barrier():
     """ Perform a MPI barrier synchronization across all ranks in the partition.
@@ -77,10 +82,11 @@ def barrier():
     Note:
         Does nothing in in non-MPI builds.
     """
-    hoomd.context._verify_init();
+    hoomd.context._verify_init()
 
     if _hoomd.is_MPI_available():
         hoomd.context.mpi_conf.barrier()
+
 
 class decomposition(object):
     """ Set the domain decomposition.
@@ -151,7 +157,9 @@ class decomposition(object):
 
         # check that system is not initialized
         if hoomd.context.current.system is not None:
-            hoomd.context.msg.error("comm.decomposition: cannot modify decomposition after system is initialized. Call before init.*\n")
+            hoomd.context.msg.error(
+                "comm.decomposition: cannot modify decomposition after system is initialized. Call before init.*\n"
+            )
             raise RuntimeError("Cannot create decomposition after system is initialized. Call before init.*")
 
         # check that there are ranks available for decomposition
@@ -170,7 +178,7 @@ class decomposition(object):
             self.uniform_z = True
 
             hoomd.util.quiet_status()
-            self.set_params(x,y,z,nx,ny,nz)
+            self.set_params(x, y, z, nx, ny, nz)
             hoomd.util.unquiet_status()
 
             # do a one time update of the cuts to the global values if a global is set
@@ -194,7 +202,7 @@ class decomposition(object):
 
             hoomd.context.current.decomposition = self
 
-    def set_params(self,x=None,y=None,z=None,nx=None,ny=None,nz=None):
+    def set_params(self, x=None, y=None, z=None, nx=None, ny=None, nz=None):
         """Set parameters for the decomposition before initialization.
 
         Args:
@@ -212,8 +220,14 @@ class decomposition(object):
         """
         hoomd.util.print_status_line()
 
-        if (x is not None and nx is not None) or (y is not None and ny is not None) or (z is not None and nz is not None):
-            hoomd.context.msg.error("comm.decomposition: cannot set fractions and number of processors simultaneously\n")
+        if (
+            (x is not None and nx is not None)
+            or (y is not None and ny is not None)
+            or (z is not None and nz is not None)
+        ):
+            hoomd.context.msg.error(
+                "comm.decomposition: cannot set fractions and number of processors simultaneously\n"
+            )
             raise RuntimeError("Cannot set fractions and number of processors simultaneously")
 
         # if x is set, use it. otherwise, if nx is set, compute x and set it
@@ -256,7 +270,9 @@ class decomposition(object):
     def _make_cpp_decomposition(self, box):
         # if the box is uniform in all directions, just use these values
         if self.uniform_x and self.uniform_y and self.uniform_z:
-            self.cpp_dd = _hoomd.DomainDecomposition(hoomd.context.exec_conf, box.getL(), self.nx, self.ny, self.nz, not hoomd.context.options.onelevel)
+            self.cpp_dd = _hoomd.DomainDecomposition(
+                hoomd.context.exec_conf, box.getL(), self.nx, self.ny, self.nz, not hoomd.context.options.onelevel
+            )
             return self.cpp_dd
 
         # otherwise, make the fractional decomposition
@@ -267,11 +283,11 @@ class decomposition(object):
 
             # if uniform, correct the fractions to be uniform as well
             if self.uniform_x and self.nx > 0:
-                self.x = [1.0/self.nx]*(self.nx-1)
+                self.x = [1.0 / self.nx] * (self.nx - 1)
             if self.uniform_y and self.ny > 0:
-                self.y = [1.0/self.ny]*(self.ny-1)
+                self.y = [1.0 / self.ny] * (self.ny - 1)
             if self.uniform_z and self.nz > 0:
-                self.z = [1.0/self.nz]*(self.nz-1)
+                self.z = [1.0 / self.nz] * (self.nz - 1)
 
             sum_x = sum_y = sum_z = 0.0
             tol = 1.0e-5

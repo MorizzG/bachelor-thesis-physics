@@ -4,10 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 # unit tests for mpcd sine force
 class mpcd_force_sine_test(unittest.TestCase):
@@ -16,20 +17,20 @@ class mpcd_force_sine_test(unittest.TestCase):
         hoomd.context.initialize()
 
         # default testing configuration
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=0, box=hoomd.data.boxdim(L=10.0)))
 
         # initialize the system from the starting snapshot
         snap = mpcd.data.make_snapshot(N=1)
-        snap.particles.position[:] = [[1.,-1.,0.]]
-        snap.particles.velocity[:] = [[1.,-2.,2.]]
+        snap.particles.position[:] = [[1.0, -1.0, 0.0]]
+        snap.particles.velocity[:] = [[1.0, -2.0, 2.0]]
         self.s = mpcd.init.read_snapshot(snap)
 
     # test for initializing sine force field
     def test_init(self):
         # tuple
-        f = mpcd.force.sine(F=2.,k=3.)
-        self.assertAlmostEqual(f.F, 2.)
-        self.assertAlmostEqual(f.k, 3.)
+        f = mpcd.force.sine(F=2.0, k=3.0)
+        self.assertAlmostEqual(f.F, 2.0)
+        self.assertAlmostEqual(f.k, 3.0)
 
     # test for stepping with sine force
     # (this is also an implicit test that the base integrator is implementing the force correctly)
@@ -38,24 +39,29 @@ class mpcd_force_sine_test(unittest.TestCase):
         bulk = mpcd.stream.bulk(period=1)
 
         # run 1 step and check updated velocity
-        k0 = 2.*np.pi/10.
-        f = mpcd.force.sine(F=2., k=k0)
+        k0 = 2.0 * np.pi / 10.0
+        f = mpcd.force.sine(F=2.0, k=k0)
         bulk.set_force(f)
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.position[0], (1.1,-1.2,0.2))
-            np.testing.assert_array_almost_equal(snap.particles.velocity[0], (1.+0.5*0.1*2.*np.sin(k0*0.2), -2.0, 2.))
+            np.testing.assert_array_almost_equal(snap.particles.position[0], (1.1, -1.2, 0.2))
+            np.testing.assert_array_almost_equal(
+                snap.particles.velocity[0], (1.0 + 0.5 * 0.1 * 2.0 * np.sin(k0 * 0.2), -2.0, 2.0)
+            )
 
         # remove force and stream freely
         bulk.remove_force()
         hoomd.run(1)
         snap = self.s.take_snapshot()
         if hoomd.comm.get_rank() == 0:
-            np.testing.assert_array_almost_equal(snap.particles.velocity[0], (1.+0.5*0.1*2.*np.sin(k0*0.2), -2.0, 2.))
+            np.testing.assert_array_almost_equal(
+                snap.particles.velocity[0], (1.0 + 0.5 * 0.1 * 2.0 * np.sin(k0 * 0.2), -2.0, 2.0)
+            )
 
     def tearDown(self):
         del self.s
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

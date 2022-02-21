@@ -4,6 +4,7 @@ Created on Sat Nov  6 15:31:33 2021
 
 @author: mg
 """
+# from collections.abc import Iterable
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -17,17 +18,18 @@ def new_fig(figsize=(8, 6), *args, **kw_args):
     return plt.subplots(*args, figsize=figsize, **kw_args)
 
 
-def set_styling(ax, x_loc=None, y_loc=None, grid=False):
-    ax.xaxis.set_tick_params(
-        which="major", size=10, width=1.5, direction="in", top="on"
-    )
+def set_styling(ax_or_axes, x_loc=None, y_loc=None, grid=False):
+    if not isinstance(ax_or_axes, mpl.axes.Axes):
+        for ax in ax_or_axes:
+            set_styling(ax)
+        return
+
+    ax = ax_or_axes
+
+    ax.xaxis.set_tick_params(which="major", size=10, width=1.5, direction="in", top="on")
     ax.xaxis.set_tick_params(which="minor", size=7, width=1.5, direction="in", top="on")
-    ax.yaxis.set_tick_params(
-        which="major", size=10, width=1.5, direction="in", right="on"
-    )
-    ax.yaxis.set_tick_params(
-        which="minor", size=7, width=1.5, direction="in", right="on"
-    )
+    ax.yaxis.set_tick_params(which="major", size=10, width=1.5, direction="in", right="on")
+    ax.yaxis.set_tick_params(which="minor", size=7, width=1.5, direction="in", right="on")
 
     if x_loc is not None:
         if type(x_loc) is int or type(x_loc) is float:

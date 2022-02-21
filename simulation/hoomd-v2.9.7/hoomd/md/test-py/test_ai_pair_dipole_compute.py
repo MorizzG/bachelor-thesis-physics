@@ -2,14 +2,18 @@
 # Maintainer: mspells
 
 import math as m
+
 from hoomd import *
 from hoomd import md
+
 context.initialize()
-import unittest
 import os
+import unittest
+
 import numpy
 
-class pair_dipole_tests_force (unittest.TestCase):
+
+class pair_dipole_tests_force(unittest.TestCase):
     def setUp(self):
         print
         context.initialize()
@@ -19,7 +23,12 @@ class pair_dipole_tests_force (unittest.TestCase):
             snapshot.particles.position[0] = [0.0, 0.0, 0.0]
             snapshot.particles.position[1] = [0.8, 0.45, 0.9]
             snapshot.particles.orientation[0] = [1, 0, 0, 0]
-            snapshot.particles.orientation[1] = [m.cos(2*m.pi/6), m.sin(2*m.pi/6)/m.sqrt(2), m.sin(2*m.pi/6)/m.sqrt(2), 0]
+            snapshot.particles.orientation[1] = [
+                m.cos(2 * m.pi / 6),
+                m.sin(2 * m.pi / 6) / m.sqrt(2),
+                m.sin(2 * m.pi / 6) / m.sqrt(2),
+                0,
+            ]
             snapshot.particles.charge[0] = 2.0
             snapshot.particles.charge[1] = 1.0
         self.system = init.read_snapshot(snapshot)
@@ -27,10 +36,10 @@ class pair_dipole_tests_force (unittest.TestCase):
     def test_force_torque_kappa0(self):
 
         self.nl = md.nlist.cell()
-        dipole = md.pair.dipole(r_cut=6.0, nlist = self.nl)
-        dipole.pair_coeff.set('A', 'A', mu=0.6, A=1.0, kappa=0.0)
-        md.integrate.mode_standard(dt = 0.0)
-        md.integrate.nve(group = group.all())
+        dipole = md.pair.dipole(r_cut=6.0, nlist=self.nl)
+        dipole.pair_coeff.set("A", "A", mu=0.6, A=1.0, kappa=0.0)
+        md.integrate.mode_standard(dt=0.0)
+        md.integrate.nve(group=group.all())
         run(1)
 
         force_1 = self.system.particles[0].net_force
@@ -54,10 +63,10 @@ class pair_dipole_tests_force (unittest.TestCase):
     def test_force_torque_kappa1(self):
 
         self.nl = md.nlist.cell()
-        dipole = md.pair.dipole(r_cut=6.0, nlist = self.nl)
-        dipole.pair_coeff.set('A', 'A', mu=0.6, A=1.0, kappa=1.0)
-        md.integrate.mode_standard(dt = 0.0)
-        md.integrate.nve(group = group.all())
+        dipole = md.pair.dipole(r_cut=6.0, nlist=self.nl)
+        dipole.pair_coeff.set("A", "A", mu=0.6, A=1.0, kappa=1.0)
+        md.integrate.mode_standard(dt=0.0)
+        md.integrate.nve(group=group.all())
         run(1)
 
         force_1 = self.system.particles[0].net_force
@@ -82,5 +91,6 @@ class pair_dipole_tests_force (unittest.TestCase):
         del self.system, self.nl
         context.initialize()
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

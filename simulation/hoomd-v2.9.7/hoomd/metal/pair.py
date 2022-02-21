@@ -1,21 +1,21 @@
 # Copyright (c) 2009-2019 The Regents of the University of Michigan
 # This file is part of the HOOMD-blue project, released under the BSD 3-Clause License.
 
-R""" Metal pair potentials.
+r""" Metal pair potentials.
 """
 
-from hoomd.md import force;
-from hoomd.md import nlist as nl # to avoid naming conflicts
-import hoomd;
+import math
+import sys
+
+import hoomd
 from hoomd import _hoomd
-from hoomd.md import _md
+from hoomd.md import _md, force
+from hoomd.md import nlist as nl  # to avoid naming conflicts
 from hoomd.metal import _metal
 
-import math;
-import sys;
 
 class eam(force._force):
-    R""" EAM pair potential.
+    r""" EAM pair potential.
 
     Args:
         file (str): File name with potential tables in Alloy or FS format
@@ -47,55 +47,63 @@ class eam(force._force):
         eam = pair.eam(file='name.eam.alloy', type='Alloy', nlist=nl)
 
     """
+
     def __init__(self, file, type, nlist):
-        c = hoomd.cite.article(cite_key = 'lin2017',
-                         author=['L Yang', 'F Zhang', 'K M Ho', 'C Z Wang','A Travesset'],
-                         title = 'Implementation of EAM and FS potentials in HOOMD-blue',
-                         journal = 'Computer Physics Communications',
-                         volume = 0,
-                         number = 0,
-                         pages = '0--0',
-                         year = '2017',
-                         doi = '0',
-                         feature = 'EAM')
+        c = hoomd.cite.article(
+            cite_key="lin2017",
+            author=["L Yang", "F Zhang", "K M Ho", "C Z Wang", "A Travesset"],
+            title="Implementation of EAM and FS potentials in HOOMD-blue",
+            journal="Computer Physics Communications",
+            volume=0,
+            number=0,
+            pages="0--0",
+            year="2017",
+            doi="0",
+            feature="EAM",
+        )
         hoomd.cite._ensure_global_bib().add(c)
 
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # Error out in MPI simulations
-        if (_hoomd.is_MPI_available()):
+        if _hoomd.is_MPI_available():
             if hoomd.context.current.system_definition.getParticleData().getDomainDecomposition():
                 hoomd.context.msg.error("pair.eam is not supported in multi-processor simulations.\n\n")
                 raise RuntimeError("Error setting up pair potential.")
 
         # initialize the base class
-        force._force.__init__(self);
+        force._force.__init__(self)
         # Translate type
-        if(type == 'Alloy'): type_of_file = 0;
-        elif(type == 'FS'): type_of_file = 1;
-        else: raise RuntimeError('Unknown EAM input file type');
+        if type == "Alloy":
+            type_of_file = 0
+        elif type == "FS":
+            type_of_file = 1
+        else:
+            raise RuntimeError("Unknown EAM input file type")
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_force = _metal.EAMForceCompute(hoomd.context.current.system_definition, file, type_of_file);
+            self.cpp_force = _metal.EAMForceCompute(hoomd.context.current.system_definition, file, type_of_file)
         else:
-            self.cpp_force = _metal.EAMForceComputeGPU(hoomd.context.current.system_definition, file, type_of_file);
+            self.cpp_force = _metal.EAMForceComputeGPU(hoomd.context.current.system_definition, file, type_of_file)
 
-        #After load EAMForceCompute we know r_cut from EAM potential`s file. We need update neighbor list.
-        self.r_cut_new = self.cpp_force.get_r_cut();
+        # After load EAMForceCompute we know r_cut from EAM potential`s file. We need update neighbor list.
+        self.r_cut_new = self.cpp_force.get_r_cut()
         self.nlist = nlist
-        self.nlist.subscribe(lambda : self.get_rcut())
+        self.nlist.subscribe(lambda: self.get_rcut())
         self.nlist.update_rcut()
 
-        #Load neighbor list to compute.
-        self.cpp_force.set_neighbor_list(self.nlist.cpp_nlist);
+        # Load neighbor list to compute.
+        self.cpp_force.set_neighbor_list(self.nlist.cpp_nlist)
         if hoomd.context.exec_conf.isCUDAEnabled():
-            self.nlist.cpp_nlist.setStorageMode(_md.NeighborList.storageMode.full);
+            self.nlist.cpp_nlist.setStorageMode(_md.NeighborList.storageMode.full)
 
-        hoomd.context.msg.notice(2, "Set r_cut = " + str(self.r_cut_new) + " from potential`s file '" +  str(file) + "'.\n");
+        hoomd.context.msg.notice(
+            2, "Set r_cut = " + str(self.r_cut_new) + " from potential`s file '" + str(file) + "'.\n"
+        )
 
-        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
-        self.pair_coeff = hoomd.md.pair.coeff();
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
+        self.pair_coeff = hoomd.md.pair.coeff()
 
     def get_rcut(self):
         # go through the list of only the active particle types in the simulation
@@ -113,4 +121,4 @@ class eam(force._force):
 
     def update_coeffs(self):
         # check that the pair coefficients are valid
-        pass;
+        pass

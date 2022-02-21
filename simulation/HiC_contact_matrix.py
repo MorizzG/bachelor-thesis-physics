@@ -18,9 +18,7 @@ n_cell = 1
 
 # %% Load data
 
-df_contact_pairs = pd.read_pickle(
-    f"data/contact_pairs_jan/contact_pairs_cell{n_cell}.pkl"
-)
+df_contact_pairs = pd.read_pickle(f"data/contact_pairs_jan/contact_pairs_cell{n_cell}.pkl")
 
 lengths = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{n_cell}.pkl")
 
@@ -48,10 +46,7 @@ for (i, j) in cp:
 X = np.arange(N, step=100)
 
 mat_thinned = np.array(
-    [
-        [np.sum(mat[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)]
-        for j in range(len(X) - 1)
-    ]
+    [[np.sum(mat[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)] for j in range(len(X) - 1)]
 )
 
 

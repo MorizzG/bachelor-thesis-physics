@@ -4,10 +4,11 @@
 # Maintainer: mphoward
 
 import unittest
-import numpy as np
+
 import hoomd
-from hoomd import md
-from hoomd import mpcd
+import numpy as np
+from hoomd import md, mpcd
+
 
 # unit tests for mpcd.collide.at
 class mpcd_collide_at_test(unittest.TestCase):
@@ -16,7 +17,7 @@ class mpcd_collide_at_test(unittest.TestCase):
         hoomd.context.initialize()
 
         # default testing configuration
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.0)))
 
         # initialize the system from the starting snapshot
         mpcd.init.read_snapshot(mpcd.data.make_snapshot(N=1))
@@ -39,7 +40,7 @@ class mpcd_collide_at_test(unittest.TestCase):
         self.assertEqual(hoomd.context.current.mpcd._collide, at)
 
         at.disable()
-        mpcd.collide.at(seed=42, period=5, kT=hoomd.variant.linear_interp([[0,1.5],[10,2.0]]))
+        mpcd.collide.at(seed=42, period=5, kT=hoomd.variant.linear_interp([[0, 1.5], [10, 2.0]]))
 
     # test for setting of embedded group
     def test_embed(self):
@@ -72,7 +73,7 @@ class mpcd_collide_at_test(unittest.TestCase):
         self.assertEqual(at.shift, False)
 
         at.set_params(kT=2.0)
-        at.set_params(kT=hoomd.variant.linear_interp([[0,1.5],[10,2.0]]))
+        at.set_params(kT=hoomd.variant.linear_interp([[0, 1.5], [10, 2.0]]))
 
     # test common initialization errors
     def test_init_errors(self):
@@ -84,7 +85,7 @@ class mpcd_collide_at_test(unittest.TestCase):
             mpcd.collide.at(seed=42, period=5, kT=1.0)
 
         # it is an error to make a collision rule without initializing MPCD first
-        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.)))
+        hoomd.init.read_snapshot(hoomd.data.make_snapshot(N=1, box=hoomd.data.boxdim(L=20.0)))
         with self.assertRaises(RuntimeError):
             mpcd.collide.at(seed=42, period=5, kT=1.0)
 
@@ -95,5 +96,6 @@ class mpcd_collide_at_test(unittest.TestCase):
     def tearDown(self):
         pass
 
-if __name__ == '__main__':
-    unittest.main(argv = ['test.py', '-v'])
+
+if __name__ == "__main__":
+    unittest.main(argv=["test.py", "-v"])

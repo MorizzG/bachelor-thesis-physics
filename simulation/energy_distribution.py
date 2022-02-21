@@ -10,28 +10,18 @@ import argparse
 
 # import numpy as np
 import pandas as pd
-
 from tools.mg_plot import new_fig, set_styling
 
 # import matplotlib.pyplot as plt
 
 
-
-
 # %% Parse args
 
 
-parser = argparse.ArgumentParser(
-    description="Display potential energy distribution for simulation"
-)
+parser = argparse.ArgumentParser(description="Display potential energy distribution for simulation")
 
 arg_group = parser.add_argument(
-    "cell_n",
-    action="store",
-    nargs="?",
-    type=int,
-    default=1,
-    help="Which cell to calculate",  # , nargs="*"
+    "cell_n", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",  # , nargs="*"
 )
 
 args = parser.parse_args()

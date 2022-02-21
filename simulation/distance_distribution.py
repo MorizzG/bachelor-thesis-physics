@@ -13,10 +13,10 @@ import argparse
 
 import gsd.hoomd
 import numpy as np
+
 # import pandas as pd
 import seaborn as sns
 from scipy.stats import rv_histogram
-
 from tools.mg_plot import new_fig, set_styling
 
 # import matplotlib.pyplot as plt
@@ -28,21 +28,13 @@ from tools.mg_plot import new_fig, set_styling
 # from scipy.signal import savgol_filter
 
 
-
 # %% Parse args
 
 
-parser = argparse.ArgumentParser(
-    description="Calculate distance distributions for bonds and contacts"
-)
+parser = argparse.ArgumentParser(description="Calculate distance distributions for bonds and contacts")
 
 arg_group = parser.add_argument(
-    "cell_n",
-    action="store",
-    nargs="?",
-    type=int,
-    default=1,
-    help="Which cell to calculate",  # , nargs="*"
+    "cell_n", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",  # , nargs="*"
 )
 
 args = parser.parse_args()
@@ -84,13 +76,9 @@ with gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb") as f:
 
 # %% Calculate bond and contact distance distribution
 
-bond_dists = np.linalg.norm(
-    np.concatenate([pos[bonds[:, 0]] - pos[bonds[:, 1]] for pos in all_pos]), axis=1
-)
+bond_dists = np.linalg.norm(np.concatenate([pos[bonds[:, 0]] - pos[bonds[:, 1]] for pos in all_pos]), axis=1)
 
-contact_dists = np.linalg.norm(
-    np.concatenate([pos[contacts[:, 0]] - pos[contacts[:, 1]] for pos in all_pos]), axis=1
-)
+contact_dists = np.linalg.norm(np.concatenate([pos[contacts[:, 0]] - pos[contacts[:, 1]] for pos in all_pos]), axis=1)
 
 
 rv_bonds = rv_histogram(np.histogram(bond_dists, "auto", density=True))

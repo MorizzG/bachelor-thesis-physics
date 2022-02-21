@@ -12,7 +12,34 @@ import gsd.hoomd
 import numpy as np
 import scipy.spatial
 
-# Make sure all rmsd files exist
+
+def rmsd(pos1, pos2):
+    """
+    Calculate the RMSD between two arrays os positions.
+
+    Parameters
+    ----------
+    pos1 : numpy.ndarray
+        First array of positions.
+    pos2 : numpy.ndarray
+        Second array of positions.
+
+    Returns
+    -------
+    float64
+        RMSD
+
+    """
+    mean_pos1 = np.mean(pos1, axis=0)
+
+    norm1 = np.linalg.norm(pos1 - mean_pos1)
+
+    mtx1, mtx2, M_sq = scipy.spatial.procrustes(pos1, pos2)
+
+    # scipy.spatial.procrustes normalises both trajectories so that
+    # the sum of all norms is equal to 1
+    # we want the rmsd of the original positions, so we reverse it by multiplying by the norm
+    return norm1 * np.sqrt(3 * ((mtx1 - mtx2) ** 2).mean())
 
 
 def _rmsd_worker(n_cell, ref_idx):
@@ -66,49 +93,22 @@ def cell_file_rmsds(filepath, ref_idx=-1):
 
     pos_ref = all_pos[ref_idx, :, :]
 
-    rmsd = np.empty(all_pos.shape[0])
+    rmsds = np.empty(all_pos.shape[0])
 
     for idx in range(all_pos.shape[0]):
         pos = all_pos[idx, :, :]
 
-        mean_pos = np.mean(pos, axis=0)
+        # mean_pos = np.mean(pos, axis=0)
 
-        norm_pos = np.linalg.norm(pos - mean_pos)
+        # norm_pos = np.linalg.norm(pos - mean_pos)
 
-        mtx1, mtx2, M = scipy.spatial.procrustes(pos, pos_ref)
+        # mtx1, mtx2, M = scipy.spatial.procrustes(pos, pos_ref)
 
-        rmsd[idx] = norm_pos * np.sqrt(3 * ((mtx1 - mtx2) ** 2).mean())
-    rmsd[ref_idx] = 0
+        # rmsd[idx] = norm_pos * np.sqrt(3 * ((mtx1 - mtx2) ** 2).mean())
+        rmsds[idx] = rmsd(pos, pos_ref)
+    rmsds[ref_idx] = 0
 
-    return rmsd
-
-def rmsd(pos1, pos2):
-    """
-    Calculate the RMSD between two arrays os positions.
-
-    Parameters
-    ----------
-    pos1 : numpy.ndarray
-        First array of positions.
-    pos2 : numpy.ndarray
-        Second array of positions.
-
-    Returns
-    -------
-    float64
-        RMSD
-
-    """
-    mean_pos1 = np.mean(pos1, axis=0)
-
-    norm1 = np.linalg.norm(pos1 - mean_pos1)
-
-    mtx1, mtx2, M_sq = scipy.spatial.procrustes(pos1, pos2)
-
-    # scipy.spatial.procrustes normalises both trajectories so that
-    # the sum of all norms is equal to 1
-    # we want the rmsd of the original positions, so we reverse it by multiplying by the norm
-    return norm1 * np.sqrt(3 * ((mtx1 - mtx2) ** 2).mean())
+    return rmsds
 
 
 if __name__ == "__main__":

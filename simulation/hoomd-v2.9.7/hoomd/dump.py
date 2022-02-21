@@ -1,23 +1,25 @@
 # Copyright (c) 2009-2019 The Regents of the University of Michigan
 # This file is part of the HOOMD-blue project, released under the BSD 3-Clause License.
 
-R""" Write system configurations to files.
+r""" Write system configurations to files.
 
 Commands in the dump package write the system state out to a file every
 *period* time steps. Check the documentation for details on which file format
 each command writes.
 """
 
-from collections import namedtuple;
+import json
+import os
+import sys
+import types
+from collections import namedtuple
+
+import hoomd
 from hoomd import _hoomd
-import hoomd;
-import json;
-import os;
-import sys;
-import types;
+
 
 class dcd(hoomd.analyze._analyzer):
-    R""" Writes simulation snapshots in the DCD format
+    r""" Writes simulation snapshots in the DCD format
 
     Args:
         filename (str): File name to write.
@@ -55,49 +57,63 @@ class dcd(hoomd.analyze._analyzer):
         * dump.dcd will not write out data at time steps that already are present in the dcd file to maintain a
           consistent timeline
     """
-    def __init__(self, filename, period, group=None, overwrite=False, unwrap_full=False, unwrap_rigid=False, angle_z=False, phase=0):
-        hoomd.util.print_status_line();
+
+    def __init__(
+        self,
+        filename,
+        period,
+        group=None,
+        overwrite=False,
+        unwrap_full=False,
+        unwrap_rigid=False,
+        angle_z=False,
+        phase=0,
+    ):
+        hoomd.util.print_status_line()
 
         # initialize base class
-        hoomd.analyze._analyzer.__init__(self);
+        hoomd.analyze._analyzer.__init__(self)
 
         # create the c++ mirror class
-        reported_period = period;
+        reported_period = period
         try:
-            reported_period = int(period);
+            reported_period = int(period)
         except TypeError:
-            reported_period = 1;
+            reported_period = 1
 
         if group is None:
-            hoomd.util.quiet_status();
-            group = hoomd.group.all();
-            hoomd.util.unquiet_status();
+            hoomd.util.quiet_status()
+            group = hoomd.group.all()
+            hoomd.util.unquiet_status()
 
-        self.cpp_analyzer = _hoomd.DCDDumpWriter(hoomd.context.current.system_definition, filename, int(reported_period), group.cpp_group, overwrite);
-        self.cpp_analyzer.setUnwrapFull(unwrap_full);
-        self.cpp_analyzer.setUnwrapRigid(unwrap_rigid);
-        self.cpp_analyzer.setAngleZ(angle_z);
-        self.setupAnalyzer(period, phase);
+        self.cpp_analyzer = _hoomd.DCDDumpWriter(
+            hoomd.context.current.system_definition, filename, int(reported_period), group.cpp_group, overwrite
+        )
+        self.cpp_analyzer.setUnwrapFull(unwrap_full)
+        self.cpp_analyzer.setUnwrapRigid(unwrap_rigid)
+        self.cpp_analyzer.setAngleZ(angle_z)
+        self.setupAnalyzer(period, phase)
 
         # store metadata
         self.filename = filename
         self.period = period
         self.group = group
-        self.metadata_fields = ['filename','period','group']
+        self.metadata_fields = ["filename", "period", "group"]
 
     def enable(self):
         """ The DCD dump writer cannot be re-enabled """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if self.enabled == False:
-            hoomd.context.msg.error("you cannot re-enable DCD output after it has been disabled\n");
-            raise RuntimeError('Error enabling updater');
+            hoomd.context.msg.error("you cannot re-enable DCD output after it has been disabled\n")
+            raise RuntimeError("Error enabling updater")
 
     def set_period(self, period):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
-        hoomd.context.msg.error("you cannot change the period of a dcd dump writer\n");
-        raise RuntimeError('Error changing updater period');
+        hoomd.context.msg.error("you cannot change the period of a dcd dump writer\n")
+        raise RuntimeError("Error changing updater period")
+
 
 class getar(hoomd.analyze._analyzer):
     """Analyzer for dumping system properties to a getar file at intervals.
@@ -178,12 +194,11 @@ class getar(hoomd.analyze._analyzer):
 
     """
 
-    class DumpProp(namedtuple('DumpProp', ['name', 'highPrecision', 'compression'])):
+    class DumpProp(namedtuple("DumpProp", ["name", "highPrecision", "compression"])):
         """Simple, internal, read-only namedtuple wrapper for specifying how
         getar properties will be dumped"""
 
-        def __new__(self, name, highPrecision=False,
-                     compression=_hoomd.GetarCompression.FastCompress):
+        def __new__(self, name, highPrecision=False, compression=_hoomd.GetarCompression.FastCompress):
             """Initialize a property dump description tuple.
 
             :param name: property name (string; see `Supported Property Table`_)
@@ -191,116 +206,134 @@ class getar(hoomd.analyze._analyzer):
             :param compression: one of `hoomd.dump.getar.Compression.{NoCompress, FastCompress, MediumCompress, SlowCompress`}.
             """
             return super(getar.DumpProp, self).__new__(
-                self, name=name, highPrecision=highPrecision,
-                compression=compression);
+                self, name=name, highPrecision=highPrecision, compression=compression
+            )
 
-    Compression = _hoomd.GetarCompression;
+    Compression = _hoomd.GetarCompression
 
-    dump_modes = {'w': _hoomd.GetarDumpMode.Overwrite,
-                  'a': _hoomd.GetarDumpMode.Append,
-                  '1': _hoomd.GetarDumpMode.OneShot};
+    dump_modes = {
+        "w": _hoomd.GetarDumpMode.Overwrite,
+        "a": _hoomd.GetarDumpMode.Append,
+        "1": _hoomd.GetarDumpMode.OneShot,
+    }
 
     substitutions = {
-        'all': ['particle_all', 'angle_all', 'bond_all',
-                'dihedral_all', 'improper_all', 'global_all'],
-        'particle_all':
-            ['angular_momentum', 'body', 'charge', 'diameter', 'image', 'mass', 'moment_inertia',
-             'orientation', 'position', 'type', 'type_names', 'velocity'],
-        'angle_all': ['angle_type_names', 'angle_tag', 'angle_type'],
-        'bond_all': ['bond_type_names', 'bond_tag', 'bond_type'],
-        'dihedral_all': ['dihedral_type_names', 'dihedral_tag', 'dihedral_type'],
-        'improper_all': ['improper_type_names', 'improper_tag', 'improper_type'],
-        'global_all': ['box', 'dimensions'],
-        'viz_dynamic': ['position', 'box'],
-        'viz_static': ['type', 'type_names', 'dimensions'],
-        'viz_all': ['viz_static', 'viz_dynamic'],
-        'viz_aniso_dynamic': ['viz_dynamic', 'orientation'],
-        'viz_aniso_all': ['viz_static', 'viz_aniso_dynamic']};
+        "all": ["particle_all", "angle_all", "bond_all", "dihedral_all", "improper_all", "global_all"],
+        "particle_all": [
+            "angular_momentum",
+            "body",
+            "charge",
+            "diameter",
+            "image",
+            "mass",
+            "moment_inertia",
+            "orientation",
+            "position",
+            "type",
+            "type_names",
+            "velocity",
+        ],
+        "angle_all": ["angle_type_names", "angle_tag", "angle_type"],
+        "bond_all": ["bond_type_names", "bond_tag", "bond_type"],
+        "dihedral_all": ["dihedral_type_names", "dihedral_tag", "dihedral_type"],
+        "improper_all": ["improper_type_names", "improper_tag", "improper_type"],
+        "global_all": ["box", "dimensions"],
+        "viz_dynamic": ["position", "box"],
+        "viz_static": ["type", "type_names", "dimensions"],
+        "viz_all": ["viz_static", "viz_dynamic"],
+        "viz_aniso_dynamic": ["viz_dynamic", "orientation"],
+        "viz_aniso_all": ["viz_static", "viz_aniso_dynamic"],
+    }
 
     # List of properties we know how to dump and their enums
-    known_properties = {'angle_type_names': _hoomd.GetarProperty.AngleNames,
-                        'angle_tag': _hoomd.GetarProperty.AngleTags,
-                        'angle_type': _hoomd.GetarProperty.AngleTypes,
-                        'angular_momentum': _hoomd.GetarProperty.AngularMomentum,
-                        'body': _hoomd.GetarProperty.Body,
-                        'bond_type_names': _hoomd.GetarProperty.BondNames,
-                        'bond_tag': _hoomd.GetarProperty.BondTags,
-                        'bond_type': _hoomd.GetarProperty.BondTypes,
-                        'box': _hoomd.GetarProperty.Box,
-                        'charge': _hoomd.GetarProperty.Charge,
-                        'diameter': _hoomd.GetarProperty.Diameter,
-                        'dihedral_type_names': _hoomd.GetarProperty.DihedralNames,
-                        'dihedral_tag': _hoomd.GetarProperty.DihedralTags,
-                        'dihedral_type': _hoomd.GetarProperty.DihedralTypes,
-                        'dimensions': _hoomd.GetarProperty.Dimensions,
-                        'image': _hoomd.GetarProperty.Image,
-                        'improper_type_names': _hoomd.GetarProperty.ImproperNames,
-                        'improper_tag': _hoomd.GetarProperty.ImproperTags,
-                        'improper_type': _hoomd.GetarProperty.ImproperTypes,
-                        'mass': _hoomd.GetarProperty.Mass,
-                        'moment_inertia': _hoomd.GetarProperty.MomentInertia,
-                        'orientation': _hoomd.GetarProperty.Orientation,
-                        'position': _hoomd.GetarProperty.Position,
-                        'potential_energy': _hoomd.GetarProperty.PotentialEnergy,
-                        'type': _hoomd.GetarProperty.Type,
-                        'type_names': _hoomd.GetarProperty.TypeNames,
-                        'velocity': _hoomd.GetarProperty.Velocity,
-                        'virial': _hoomd.GetarProperty.Virial};
+    known_properties = {
+        "angle_type_names": _hoomd.GetarProperty.AngleNames,
+        "angle_tag": _hoomd.GetarProperty.AngleTags,
+        "angle_type": _hoomd.GetarProperty.AngleTypes,
+        "angular_momentum": _hoomd.GetarProperty.AngularMomentum,
+        "body": _hoomd.GetarProperty.Body,
+        "bond_type_names": _hoomd.GetarProperty.BondNames,
+        "bond_tag": _hoomd.GetarProperty.BondTags,
+        "bond_type": _hoomd.GetarProperty.BondTypes,
+        "box": _hoomd.GetarProperty.Box,
+        "charge": _hoomd.GetarProperty.Charge,
+        "diameter": _hoomd.GetarProperty.Diameter,
+        "dihedral_type_names": _hoomd.GetarProperty.DihedralNames,
+        "dihedral_tag": _hoomd.GetarProperty.DihedralTags,
+        "dihedral_type": _hoomd.GetarProperty.DihedralTypes,
+        "dimensions": _hoomd.GetarProperty.Dimensions,
+        "image": _hoomd.GetarProperty.Image,
+        "improper_type_names": _hoomd.GetarProperty.ImproperNames,
+        "improper_tag": _hoomd.GetarProperty.ImproperTags,
+        "improper_type": _hoomd.GetarProperty.ImproperTypes,
+        "mass": _hoomd.GetarProperty.Mass,
+        "moment_inertia": _hoomd.GetarProperty.MomentInertia,
+        "orientation": _hoomd.GetarProperty.Orientation,
+        "position": _hoomd.GetarProperty.Position,
+        "potential_energy": _hoomd.GetarProperty.PotentialEnergy,
+        "type": _hoomd.GetarProperty.Type,
+        "type_names": _hoomd.GetarProperty.TypeNames,
+        "velocity": _hoomd.GetarProperty.Velocity,
+        "virial": _hoomd.GetarProperty.Virial,
+    }
 
     # List of properties we know how to dump and their enums
-    known_resolutions = {'angle_type_names': _hoomd.GetarResolution.Text,
-                         'angle_tag': _hoomd.GetarResolution.Individual,
-                         'angle_type': _hoomd.GetarResolution.Individual,
-                         'angular_momentum': _hoomd.GetarResolution.Individual,
-                         'body': _hoomd.GetarResolution.Individual,
-                         'bond_type_names': _hoomd.GetarResolution.Text,
-                         'bond_tag': _hoomd.GetarResolution.Individual,
-                         'bond_type': _hoomd.GetarResolution.Individual,
-                         'box': _hoomd.GetarResolution.Uniform,
-                         'charge': _hoomd.GetarResolution.Individual,
-                         'diameter': _hoomd.GetarResolution.Individual,
-                         'dihedral_type_names': _hoomd.GetarResolution.Text,
-                         'dihedral_tag': _hoomd.GetarResolution.Individual,
-                         'dihedral_type': _hoomd.GetarResolution.Individual,
-                         'dimensions': _hoomd.GetarResolution.Uniform,
-                         'image': _hoomd.GetarResolution.Individual,
-                         'improper_type_names': _hoomd.GetarResolution.Text,
-                         'improper_tag': _hoomd.GetarResolution.Individual,
-                         'improper_type': _hoomd.GetarResolution.Individual,
-                         'mass': _hoomd.GetarResolution.Individual,
-                         'moment_inertia': _hoomd.GetarResolution.Individual,
-                         'orientation': _hoomd.GetarResolution.Individual,
-                         'position': _hoomd.GetarResolution.Individual,
-                         'potential_energy': _hoomd.GetarResolution.Individual,
-                         'type': _hoomd.GetarResolution.Individual,
-                         'type_names': _hoomd.GetarResolution.Text,
-                         'velocity': _hoomd.GetarResolution.Individual,
-                         'virial': _hoomd.GetarResolution.Individual};
+    known_resolutions = {
+        "angle_type_names": _hoomd.GetarResolution.Text,
+        "angle_tag": _hoomd.GetarResolution.Individual,
+        "angle_type": _hoomd.GetarResolution.Individual,
+        "angular_momentum": _hoomd.GetarResolution.Individual,
+        "body": _hoomd.GetarResolution.Individual,
+        "bond_type_names": _hoomd.GetarResolution.Text,
+        "bond_tag": _hoomd.GetarResolution.Individual,
+        "bond_type": _hoomd.GetarResolution.Individual,
+        "box": _hoomd.GetarResolution.Uniform,
+        "charge": _hoomd.GetarResolution.Individual,
+        "diameter": _hoomd.GetarResolution.Individual,
+        "dihedral_type_names": _hoomd.GetarResolution.Text,
+        "dihedral_tag": _hoomd.GetarResolution.Individual,
+        "dihedral_type": _hoomd.GetarResolution.Individual,
+        "dimensions": _hoomd.GetarResolution.Uniform,
+        "image": _hoomd.GetarResolution.Individual,
+        "improper_type_names": _hoomd.GetarResolution.Text,
+        "improper_tag": _hoomd.GetarResolution.Individual,
+        "improper_type": _hoomd.GetarResolution.Individual,
+        "mass": _hoomd.GetarResolution.Individual,
+        "moment_inertia": _hoomd.GetarResolution.Individual,
+        "orientation": _hoomd.GetarResolution.Individual,
+        "position": _hoomd.GetarResolution.Individual,
+        "potential_energy": _hoomd.GetarResolution.Individual,
+        "type": _hoomd.GetarResolution.Individual,
+        "type_names": _hoomd.GetarResolution.Text,
+        "velocity": _hoomd.GetarResolution.Individual,
+        "virial": _hoomd.GetarResolution.Individual,
+    }
 
     # List of properties which can't run in MPI mode
-    bad_mpi_properties = ['potential_energy', 'virial'];
+    bad_mpi_properties = ["potential_energy", "virial"]
 
     def _getStatic(self, val):
         """Helper method to parse a static property specification element"""
-        if type(val) == type(''):
-            return self.DumpProp(name=val);
+        if type(val) == type(""):
+            return self.DumpProp(name=val)
         else:
-            return val;
+            return val
 
     def _expandNames(self, vals):
-        result = [];
+        result = []
         for val in vals:
-            val = self._getStatic(val);
+            val = self._getStatic(val)
             if val.name in self.substitutions:
-                subs = [self.DumpProp(name, val.highPrecision, val.compression) for name in
-                        self.substitutions[val.name]];
-                result.extend(self._expandNames(subs));
+                subs = [
+                    self.DumpProp(name, val.highPrecision, val.compression) for name in self.substitutions[val.name]
+                ]
+                result.extend(self._expandNames(subs))
             else:
-                result.append(val);
+                result.append(val)
 
-        return result;
+        return result
 
-    def __init__(self, filename, mode='w', static=[], dynamic={}, _register=True):
+    def __init__(self, filename, mode="w", static=[], dynamic={}, _register=True):
         """Initialize a getar dumper. Creates or appends an archive at the given file
         location according to the mode and prepares to dump the given
         sets of properties.
@@ -339,74 +372,84 @@ class getar(hoomd.analyze._analyzer):
 
         """
 
-        self._static = self._expandNames(static);
-        self._dynamic = {};
+        self._static = self._expandNames(static)
+        self._dynamic = {}
 
         for key in dynamic:
-            period = dynamic[key];
+            period = dynamic[key]
             for prop in self._expandNames([key]):
-                self._dynamic[prop] = period;
+                self._dynamic[prop] = period
 
         if _register:
-            hoomd.analyze._analyzer.__init__(self);
-            self.analyzer_name = "dump.getar%d" % (hoomd.analyze._analyzer.cur_id - 1);
+            hoomd.analyze._analyzer.__init__(self)
+            self.analyzer_name = "dump.getar%d" % (hoomd.analyze._analyzer.cur_id - 1)
 
         for val in self._static:
             if prop.name not in self.known_properties:
-                raise RuntimeError('Unknown static property in dump.getar: {}'.format(val));
+                raise RuntimeError("Unknown static property in dump.getar: {}".format(val))
 
         for val in self._dynamic:
             if val.name not in self.known_properties:
-                raise RuntimeError('Unknown dynamic property in dump.getar: {}'.format(val));
+                raise RuntimeError("Unknown dynamic property in dump.getar: {}".format(val))
 
         try:
-            dumpMode = self.dump_modes[mode];
+            dumpMode = self.dump_modes[mode]
         except KeyError:
-            raise RuntimeError('Unknown open mode: {}'.format(mode));
+            raise RuntimeError("Unknown open mode: {}".format(mode))
 
-        if dumpMode == self.dump_modes['a'] and not os.path.isfile(filename):
-            dumpMode = self.dump_modes['w'];
+        if dumpMode == self.dump_modes["a"] and not os.path.isfile(filename):
+            dumpMode = self.dump_modes["w"]
 
-        self.cpp_analyzer = _hoomd.GetarDumpWriter(hoomd.context.current.system_definition,
-                                                filename, dumpMode,
-                                                hoomd.context.current.system.getCurrentTimeStep());
+        self.cpp_analyzer = _hoomd.GetarDumpWriter(
+            hoomd.context.current.system_definition,
+            filename,
+            dumpMode,
+            hoomd.context.current.system.getCurrentTimeStep(),
+        )
 
         for val in set(self._static):
-            prop = self._getStatic(val);
+            prop = self._getStatic(val)
             if hoomd.comm.get_num_ranks() > 1 and prop.name in self.bad_mpi_properties:
-                raise RuntimeError(('dump.getar: Can\'t dump property {} '
-                                    'with MPI!').format(prop.name));
+                raise RuntimeError(("dump.getar: Can't dump property {} " "with MPI!").format(prop.name))
             else:
-                self.cpp_analyzer.setPeriod(self.known_properties[prop.name],
-                                            self.known_resolutions[prop.name],
-                                            _hoomd.GetarBehavior.Constant,
-                                            prop.highPrecision, prop.compression, 0);
+                self.cpp_analyzer.setPeriod(
+                    self.known_properties[prop.name],
+                    self.known_resolutions[prop.name],
+                    _hoomd.GetarBehavior.Constant,
+                    prop.highPrecision,
+                    prop.compression,
+                    0,
+                )
 
         for prop in self._dynamic:
             try:
                 if hoomd.comm.get_num_ranks() > 1 and prop.name in self.bad_mpi_properties:
-                    raise RuntimeError(('dump.getar: Can\'t dump property {} '
-                                        'with MPI!').format(prop.name));
+                    raise RuntimeError(("dump.getar: Can't dump property {} " "with MPI!").format(prop.name))
                 else:
                     for period in self._dynamic[prop]:
-                        self.cpp_analyzer.setPeriod(self.known_properties[prop.name],
-                                                    self.known_resolutions[prop.name],
-                                                    _hoomd.GetarBehavior.Discrete,
-                                                    prop.highPrecision, prop.compression,
-                                                    int(period));
-            except TypeError: # We got a single value, not an iterable
+                        self.cpp_analyzer.setPeriod(
+                            self.known_properties[prop.name],
+                            self.known_resolutions[prop.name],
+                            _hoomd.GetarBehavior.Discrete,
+                            prop.highPrecision,
+                            prop.compression,
+                            int(period),
+                        )
+            except TypeError:  # We got a single value, not an iterable
                 if hoomd.comm.get_num_ranks() > 1 and prop.name in self.bad_mpi_properties:
-                    raise RuntimeError(('dump.getar: Can\'t dump property {} '
-                                        'with MPI!').format(prop.name));
+                    raise RuntimeError(("dump.getar: Can't dump property {} " "with MPI!").format(prop.name))
                 else:
-                    self.cpp_analyzer.setPeriod(self.known_properties[prop.name],
-                                                self.known_resolutions[prop.name],
-                                                _hoomd.GetarBehavior.Discrete,
-                                                prop.highPrecision, prop.compression,
-                                                int(self._dynamic[prop]));
+                    self.cpp_analyzer.setPeriod(
+                        self.known_properties[prop.name],
+                        self.known_resolutions[prop.name],
+                        _hoomd.GetarBehavior.Discrete,
+                        prop.highPrecision,
+                        prop.compression,
+                        int(self._dynamic[prop]),
+                    )
 
         if _register:
-            self.setupAnalyzer(int(self.cpp_analyzer.getPeriod()));
+            self.setupAnalyzer(int(self.cpp_analyzer.getPeriod()))
 
     def writeJSON(self, name, contents, dynamic=True):
         """Encodes the given JSON-encodable object as a string and writes it
@@ -434,7 +477,7 @@ class getar(hoomd.analyze._analyzer):
         self.cpp_analyzer.writeStr(name, json.dumps(contents), timestep)
 
     @classmethod
-    def simple(cls, filename, period, mode='w', static=[], dynamic=[], high_precision=False):
+    def simple(cls, filename, period, mode="w", static=[], dynamic=[], high_precision=False):
         """Create a :py:class:`getar` dump object with a simpler interface.
 
         Static properties will be dumped once immediately, and dynamic
@@ -463,8 +506,8 @@ class getar(hoomd.analyze._analyzer):
                 'backup.tar', 10000, '1', static=['viz_static'], dynamic=['viz_aniso_dynamic'])
 
         """
-        dynamicDict = {cls.DumpProp(name, highPrecision=high_precision): period for name in dynamic};
-        return cls(filename=filename, mode=mode, static=static, dynamic=dynamicDict);
+        dynamicDict = {cls.DumpProp(name, highPrecision=high_precision): period for name in dynamic}
+        return cls(filename=filename, mode=mode, static=static, dynamic=dynamicDict)
 
     @classmethod
     def immediate(cls, filename, static, dynamic):
@@ -478,19 +521,20 @@ class getar(hoomd.analyze._analyzer):
                 'snapshot.tar', static=['viz_static'], dynamic=['viz_dynamic'])
 
         """
-        hoomd.util.quiet_status();
-        dumper = getar(filename, 'w', static, {key: 1 for key in dynamic}, _register=False);
-        dumper.cpp_analyzer.analyze(hoomd.context.current.system.getCurrentTimeStep());
-        dumper.close();
-        del dumper.cpp_analyzer;
-        hoomd.util.unquiet_status();
+        hoomd.util.quiet_status()
+        dumper = getar(filename, "w", static, {key: 1 for key in dynamic}, _register=False)
+        dumper.cpp_analyzer.analyze(hoomd.context.current.system.getCurrentTimeStep())
+        dumper.close()
+        del dumper.cpp_analyzer
+        hoomd.util.unquiet_status()
 
     def close(self):
         """Closes the trajectory if it is open. Finalizes any IO beforehand."""
-        self.cpp_analyzer.close();
+        self.cpp_analyzer.close()
+
 
 class gsd(hoomd.analyze._analyzer):
-    R""" Writes simulation snapshots in the GSD format
+    r""" Writes simulation snapshots in the GSD format
 
     Args:
         filename (str): File name to write
@@ -586,62 +630,67 @@ class gsd(hoomd.analyze._analyzer):
         dump.gsd(filename="saveall.gsd", overwrite=True, period=1000, group=group.all(), dynamic=['attribute', 'momentum', 'topology'])
 
     """
-    def __init__(self,
-                 filename,
-                 period,
-                 group,
-                 overwrite=False,
-                 truncate=False,
-                 phase=0,
-                 time_step=None,
-                 static=None,
-                 dynamic=None):
-        hoomd.util.print_status_line();
+
+    def __init__(
+        self,
+        filename,
+        period,
+        group,
+        overwrite=False,
+        truncate=False,
+        phase=0,
+        time_step=None,
+        static=None,
+        dynamic=None,
+    ):
+        hoomd.util.print_status_line()
 
         if static is not None and dynamic is not None:
-            raise ValueError("Cannot specify both static and dynamic arguments");
+            raise ValueError("Cannot specify both static and dynamic arguments")
 
-        categories = ['attribute', 'property', 'momentum', 'topology'];
-        dynamic_quantities = ['property']
+        categories = ["attribute", "property", "momentum", "topology"]
+        dynamic_quantities = ["property"]
 
         # process inputs and build list of dynamic quantities
         if static is not None:
-            hoomd.context.msg.warning("The static argument to hoomd.dump.gsd is deprecated, use dynamic instead.\n");
+            hoomd.context.msg.warning("The static argument to hoomd.dump.gsd is deprecated, use dynamic instead.\n")
 
             # notify they user of possible typos
             for v in static:
                 if v not in categories:
-                    hoomd.context.msg.warning("dump.gsd: static quantity " + v + " is not recognized\n");
+                    hoomd.context.msg.warning("dump.gsd: static quantity " + v + " is not recognized\n")
 
             # invert the sense of the static arg
             dynamic_quantities = []
             for v in categories:
                 if v not in static:
-                    dynamic_quantities.append(v);
+                    dynamic_quantities.append(v)
 
         if dynamic is not None:
             for v in dynamic:
                 if v not in categories:
-                    hoomd.context.msg.warning("dump.gsd: dynamic quantity " + v + " is not recognized\n");
+                    hoomd.context.msg.warning("dump.gsd: dynamic quantity " + v + " is not recognized\n")
 
-            dynamic_quantities = ['property'] + dynamic;
+            dynamic_quantities = ["property"] + dynamic
 
         # initialize base class
-        hoomd.analyze._analyzer.__init__(self);
+        hoomd.analyze._analyzer.__init__(self)
 
-        self.cpp_analyzer = _hoomd.GSDDumpWriter(hoomd.context.current.system_definition, filename, group.cpp_group, overwrite, truncate);
+        self.cpp_analyzer = _hoomd.GSDDumpWriter(
+            hoomd.context.current.system_definition, filename, group.cpp_group, overwrite, truncate
+        )
 
-        self.cpp_analyzer.setWriteAttribute('attribute' in dynamic_quantities);
-        self.cpp_analyzer.setWriteProperty('property' in dynamic_quantities);
-        self.cpp_analyzer.setWriteMomentum('momentum' in dynamic_quantities);
-        self.cpp_analyzer.setWriteTopology('topology' in dynamic_quantities);
+        self.cpp_analyzer.setWriteAttribute("attribute" in dynamic_quantities)
+        self.cpp_analyzer.setWriteProperty("property" in dynamic_quantities)
+        self.cpp_analyzer.setWriteMomentum("momentum" in dynamic_quantities)
+        self.cpp_analyzer.setWriteTopology("topology" in dynamic_quantities)
 
         if period is not None:
-            self.setupAnalyzer(period, phase);
+            self.setupAnalyzer(period, phase)
         else:
             if time_step is None:
                 time_step = hoomd.context.current.system.getCurrentTimeStep()
-            self.cpp_analyzer.analyze(time_step);
+            self.cpp_analyzer.analyze(time_step)
             hoomd.context.current.analyzers.remove(self)
 
         # store metadata
@@ -649,7 +698,7 @@ class gsd(hoomd.analyze._analyzer):
         self.period = period
         self.group = group
         self.phase = phase
-        self.metadata_fields = ['filename','period','group', 'phase']
+        self.metadata_fields = ["filename", "period", "group", "phase"]
 
     def write_restart(self):
         """ Write a restart file at the current time step.
@@ -660,7 +709,7 @@ class gsd(hoomd.analyze._analyzer):
         """
 
         time_step = hoomd.context.current.system.getCurrentTimeStep()
-        self.cpp_analyzer.analyze(time_step);
+        self.cpp_analyzer.analyze(time_step)
 
     def dump_state(self, obj):
         """Write state information for a hoomd object.
@@ -670,10 +719,10 @@ class gsd(hoomd.analyze._analyzer):
 
         .. versionadded:: 2.2
         """
-        if hasattr(obj, '_connect_gsd') and type(getattr(obj, '_connect_gsd')) == types.MethodType:
-            obj._connect_gsd(self);
+        if hasattr(obj, "_connect_gsd") and type(getattr(obj, "_connect_gsd")) == types.MethodType:
+            obj._connect_gsd(self)
         else:
-            hoomd.context.msg.warning("GSD is not currently support for {name}".format(obj.__class__.__name__));
+            hoomd.context.msg.warning("GSD is not currently support for {name}".format(obj.__class__.__name__))
 
     def dump_shape(self, obj):
         """Writes particle shape information stored by a hoomd object.
@@ -700,10 +749,13 @@ class gsd(hoomd.analyze._analyzer):
 
         .. versionadded:: 2.7
         """
-        if hasattr(obj, '_connect_gsd_shape_spec') and type(getattr(obj, '_connect_gsd_shape_spec')) == types.MethodType:
-            obj._connect_gsd_shape_spec(self);
+        if (
+            hasattr(obj, "_connect_gsd_shape_spec")
+            and type(getattr(obj, "_connect_gsd_shape_spec")) == types.MethodType
+        ):
+            obj._connect_gsd_shape_spec(self)
         else:
-            hoomd.context.msg.warning("GSD is not currently support for {}".format(obj.__class__.__name__));
+            hoomd.context.msg.warning("GSD is not currently support for {}".format(obj.__class__.__name__))
 
     @property
     def log(self):
@@ -728,4 +780,4 @@ class gsd(hoomd.analyze._analyzer):
 
         .. versionadded:: 2.7
         """
-        return self.cpp_analyzer.user_log;
+        return self.cpp_analyzer.user_log

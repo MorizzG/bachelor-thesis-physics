@@ -3,15 +3,17 @@
 
 # Maintainer: joaander / All Developers are free to add commands for new features
 
-R""" Modify the system state periodically.
+r""" Modify the system state periodically.
 
 When an updater is specified, it acts on the particle system every *period* steps to change
 it in some way. See the documentation of specific updaters to find out what they do.
 """
 
-from hoomd import _hoomd;
-import hoomd;
-import sys;
+import sys
+
+import hoomd
+from hoomd import _hoomd
+
 
 ## \internal
 # \brief Base class for updaters
@@ -29,17 +31,17 @@ class _updater(hoomd.meta._metadata):
     def __init__(self):
         # check if initialization has occurred
         if not hoomd.init.is_initialized():
-            hoomd.context.msg.error("Cannot create updater before initialization\n");
-            raise RuntimeError('Error creating updater');
+            hoomd.context.msg.error("Cannot create updater before initialization\n")
+            raise RuntimeError("Error creating updater")
 
-        self.cpp_updater = None;
+        self.cpp_updater = None
 
         # increment the id counter
-        id = _updater.cur_id;
-        _updater.cur_id += 1;
+        id = _updater.cur_id
+        _updater.cur_id += 1
 
-        self.updater_name = "updater%d" % (id);
-        self.enabled = True;
+        self.updater_name = "updater%d" % (id)
+        self.enabled = True
 
         # Store a reference in global simulation variables
         hoomd.context.current.updaters.append(self)
@@ -59,19 +61,23 @@ class _updater(hoomd.meta._metadata):
     # to the integer period and the variable period is enabled
     #
     def setupUpdater(self, period, phase=0):
-        self.phase = phase;
+        self.phase = phase
 
         if type(period) == type(1.0):
-            period = int(period);
+            period = int(period)
 
         if type(period) == type(1):
-            hoomd.context.current.system.addUpdater(self.cpp_updater, self.updater_name, period, phase);
-        elif type(period) == type(lambda n: n*2):
-            hoomd.context.current.system.addUpdater(self.cpp_updater, self.updater_name, 1000, -1);
-            hoomd.context.current.system.setUpdaterPeriodVariable(self.updater_name, period);
+            hoomd.context.current.system.addUpdater(self.cpp_updater, self.updater_name, period, phase)
+        elif type(period) == type(lambda n: n * 2):
+            hoomd.context.current.system.addUpdater(self.cpp_updater, self.updater_name, 1000, -1)
+            hoomd.context.current.system.setUpdaterPeriodVariable(self.updater_name, period)
         else:
-            hoomd.context.msg.error("I don't know what to do with a period of type " + str(type(period)) + "expecting an int or a function\n");
-            raise RuntimeError('Error creating updater');
+            hoomd.context.msg.error(
+                "I don't know what to do with a period of type "
+                + str(type(period))
+                + "expecting an int or a function\n"
+            )
+            raise RuntimeError("Error creating updater")
 
     ## \var enabled
     # \internal
@@ -94,11 +100,11 @@ class _updater(hoomd.meta._metadata):
     def check_initialization(self):
         # check that we have been initialized properly
         if self.cpp_updater is None:
-            hoomd.context.msg.error('Bug in hoomd. cpp_updater not set, please report\n');
-            raise RuntimeError();
+            hoomd.context.msg.error("Bug in hoomd. cpp_updater not set, please report\n")
+            raise RuntimeError()
 
     def disable(self):
-        R""" Disables the updater.
+        r""" Disables the updater.
 
         Examples::
 
@@ -109,21 +115,21 @@ class _updater(hoomd.meta._metadata):
         updater during the simulation. A disabled updater can be re-enabled
         with :py:meth:`enable()`
         """
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         # check if we are already disabled
         if not self.enabled:
-            hoomd.context.msg.warning("Ignoring command to disable an updater that is already disabled");
-            return;
+            hoomd.context.msg.warning("Ignoring command to disable an updater that is already disabled")
+            return
 
-        self.prev_period = hoomd.context.current.system.getUpdaterPeriod(self.updater_name);
-        hoomd.context.current.system.removeUpdater(self.updater_name);
+        self.prev_period = hoomd.context.current.system.getUpdaterPeriod(self.updater_name)
+        hoomd.context.current.system.removeUpdater(self.updater_name)
         hoomd.context.current.updaters.remove(self)
-        self.enabled = False;
+        self.enabled = False
 
     def enable(self):
-        R""" Enables the updater.
+        r""" Enables the updater.
 
         Examples::
 
@@ -133,20 +139,20 @@ class _updater(hoomd.meta._metadata):
             :py:meth:`disable()`
         """
 
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         # check if we are already disabled
         if self.enabled:
-            hoomd.context.msg.warning("Ignoring command to enable an updater that is already enabled");
-            return;
+            hoomd.context.msg.warning("Ignoring command to enable an updater that is already enabled")
+            return
 
-        hoomd.context.current.system.addUpdater(self.cpp_updater, self.updater_name, self.prev_period, self.phase);
+        hoomd.context.current.system.addUpdater(self.cpp_updater, self.updater_name, self.prev_period, self.phase)
         hoomd.context.current.updaters.append(self)
-        self.enabled = True;
+        self.enabled = True
 
     def set_period(self, period):
-        R""" Changes the updater period.
+        r""" Changes the updater period.
 
         Args:
             period (int): New period to set.
@@ -161,55 +167,64 @@ class _updater(hoomd.meta._metadata):
         not change the phase set when the analyzer was first created.
         """
 
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if type(period) == type(1.0):
-            period = int(period);
+            period = int(period)
 
         if type(period) == type(1):
             if self.enabled:
-                hoomd.context.current.system.setUpdaterPeriod(self.updater_name, period, self.phase);
+                hoomd.context.current.system.setUpdaterPeriod(self.updater_name, period, self.phase)
             else:
-                self.prev_period = period;
-        elif type(period) == type(lambda n: n*2):
-            hoomd.context.msg.warning("A period cannot be changed to a variable one");
+                self.prev_period = period
+        elif type(period) == type(lambda n: n * 2):
+            hoomd.context.msg.warning("A period cannot be changed to a variable one")
         else:
-            hoomd.context.msg.warning("I don't know what to do with a period of type " + str(type(period)) + " expecting an int or a function");
+            hoomd.context.msg.warning(
+                "I don't know what to do with a period of type " + str(type(period)) + " expecting an int or a function"
+            )
 
     ## \internal
     # \brief Get metadata
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['enabled'] = self.enabled
+        data["enabled"] = self.enabled
 
         return data
 
     @classmethod
     def _gsd_state_name(cls):
-        raise NotImplementedError("GSD Schema is not implemented for {}".format(cls.__name__));
+        raise NotImplementedError("GSD Schema is not implemented for {}".format(cls.__name__))
 
     def _connect_gsd(self, gsd):
         # This is an internal method, and should not be called directly. See gsd.dump_state() instead
         if isinstance(gsd, hoomd.dump.gsd) and hasattr(self.cpp_updater, "connectGSDStateSignal"):
-            self.cpp_updater.connectGSDStateSignal(gsd.cpp_analyzer, self._gsd_state_name());
+            self.cpp_updater.connectGSDStateSignal(gsd.cpp_analyzer, self._gsd_state_name())
         else:
-            raise NotImplementedError("GSD Schema is not implemented for {}".format(self.__class__.__name__));
+            raise NotImplementedError("GSD Schema is not implemented for {}".format(self.__class__.__name__))
 
     def restore_state(self):
         """ Restore the state information from the file used to initialize the simulations
         """
-        hoomd.util.print_status_line();
-        if isinstance(hoomd.context.current.state_reader, _hoomd.GSDReader) and hasattr(self.cpp_updater, "restoreStateGSD"):
-            self.cpp_updater.restoreStateGSD(hoomd.context.current.state_reader, self._gsd_state_name());
+        hoomd.util.print_status_line()
+        if isinstance(hoomd.context.current.state_reader, _hoomd.GSDReader) and hasattr(
+            self.cpp_updater, "restoreStateGSD"
+        ):
+            self.cpp_updater.restoreStateGSD(hoomd.context.current.state_reader, self._gsd_state_name())
         else:
             if hoomd.context.current.state_reader is None:
-                hoomd.context.msg.error("Can only restore after the state reader has been initialized.\n");
+                hoomd.context.msg.error("Can only restore after the state reader has been initialized.\n")
             else:
-                hoomd.context.msg.error("Restoring state from {reader_name} is not currently supported for {name}\n".format(reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__));
-            raise RuntimeError("Can not restore state information!");
+                hoomd.context.msg.error(
+                    "Restoring state from {reader_name} is not currently supported for {name}\n".format(
+                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__
+                    )
+                )
+            raise RuntimeError("Can not restore state information!")
+
 
 class sort(_updater):
-    R""" Sorts particles in memory to improve cache coherency.
+    r""" Sorts particles in memory to improve cache coherency.
 
     Warning:
         Do not specify :py:class:`hoomd.update.sort` explicitly in your script. HOOMD creates
@@ -247,23 +262,23 @@ class sort(_updater):
 
     def __init__(self):
         # initialize base class
-        _updater.__init__(self);
+        _updater.__init__(self)
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_updater = _hoomd.SFCPackUpdater(hoomd.context.current.system_definition);
+            self.cpp_updater = _hoomd.SFCPackUpdater(hoomd.context.current.system_definition)
         else:
-            self.cpp_updater = _hoomd.SFCPackUpdaterGPU(hoomd.context.current.system_definition);
+            self.cpp_updater = _hoomd.SFCPackUpdaterGPU(hoomd.context.current.system_definition)
 
-        default_period = 300;
+        default_period = 300
         # change default period to 100 on the CPU
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            default_period = 100;
+            default_period = 100
 
-        self.setupUpdater(default_period);
+        self.setupUpdater(default_period)
 
     def set_params(self, grid=None):
-        R""" Change sorter parameters.
+        r""" Change sorter parameters.
 
         Args:
             grid (int): New grid dimension (if set)
@@ -272,14 +287,15 @@ class sort(_updater):
             sorter.set_params(grid=128)
         """
 
-        hoomd.util.print_status_line();
-        self.check_initialization();
+        hoomd.util.print_status_line()
+        self.check_initialization()
 
         if grid is not None:
-            self.cpp_updater.setGrid(grid);
+            self.cpp_updater.setGrid(grid)
+
 
 class box_resize(_updater):
-    R""" Rescale the system box size.
+    r""" Rescale the system box size.
 
     Args:
         L (:py:mod:`hoomd.variant`): (if set) box length in the x,y, and z directions as a function of time (in distance units)
@@ -328,47 +344,48 @@ class box_resize(_updater):
         update.box_resize(xy = hoomd.variant.linear_interp([(0,0), (1e6, 1)]))
     """
 
-    def __init__(self, Lx = None, Ly = None, Lz = None, xy = None, xz = None, yz = None, period = 1, L = None, phase=0, scale_particles=True):
-        hoomd.util.print_status_line();
+    def __init__(
+        self, Lx=None, Ly=None, Lz=None, xy=None, xz=None, yz=None, period=1, L=None, phase=0, scale_particles=True
+    ):
+        hoomd.util.print_status_line()
 
         # initialize base class
-        _updater.__init__(self);
+        _updater.__init__(self)
 
-        self.metadata_fields = ['period']
+        self.metadata_fields = ["period"]
 
         if L is not None:
-            Lx = L;
-            Ly = L;
-            Lz = L;
+            Lx = L
+            Ly = L
+            Lz = L
 
         if Lx is None and Ly is None and Lz is None and xy is None and xz is None and yz is None:
             hoomd.context.msg.warning("update.box_resize: Ignoring request to setup updater without parameters\n")
             return
 
-
-        box = hoomd.context.current.system_definition.getParticleData().getGlobalBox();
+        box = hoomd.context.current.system_definition.getParticleData().getGlobalBox()
         # setup arguments
         if Lx is None:
-            Lx = box.getL().x;
+            Lx = box.getL().x
         if Ly is None:
-            Ly = box.getL().y;
+            Ly = box.getL().y
         if Lz is None:
-            Lz = box.getL().z;
+            Lz = box.getL().z
 
         if xy is None:
-            xy = box.getTiltFactorXY();
+            xy = box.getTiltFactorXY()
         if xz is None:
-            xz = box.getTiltFactorXZ();
+            xz = box.getTiltFactorXZ()
         if yz is None:
-            yz = box.getTiltFactorYZ();
+            yz = box.getTiltFactorYZ()
 
-        Lx = hoomd.variant._setup_variant_input(Lx);
-        Ly = hoomd.variant._setup_variant_input(Ly);
-        Lz = hoomd.variant._setup_variant_input(Lz);
+        Lx = hoomd.variant._setup_variant_input(Lx)
+        Ly = hoomd.variant._setup_variant_input(Ly)
+        Lz = hoomd.variant._setup_variant_input(Lz)
 
-        xy = hoomd.variant._setup_variant_input(xy);
-        xz = hoomd.variant._setup_variant_input(xz);
-        yz = hoomd.variant._setup_variant_input(yz);
+        xy = hoomd.variant._setup_variant_input(xy)
+        xz = hoomd.variant._setup_variant_input(xz)
+        yz = hoomd.variant._setup_variant_input(yz)
 
         # store metadata
         self.Lx = Lx
@@ -377,21 +394,29 @@ class box_resize(_updater):
         self.xy = xy
         self.xz = xz
         self.yz = yz
-        self.metadata_fields = ['Lx','Ly','Lz','xy','xz','yz']
+        self.metadata_fields = ["Lx", "Ly", "Lz", "xy", "xz", "yz"]
 
         # create the c++ mirror class
-        self.cpp_updater = _hoomd.BoxResizeUpdater(hoomd.context.current.system_definition, Lx.cpp_variant, Ly.cpp_variant, Lz.cpp_variant,
-                                                  xy.cpp_variant, xz.cpp_variant, yz.cpp_variant);
-        self.cpp_updater.setParams(scale_particles);
+        self.cpp_updater = _hoomd.BoxResizeUpdater(
+            hoomd.context.current.system_definition,
+            Lx.cpp_variant,
+            Ly.cpp_variant,
+            Lz.cpp_variant,
+            xy.cpp_variant,
+            xz.cpp_variant,
+            yz.cpp_variant,
+        )
+        self.cpp_updater.setParams(scale_particles)
 
         if period is None:
-            self.cpp_updater.update(hoomd.context.current.system.getCurrentTimeStep());
+            self.cpp_updater.update(hoomd.context.current.system.getCurrentTimeStep())
             hoomd.context.current.updaters.remove(self)
         else:
-            self.setupUpdater(period, phase);
+            self.setupUpdater(period, phase)
+
 
 class balance(_updater):
-    R""" Adjusts the boundaries of a domain decomposition on a regular 3D grid.
+    r""" Adjusts the boundaries of a domain decomposition on a regular 3D grid.
 
     Args:
         x (bool): If True, balance in x dimension.
@@ -443,11 +468,12 @@ class balance(_updater):
 
     Balancing is ignored if there is no domain decomposition available (MPI is not built or is running on a single rank).
     """
+
     def __init__(self, x=True, y=True, z=True, tolerance=1.02, maxiter=1, period=1000, phase=0):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # initialize base class
-        _updater.__init__(self);
+        _updater.__init__(self)
 
         # balancing cannot be done without mpi
         if not _hoomd.is_MPI_available() or hoomd.context.current.decomposition is None:
@@ -456,24 +482,28 @@ class balance(_updater):
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_updater = _hoomd.LoadBalancer(hoomd.context.current.system_definition, hoomd.context.current.decomposition.cpp_dd);
+            self.cpp_updater = _hoomd.LoadBalancer(
+                hoomd.context.current.system_definition, hoomd.context.current.decomposition.cpp_dd
+            )
         else:
-            self.cpp_updater = _hoomd.LoadBalancerGPU(hoomd.context.current.system_definition, hoomd.context.current.decomposition.cpp_dd);
+            self.cpp_updater = _hoomd.LoadBalancerGPU(
+                hoomd.context.current.system_definition, hoomd.context.current.decomposition.cpp_dd
+            )
 
-        self.setupUpdater(period,phase)
+        self.setupUpdater(period, phase)
 
         # stash arguments to metadata
-        self.metadata_fields = ['tolerance','maxiter','period','phase']
+        self.metadata_fields = ["tolerance", "maxiter", "period", "phase"]
         self.period = period
         self.phase = phase
 
         # configure the parameters
         hoomd.util.quiet_status()
-        self.set_params(x,y,z,tolerance, maxiter)
+        self.set_params(x, y, z, tolerance, maxiter)
         hoomd.util.unquiet_status()
 
     def set_params(self, x=None, y=None, z=None, tolerance=None, maxiter=None):
-        R""" Change load balancing parameters.
+        r""" Change load balancing parameters.
 
         Args:
             x (bool): If True, balance in x dimension.
@@ -504,5 +534,6 @@ class balance(_updater):
             self.maxiter = maxiter
             self.cpp_updater.setMaxIterations(self.maxiter)
 
+
 # Global current id counter to assign updaters unique names
-_updater.cur_id = 0;
+_updater.cur_id = 0

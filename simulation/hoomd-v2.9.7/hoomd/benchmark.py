@@ -3,15 +3,16 @@
 
 # Maintainer: joaander / All Developers are free to add commands for new features
 
-R""" Benchmark utilities
+r""" Benchmark utilities
 
 Commands that help in benchmarking HOOMD-blue performance.
 """
 
 import hoomd
 
+
 def series(warmup=100000, repeat=20, steps=10000, limit_hours=None):
-    R""" Perform a series of benchmark runs.
+    r""" Perform a series of benchmark runs.
 
     Args:
         warmup (int): Number of time steps to :py:meth:`hoomd.run()` to warm up the benchmark
@@ -24,15 +25,15 @@ def series(warmup=100000, repeat=20, steps=10000, limit_hours=None):
     """
     # check if initialization has occurred
     if not hoomd.init.is_initialized():
-        hoomd.context.msg.error("Cannot tune r_buff before initialization\n");
+        hoomd.context.msg.error("Cannot tune r_buff before initialization\n")
 
-    tps_list = [];
+    tps_list = []
 
     if warmup > 0:
-        hoomd.run(warmup);
+        hoomd.run(warmup)
 
-    for i in range(0,repeat):
-        hoomd.run(steps, limit_hours=limit_hours);
-        tps_list.append(hoomd.context.current.system.getLastTPS());
+    for i in range(0, repeat):
+        hoomd.run(steps, limit_hours=limit_hours)
+        tps_list.append(hoomd.context.current.system.getLastTPS())
 
-    return tps_list;
+    return tps_list

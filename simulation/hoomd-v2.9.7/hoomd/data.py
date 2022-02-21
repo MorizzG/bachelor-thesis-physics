@@ -3,7 +3,7 @@
 
 # Maintainer: joaander
 
-R""" Access system configuration data.
+r""" Access system configuration data.
 
 Code in the data package provides high-level access to all of the particle, bond and other data that define the
 current state of the system. You can use python code to directly read and modify this data, allowing you to analyze
@@ -501,11 +501,12 @@ provides an interface to get/set the properties on demand. This has some side ef
 
 """
 
-from hoomd import _hoomd
 import hoomd
+from hoomd import _hoomd
+
 
 class boxdim(hoomd.meta._metadata):
-    R""" Define box dimensions.
+    r""" Define box dimensions.
 
     Args:
         Lx (float): box extent in the x direction (distance units)
@@ -555,32 +556,33 @@ class boxdim(hoomd.meta._metadata):
     * Cubic box with given length: ``data.boxdim(L=10)``
     * Fully define all box parameters: ``data.boxdim(Lx=10, Ly=20, Lz=30, xy=1.0, xz=0.5, yz=0.1)``
     """
+
     def __init__(self, Lx=1.0, Ly=1.0, Lz=1.0, xy=0.0, xz=0.0, yz=0.0, dimensions=3, L=None, volume=None):
         if L is not None:
-            Lx = L;
-            Ly = L;
-            Lz = L;
+            Lx = L
+            Ly = L
+            Lz = L
 
         if dimensions == 2:
-            Lz = 1.0;
-            xz = yz = 0.0;
+            Lz = 1.0
+            xz = yz = 0.0
 
-        self.Lx = Lx;
-        self.Ly = Ly;
-        self.Lz = Lz;
-        self.xy = xy;
-        self.xz = xz;
-        self.yz = yz;
-        self.dimensions = dimensions;
+        self.Lx = Lx
+        self.Ly = Ly
+        self.Lz = Lz
+        self.xy = xy
+        self.xz = xz
+        self.yz = yz
+        self.dimensions = dimensions
 
         if volume is not None:
-            self.set_volume(volume);
+            self.set_volume(volume)
 
         # base class constructor
         hoomd.meta._metadata.__init__(self)
 
     def scale(self, sx=1.0, sy=1.0, sz=1.0, s=None):
-        R""" Scale box dimensions.
+        r""" Scale box dimensions.
 
         Args:
             sx (float): scale factor in the x direction
@@ -594,17 +596,17 @@ class boxdim(hoomd.meta._metadata):
             A reference to the modified box.
         """
         if s is not None:
-            sx = s;
-            sy = s;
-            sz = s;
+            sx = s
+            sy = s
+            sz = s
 
-        self.Lx = self.Lx * sx;
-        self.Ly = self.Ly * sy;
-        self.Lz = self.Lz * sz;
+        self.Lx = self.Lx * sx
+        self.Ly = self.Ly * sy
+        self.Lz = self.Lz * sz
         return self
 
     def set_volume(self, volume):
-        R""" Set the box volume.
+        r""" Set the box volume.
 
         Args:
             volume (float): new box volume (area if dimensions=2)
@@ -615,27 +617,27 @@ class boxdim(hoomd.meta._metadata):
             A reference to the modified box.
         """
 
-        cur_vol = self.get_volume();
+        cur_vol = self.get_volume()
 
         if self.dimensions == 3:
-            s = (volume / cur_vol)**(1.0/3.0)
-            self.scale(s, s, s);
+            s = (volume / cur_vol) ** (1.0 / 3.0)
+            self.scale(s, s, s)
         else:
-            s = (volume / cur_vol)**(1.0/2.0)
-            self.scale(s, s, 1.0);
+            s = (volume / cur_vol) ** (1.0 / 2.0)
+            self.scale(s, s, 1.0)
         return self
 
     def get_volume(self):
-        R""" Get the box volume.
+        r""" Get the box volume.
 
         Returns:
             The box volume (area in 2D).
         """
-        b = self._getBoxDim();
-        return b.getVolume(self.dimensions == 2);
+        b = self._getBoxDim()
+        return b.getVolume(self.dimensions == 2)
 
-    def get_lattice_vector(self,i):
-        R""" Get a lattice vector.
+    def get_lattice_vector(self, i):
+        r""" Get a lattice vector.
 
         Args:
             i (int): (=0,1,2) direction of lattice vector
@@ -644,12 +646,12 @@ class boxdim(hoomd.meta._metadata):
             The lattice vector (3-tuple) along direction *i*.
         """
 
-        b = self._getBoxDim();
+        b = self._getBoxDim()
         v = b.getLatticeVector(int(i))
         return (v.x, v.y, v.z)
 
-    def wrap(self,v, img=(0,0,0)):
-        R""" Wrap a vector using the periodic boundary conditions.
+    def wrap(self, v, img=(0, 0, 0)):
+        r""" Wrap a vector using the periodic boundary conditions.
 
         Args:
             v (tuple): The vector to wrap
@@ -658,15 +660,15 @@ class boxdim(hoomd.meta._metadata):
         Returns:
             The wrapped vector and the image flags in a tuple.
         """
-        u = _hoomd.make_scalar3(float(v[0]),float(v[1]),float(v[2]))
-        i = _hoomd.make_int3(int(img[0]),int(img[1]),int(img[2]))
-        c = _hoomd.make_char3(0,0,0)
-        self._getBoxDim().wrap(u,i,c)
-        img = (i.x,i.y,i.z)
-        return (u.x, u.y, u.z),img
+        u = _hoomd.make_scalar3(float(v[0]), float(v[1]), float(v[2]))
+        i = _hoomd.make_int3(int(img[0]), int(img[1]), int(img[2]))
+        c = _hoomd.make_char3(0, 0, 0)
+        self._getBoxDim().wrap(u, i, c)
+        img = (i.x, i.y, i.z)
+        return (u.x, u.y, u.z), img
 
-    def min_image(self,v):
-        R""" Apply the minimum image convention to a vector using periodic boundary conditions.
+    def min_image(self, v):
+        r""" Apply the minimum image convention to a vector using periodic boundary conditions.
 
         Args:
             v (tuple): The vector to apply minimum image to
@@ -675,12 +677,12 @@ class boxdim(hoomd.meta._metadata):
             The minimum image as a tuple.
 
         """
-        u = _hoomd.make_scalar3(v[0],v[1],v[2])
+        u = _hoomd.make_scalar3(v[0], v[1], v[2])
         u = self._getBoxDim().minImage(u)
         return (u.x, u.y, u.z)
 
-    def make_fraction(self,v):
-        R""" Scale a vector to fractional coordinates.
+    def make_fraction(self, v):
+        r""" Scale a vector to fractional coordinates.
 
         Args:
             v (tuple): The vector to convert to fractional coordinates
@@ -691,39 +693,54 @@ class boxdim(hoomd.meta._metadata):
         Returns:
             The scaled vector.
         """
-        u = _hoomd.make_scalar3(v[0],v[1],v[2])
-        w = _hoomd.make_scalar3(0,0,0)
+        u = _hoomd.make_scalar3(v[0], v[1], v[2])
+        w = _hoomd.make_scalar3(0, 0, 0)
 
-        u = self._getBoxDim().makeFraction(u,w)
+        u = self._getBoxDim().makeFraction(u, w)
         return (u.x, u.y, u.z)
 
     ## \internal
     # \brief Get a C++ boxdim
     def _getBoxDim(self):
-        b = _hoomd.BoxDim(self.Lx, self.Ly, self.Lz);
-        b.setTiltFactors(self.xy, self.xz, self.yz);
+        b = _hoomd.BoxDim(self.Lx, self.Ly, self.Lz)
+        b.setTiltFactors(self.xy, self.xz, self.yz)
         return b
 
     def __str__(self):
-        return 'Box: Lx=' + str(self.Lx) + ' Ly=' + str(self.Ly) + ' Lz=' + str(self.Lz) + ' xy=' + str(self.xy) + \
-                    ' xz='+ str(self.xz) + ' yz=' + str(self.yz) + ' dimensions=' + str(self.dimensions);
+        return (
+            "Box: Lx="
+            + str(self.Lx)
+            + " Ly="
+            + str(self.Ly)
+            + " Lz="
+            + str(self.Lz)
+            + " xy="
+            + str(self.xy)
+            + " xz="
+            + str(self.xz)
+            + " yz="
+            + str(self.yz)
+            + " dimensions="
+            + str(self.dimensions)
+        )
 
     ## \internal
     # \brief Get a dictionary representation of the box dimensions
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['d'] = self.dimensions
-        data['Lx'] = self.Lx
-        data['Ly'] = self.Ly
-        data['Lz'] = self.Lz
-        data['xy'] = self.xy
-        data['xz'] = self.xz
-        data['yz'] = self.yz
-        data['V'] = self.get_volume()
+        data["d"] = self.dimensions
+        data["Lx"] = self.Lx
+        data["Ly"] = self.Ly
+        data["Lz"] = self.Lz
+        data["xy"] = self.xy
+        data["xz"] = self.xz
+        data["yz"] = self.yz
+        data["V"] = self.get_volume()
         return data
 
+
 class system_data(hoomd.meta._metadata):
-    R""" Access system data
+    r""" Access system data
 
     system_data provides access to the different data structures that define the current state of the simulation.
     See :py:mod:`hoomd.data` for a full explanation of how to use by example.
@@ -741,26 +758,20 @@ class system_data(hoomd.meta._metadata):
     """
 
     def __init__(self, sysdef):
-        self.sysdef = sysdef;
-        self.particles = particle_data(sysdef.getParticleData());
-        self.bonds = bond_data(sysdef.getBondData());
-        self.angles = angle_data(sysdef.getAngleData());
-        self.dihedrals = dihedral_data(sysdef.getDihedralData());
-        self.impropers = dihedral_data(sysdef.getImproperData());
-        self.constraints = constraint_data(sysdef.getConstraintData());
-        self.pairs = bond_data(sysdef.getPairData());
+        self.sysdef = sysdef
+        self.particles = particle_data(sysdef.getParticleData())
+        self.bonds = bond_data(sysdef.getBondData())
+        self.angles = angle_data(sysdef.getAngleData())
+        self.dihedrals = dihedral_data(sysdef.getDihedralData())
+        self.impropers = dihedral_data(sysdef.getImproperData())
+        self.constraints = constraint_data(sysdef.getConstraintData())
+        self.pairs = bond_data(sysdef.getPairData())
 
         # base class constructor
         hoomd.meta._metadata.__init__(self)
 
-    def take_snapshot(self,
-                      particles=True,
-                      bonds=False,
-                      pairs=False,
-                      integrators=False,
-                      all=False,
-                      dtype='float'):
-        R""" Take a snapshot of the current system data.
+    def take_snapshot(self, particles=True, bonds=False, pairs=False, integrators=False, all=False, dtype="float"):
+        r""" Take a snapshot of the current system data.
 
         Args:
             particles (bool): When True, particle data is included in the snapshot.
@@ -787,26 +798,30 @@ class system_data(hoomd.meta._metadata):
             snapshot = system.take_snapshot(bonds=true)
 
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if all is True:
-                particles=True
-                bonds=True
-                pairs=True
-                integrators=True
+            particles = True
+            bonds = True
+            pairs = True
+            integrators = True
 
         # take the snapshot
-        if dtype == 'float':
-            cpp_snapshot = self.sysdef.takeSnapshot_float(particles,bonds,bonds,bonds,bonds,bonds,integrators,pairs)
-        elif dtype == 'double':
-            cpp_snapshot = self.sysdef.takeSnapshot_double(particles,bonds,bonds,bonds,bonds,bonds,integrators,pairs)
+        if dtype == "float":
+            cpp_snapshot = self.sysdef.takeSnapshot_float(
+                particles, bonds, bonds, bonds, bonds, bonds, integrators, pairs
+            )
+        elif dtype == "double":
+            cpp_snapshot = self.sysdef.takeSnapshot_double(
+                particles, bonds, bonds, bonds, bonds, bonds, integrators, pairs
+            )
         else:
-            raise ValueError("dtype must be float or double");
+            raise ValueError("dtype must be float or double")
 
         return cpp_snapshot
 
     def replicate(self, nx=1, ny=1, nz=1):
-        R""" Replicates the system along the three spatial dimensions.
+        r""" Replicates the system along the three spatial dimensions.
 
         Args:
             nx (int): Number of times to replicate the system along the x-direction
@@ -862,7 +877,7 @@ class system_data(hoomd.meta._metadata):
         hoomd.util.unquiet_status()
 
     def restore_snapshot(self, snapshot):
-        R""" Re-initializes the system from a snapshot.
+        r""" Re-initializes the system from a snapshot.
 
         Args:
             snapshot:. The snapshot to initialize the system from.
@@ -892,56 +907,73 @@ class system_data(hoomd.meta._metadata):
                 restore_snapshot() between run() commands to ensure that all per type coefficients are updated properly.
 
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if hoomd.comm.get_rank() == 0:
-            if snapshot.has_particle_data and len(snapshot.particles.types) != self.sysdef.getParticleData().getNTypes():
+            if (
+                snapshot.has_particle_data
+                and len(snapshot.particles.types) != self.sysdef.getParticleData().getNTypes()
+            ):
                 raise RuntimeError("Number of particle types must remain the same")
             if snapshot.has_bond_data and len(snapshot.bonds.types) != self.sysdef.getBondData().getNTypes():
                 raise RuntimeError("Number of bond types must remain the same")
             if snapshot.has_angle_data and len(snapshot.angles.types) != self.sysdef.getAngleData().getNTypes():
                 raise RuntimeError("Number of angle types must remain the same")
-            if snapshot.has_dihedral_data and len(snapshot.dihedrals.types) != self.sysdef.getDihedralData().getNTypes():
+            if (
+                snapshot.has_dihedral_data
+                and len(snapshot.dihedrals.types) != self.sysdef.getDihedralData().getNTypes()
+            ):
                 raise RuntimeError("Number of dihedral types must remain the same")
-            if snapshot.has_improper_data and len(snapshot.impropers.types) != self.sysdef.getImproperData().getNTypes():
+            if (
+                snapshot.has_improper_data
+                and len(snapshot.impropers.types) != self.sysdef.getImproperData().getNTypes()
+            ):
                 raise RuntimeError("Number of dihedral types must remain the same")
             if snapshot.has_pair_data and len(snapshot.pairs.types) != self.sysdef.getPairData().getNTypes():
                 raise RuntimeError("Number of pair types must remain the same")
 
-        self.sysdef.initializeFromSnapshot(snapshot);
+        self.sysdef.initializeFromSnapshot(snapshot)
 
     ## \internal
     # \brief Get particle metadata
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['box'] = self.box
-        data['particles'] = self.particles
-        data['number_density'] = len(self.particles)/self.box.get_volume()
+        data["box"] = self.box
+        data["particles"] = self.particles
+        data["number_density"] = len(self.particles) / self.box.get_volume()
 
-        data['bonds'] = self.bonds
-        data['angles'] = self.angles
-        data['dihedrals'] = self.dihedrals
-        data['impropers'] = self.impropers
-        data['constraints'] = self.constraints
-        data['pairs'] = self.pairs
+        data["bonds"] = self.bonds
+        data["angles"] = self.angles
+        data["dihedrals"] = self.dihedrals
+        data["impropers"] = self.impropers
+        data["constraints"] = self.constraints
+        data["pairs"] = self.pairs
 
-        data['timestep'] = hoomd.context.current.system.getCurrentTimeStep()
+        data["timestep"] = hoomd.context.current.system.getCurrentTimeStep()
         return data
 
     ## Get the system box
     @property
     def box(self):
-        b = self.sysdef.getParticleData().getGlobalBox();
-        L = b.getL();
-        return boxdim(Lx=L.x, Ly=L.y, Lz=L.z, xy=b.getTiltFactorXY(), xz=b.getTiltFactorXZ(), yz=b.getTiltFactorYZ(), dimensions=self.sysdef.getNDimensions());
+        b = self.sysdef.getParticleData().getGlobalBox()
+        L = b.getL()
+        return boxdim(
+            Lx=L.x,
+            Ly=L.y,
+            Lz=L.z,
+            xy=b.getTiltFactorXY(),
+            xz=b.getTiltFactorXZ(),
+            yz=b.getTiltFactorYZ(),
+            dimensions=self.sysdef.getNDimensions(),
+        )
 
     ## Set the system box
     # \param value The new boundaries (a data.boxdim object)
     @box.setter
     def box(self, value):
         if not isinstance(value, boxdim):
-            raise TypeError('box must be a data.boxdim object');
-        self.sysdef.getParticleData().setGlobalBox(value._getBoxDim());
+            raise TypeError("box must be a data.boxdim object")
+        self.sysdef.getParticleData().setGlobalBox(value._getBoxDim())
 
 
 ## \internal
@@ -956,27 +988,29 @@ class pdata_types_proxy(object):
     # \brief particle_data iterator
     class pdata_types_iterator(object):
         def __init__(self, data):
-            self.data = data;
-            self.index = 0;
+            self.data = data
+            self.index = 0
+
         def __iter__(self):
-            return self;
+            return self
+
         def __next__(self):
             if self.index == len(self.data):
-                raise StopIteration;
+                raise StopIteration
 
-            result = self.data[self.index];
-            self.index += 1;
-            return result;
+            result = self.data[self.index]
+            self.index += 1
+            return result
 
         # support python2
-        next = __next__;
+        next = __next__
 
     ## \internal
     # \brief create a pdata_types_proxy
     #
     # \param pdata ParticleData to connect
     def __init__(self, pdata):
-        self.pdata = pdata;
+        self.pdata = pdata
 
     ## \var pdata
     # \internal
@@ -986,34 +1020,34 @@ class pdata_types_proxy(object):
     # \brief Get a the name of a type
     # \param type_idx Type index
     def __getitem__(self, type_idx):
-        ntypes = self.pdata.getNTypes();
+        ntypes = self.pdata.getNTypes()
         if type_idx >= ntypes or type_idx < 0:
-            raise IndexError;
-        return self.pdata.getNameByType(type_idx);
+            raise IndexError
+        return self.pdata.getNameByType(type_idx)
 
     ## \internal
     # \brief Set the name of a type
     # \param type_idx Particle tag to set
     # \param name New type name
     def __setitem__(self, type_idx, name):
-        ntypes = self.pdata.getNTypes();
+        ntypes = self.pdata.getNTypes()
         if type_idx >= ntypes or type_idx < 0:
-            raise IndexError;
-        self.pdata.setTypeName(type_idx, name);
+            raise IndexError
+        self.pdata.setTypeName(type_idx, name)
 
     ## \internal
     # \brief Get the number of types
     def __len__(self):
-        return self.pdata.getNTypes();
+        return self.pdata.getNTypes()
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        ntypes = self.pdata.getNTypes();
+        ntypes = self.pdata.getNTypes()
         result = "Particle types: ["
-        for i in range(0,ntypes):
+        for i in range(0, ntypes):
             result += "'" + self.pdata.getNameByType(i) + "'"
-            if (i != ntypes-1):
+            if i != ntypes - 1:
                 result += ", "
             else:
                 result += "]"
@@ -1023,7 +1057,7 @@ class pdata_types_proxy(object):
     ## \internal
     # \brief Return an iterator
     def __iter__(self):
-        return pdata_types_proxy.pdata_types_iterator(self);
+        return pdata_types_proxy.pdata_types_iterator(self)
 
     ## \internal
     # \brief Add a new particle type
@@ -1031,13 +1065,13 @@ class pdata_types_proxy(object):
     # \returns Index of newly added type
     def add(self, name):
         # check that type does not yet exist
-        ntypes = self.pdata.getNTypes();
-        for i in range(0,ntypes):
+        ntypes = self.pdata.getNTypes()
+        for i in range(0, ntypes):
             if self.pdata.getNameByType(i) == name:
-                hoomd.context.msg.warning("Type '"+name+"' already defined.\n");
+                hoomd.context.msg.warning("Type '" + name + "' already defined.\n")
                 return i
 
-        typeid = self.pdata.addType(name);
+        typeid = self.pdata.addType(name)
         return typeid
 
 
@@ -1053,27 +1087,29 @@ class particle_data(hoomd.meta._metadata):
     # \brief particle_data iterator
     class particle_data_iterator:
         def __init__(self, data):
-            self.data = data;
-            self.index = 0;
+            self.data = data
+            self.index = 0
+
         def __iter__(self):
-            return self;
+            return self
+
         def __next__(self):
             if self.index == len(self.data):
-                raise StopIteration;
+                raise StopIteration
 
-            result = self.data[self.index];
-            self.index += 1;
-            return result;
+            result = self.data[self.index]
+            self.index += 1
+            return result
 
         # support python2
-        next = __next__;
+        next = __next__
 
     ## \internal
     # \brief create a particle_data
     #
     # \param pdata ParticleData to connect
     def __init__(self, pdata):
-        self.pdata = pdata;
+        self.pdata = pdata
 
         self.types = pdata_types_proxy(hoomd.context.current.system_definition.getParticleData())
 
@@ -1089,74 +1125,75 @@ class particle_data(hoomd.meta._metadata):
     # \param id Contiguous particle id to access
     def __getitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
-        tag = self.pdata.getNthTag(id);
-        return particle_data_proxy(self.pdata, tag);
+            raise IndexError
+        tag = self.pdata.getNthTag(id)
+        return particle_data_proxy(self.pdata, tag)
 
     ## \internal
     # \brief Get a particle_proxy reference to the particle with tag \a tag
     # \param tag Particle tag to access
     def get(self, tag):
         if tag > self.pdata.getMaximumTag() or tag < 0:
-            raise IndexError;
-        return particle_data_proxy(self.pdata, tag);
+            raise IndexError
+        return particle_data_proxy(self.pdata, tag)
 
     ## \internal
     # \brief Set a particle's properties
     # \param tag Particle tag to set
     # \param p Value containing properties to set
     def __setitem__(self, tag, p):
-        raise RuntimeError('__setitem__ not implemented');
+        raise RuntimeError("__setitem__ not implemented")
 
     ## \internal
     # \brief Add a new particle
     # \param type Type name of the particle to add
     # \returns Unique tag identifying this bond
     def add(self, type):
-        typeid = self.pdata.getTypeByName(type);
-        return self.pdata.addParticle(typeid);
+        typeid = self.pdata.getTypeByName(type)
+        return self.pdata.addParticle(typeid)
 
     ## \internal
     # \brief Remove a bond by tag
     # \param tag Unique tag of the bond to remove
     def remove(self, tag):
-        self.pdata.removeParticle(tag);
+        self.pdata.removeParticle(tag)
 
     ## \internal
     # \brief Delete a particle by id
     # \param id Bond id to delete
     def __delitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
-        tag = self.pdata.getNthTag(id);
-        self.pdata.removeParticle(tag);
+            raise IndexError
+        tag = self.pdata.getNthTag(id)
+        self.pdata.removeParticle(tag)
 
     ## \internal
     # \brief Get the number of particles
     def __len__(self):
-        return self.pdata.getNGlobal();
+        return self.pdata.getNGlobal()
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Particle Data for %d particles of %d type(s)" % (self.pdata.getNGlobal(), self.pdata.getNTypes());
+        result = "Particle Data for %d particles of %d type(s)" % (self.pdata.getNGlobal(), self.pdata.getNTypes())
         return result
 
     ## \internal
     # \brief Return an iterator
     def __iter__(self):
-        return particle_data.particle_data_iterator(self);
+        return particle_data.particle_data_iterator(self)
 
     ## \internal
     # \brief Return metadata for this particle_data instance
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['N'] = len(self)
-        data['types'] = list(self.types);
+        data["N"] = len(self)
+        data["types"] = list(self.types)
         return data
 
+
 class particle_data_proxy(object):
-    R""" Access a single particle via a proxy.
+    r""" Access a single particle via a proxy.
 
     particle_data_proxy provides access to all of the properties of a single particle in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -1186,200 +1223,203 @@ class particle_data_proxy(object):
     # \param pdata ParticleData to which this proxy belongs
     # \param tag Tag this particle in \a pdata
     def __init__(self, pdata, tag):
-        self.pdata = pdata;
+        self.pdata = pdata
         self.tag = tag
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "";
+        result = ""
         result += "tag         : " + str(self.tag) + "\n"
-        result += "position    : " + str(self.position) + "\n";
-        result += "image       : " + str(self.image) + "\n";
-        result += "velocity    : " + str(self.velocity) + "\n";
-        result += "acceleration: " + str(self.acceleration) + "\n";
-        result += "charge      : " + str(self.charge) + "\n";
-        result += "mass        : " + str(self.mass) + "\n";
-        result += "diameter    : " + str(self.diameter) + "\n";
-        result += "type        : " + str(self.type) + "\n";
-        result += "typeid      : " + str(self.typeid) + "\n";
-        result += "body        : " + str(self.body) + "\n";
-        result += "orientation : " + str(self.orientation) + "\n";
-        result += "mom. inertia: " + str(self.moment_inertia) + "\n";
-        result += "angular_momentum: " + str(self.angular_momentum) + "\n";
-        result += "net_force   : " + str(self.net_force) + "\n";
-        result += "net_energy  : " + str(self.net_energy) + "\n";
-        result += "net_torque  : " + str(self.net_torque) + "\n";
-        result += "net_virial  : " + str(self.net_virial) + "\n";
-        return result;
+        result += "position    : " + str(self.position) + "\n"
+        result += "image       : " + str(self.image) + "\n"
+        result += "velocity    : " + str(self.velocity) + "\n"
+        result += "acceleration: " + str(self.acceleration) + "\n"
+        result += "charge      : " + str(self.charge) + "\n"
+        result += "mass        : " + str(self.mass) + "\n"
+        result += "diameter    : " + str(self.diameter) + "\n"
+        result += "type        : " + str(self.type) + "\n"
+        result += "typeid      : " + str(self.typeid) + "\n"
+        result += "body        : " + str(self.body) + "\n"
+        result += "orientation : " + str(self.orientation) + "\n"
+        result += "mom. inertia: " + str(self.moment_inertia) + "\n"
+        result += "angular_momentum: " + str(self.angular_momentum) + "\n"
+        result += "net_force   : " + str(self.net_force) + "\n"
+        result += "net_energy  : " + str(self.net_energy) + "\n"
+        result += "net_torque  : " + str(self.net_torque) + "\n"
+        result += "net_virial  : " + str(self.net_virial) + "\n"
+        return result
 
     @property
     def position(self):
-        pos = self.pdata.getPosition(self.tag);
-        return (pos.x, pos.y, pos.z);
+        pos = self.pdata.getPosition(self.tag)
+        return (pos.x, pos.y, pos.z)
 
     @position.setter
     def position(self, value):
         if len(value) != 3:
             raise ValueError("The input value/vector should be exactly length 3.")
-        v = _hoomd.Scalar3();
-        v.x = float(value[0]);
-        v.y = float(value[1]);
-        v.z = float(value[2]);
-        self.pdata.setPosition(self.tag, v, True);
+        v = _hoomd.Scalar3()
+        v.x = float(value[0])
+        v.y = float(value[1])
+        v.z = float(value[2])
+        self.pdata.setPosition(self.tag, v, True)
 
     @property
     def velocity(self):
-        vel = self.pdata.getVelocity(self.tag);
-        return (vel.x, vel.y, vel.z);
+        vel = self.pdata.getVelocity(self.tag)
+        return (vel.x, vel.y, vel.z)
 
     @velocity.setter
     def velocity(self, value):
         if len(value) != 3:
             raise ValueError("The input value/vector should be exactly length 3.")
-        v = _hoomd.Scalar3();
-        v.x = float(value[0]);
-        v.y = float(value[1]);
-        v.z = float(value[2]);
-        self.pdata.setVelocity(self.tag, v);
+        v = _hoomd.Scalar3()
+        v.x = float(value[0])
+        v.y = float(value[1])
+        v.z = float(value[2])
+        self.pdata.setVelocity(self.tag, v)
 
     @property
     def acceleration(self):
-        accel = self.pdata.getAcceleration(self.tag);
-        return (accel.x, accel.y, accel.z);
+        accel = self.pdata.getAcceleration(self.tag)
+        return (accel.x, accel.y, accel.z)
 
     @property
     def image(self):
-        image = self.pdata.getImage(self.tag);
-        return (image.x, image.y, image.z);
+        image = self.pdata.getImage(self.tag)
+        return (image.x, image.y, image.z)
 
     @image.setter
     def image(self, value):
         if len(value) != 3:
             raise ValueError("The input value/vector should be exactly length 3.")
-        v = _hoomd.int3();
-        v.x = int(value[0]);
-        v.y = int(value[1]);
-        v.z = int(value[2]);
-        self.pdata.setImage(self.tag, v);
+        v = _hoomd.int3()
+        v.x = int(value[0])
+        v.y = int(value[1])
+        v.z = int(value[2])
+        self.pdata.setImage(self.tag, v)
 
     @property
     def charge(self):
-        return self.pdata.getCharge(self.tag);
+        return self.pdata.getCharge(self.tag)
 
     @charge.setter
     def charge(self, value):
-        self.pdata.setCharge(self.tag, float(value));
+        self.pdata.setCharge(self.tag, float(value))
 
     @property
     def mass(self):
-        return self.pdata.getMass(self.tag);
+        return self.pdata.getMass(self.tag)
 
     @mass.setter
     def mass(self, value):
-        self.pdata.setMass(self.tag, float(value));
+        self.pdata.setMass(self.tag, float(value))
 
     @property
     def diameter(self):
-        return self.pdata.getDiameter(self.tag);
+        return self.pdata.getDiameter(self.tag)
 
     @diameter.setter
     def diameter(self, value):
-        self.pdata.setDiameter(self.tag, float(value));
+        self.pdata.setDiameter(self.tag, float(value))
 
     @property
     def typeid(self):
-        return self.pdata.getType(self.tag);
+        return self.pdata.getType(self.tag)
 
     @property
     def body(self):
-        return self.pdata.getBody(self.tag);
+        return self.pdata.getBody(self.tag)
 
     @body.setter
     def body(self, value):
-        self.pdata.setBody(self.tag, value);
+        self.pdata.setBody(self.tag, value)
 
     @property
     def type(self):
-        typeid = self.pdata.getType(self.tag);
-        return self.pdata.getNameByType(typeid);
+        typeid = self.pdata.getType(self.tag)
+        return self.pdata.getNameByType(typeid)
 
     @type.setter
     def type(self, value):
-        typeid = self.pdata.getTypeByName(value);
-        self.pdata.setType(self.tag, typeid);
+        typeid = self.pdata.getTypeByName(value)
+        self.pdata.setType(self.tag, typeid)
 
     @property
     def orientation(self):
-        o = self.pdata.getOrientation(self.tag);
-        return (o.x, o.y, o.z, o.w);
+        o = self.pdata.getOrientation(self.tag)
+        return (o.x, o.y, o.z, o.w)
 
     @orientation.setter
     def orientation(self, value):
         if len(value) != 4:
             raise ValueError("The input value/vector should be exactly length 4.")
-        o = _hoomd.Scalar4();
-        o.x = float(value[0]);
-        o.y = float(value[1]);
-        o.z = float(value[2]);
-        o.w = float(value[3]);
-        self.pdata.setOrientation(self.tag, o);
+        o = _hoomd.Scalar4()
+        o.x = float(value[0])
+        o.y = float(value[1])
+        o.z = float(value[2])
+        o.w = float(value[3])
+        self.pdata.setOrientation(self.tag, o)
 
     @property
     def angular_momentum(self):
-        a = self.pdata.getAngularMomentum(self.tag);
-        return (a.x, a.y, a.z, a.w);
+        a = self.pdata.getAngularMomentum(self.tag)
+        return (a.x, a.y, a.z, a.w)
 
     @angular_momentum.setter
     def angular_momentum(self, value):
         if len(value) != 4:
             raise ValueError("The input value/vector should be exactly length 4.")
-        a = _hoomd.Scalar4();
-        a.x = float(value[0]);
-        a.y = float(value[1]);
-        a.z = float(value[2]);
-        a.w = float(value[3]);
-        self.pdata.setAngularMomentum(self.tag, a);
+        a = _hoomd.Scalar4()
+        a.x = float(value[0])
+        a.y = float(value[1])
+        a.z = float(value[2])
+        a.w = float(value[3])
+        self.pdata.setAngularMomentum(self.tag, a)
 
     @property
     def moment_inertia(self):
         m = self.pdata.getMomentsOfInertia(self.tag)
-        return (m.x, m.y, m.z);
+        return (m.x, m.y, m.z)
 
     @moment_inertia.setter
     def moment_inertia(self, value):
         if len(value) != 3:
             raise ValueError("The input value/vector should be exactly length 3.")
-        m = _hoomd.Scalar3();
-        m.x = float(value[0]);
-        m.y = float(value[1]);
-        m.z = float(value[2]);
-        self.pdata.setMomentsOfInertia(self.tag, m);
+        m = _hoomd.Scalar3()
+        m.x = float(value[0])
+        m.y = float(value[1])
+        m.z = float(value[2])
+        self.pdata.setMomentsOfInertia(self.tag, m)
 
     @property
     def net_force(self):
-        f = self.pdata.getPNetForce(self.tag);
-        return (f.x, f.y, f.z);
+        f = self.pdata.getPNetForce(self.tag)
+        return (f.x, f.y, f.z)
 
     @property
     def net_virial(self):
-        v = (self.pdata.getPNetVirial(self.tag,0),
-             self.pdata.getPNetVirial(self.tag,1),
-             self.pdata.getPNetVirial(self.tag,2),
-             self.pdata.getPNetVirial(self.tag,3),
-             self.pdata.getPNetVirial(self.tag,4),
-             self.pdata.getPNetVirial(self.tag,5));
+        v = (
+            self.pdata.getPNetVirial(self.tag, 0),
+            self.pdata.getPNetVirial(self.tag, 1),
+            self.pdata.getPNetVirial(self.tag, 2),
+            self.pdata.getPNetVirial(self.tag, 3),
+            self.pdata.getPNetVirial(self.tag, 4),
+            self.pdata.getPNetVirial(self.tag, 5),
+        )
         return v
 
     @property
     def net_energy(self):
-        f = self.pdata.getPNetForce(self.tag);
-        return f.w;
+        f = self.pdata.getPNetForce(self.tag)
+        return f.w
 
     @property
     def net_torque(self):
-        f = self.pdata.getNetTorque(self.tag);
-        return (f.x, f.y, f.z);
+        f = self.pdata.getNetTorque(self.tag)
+        return (f.x, f.y, f.z)
+
 
 ## \internal
 # Access force data
@@ -1393,27 +1433,29 @@ class force_data(object):
     # \brief force_data iterator
     class force_data_iterator(object):
         def __init__(self, data):
-            self.data = data;
-            self.index = 0;
+            self.data = data
+            self.index = 0
+
         def __iter__(self):
-            return self;
+            return self
+
         def __next__(self):
             if self.index == len(self.data):
-                raise StopIteration;
+                raise StopIteration
 
-            result = self.data[self.index];
-            self.index += 1;
-            return result;
+            result = self.data[self.index]
+            self.index += 1
+            return result
 
         # support python2
-        next = __next__;
+        next = __next__
 
     ## \internal
     # \brief create a force_data
     #
     # \param pdata ParticleData to connect
     def __init__(self, force):
-        self.force = force;
+        self.force = force
 
     ## \var force
     # \internal
@@ -1424,34 +1466,35 @@ class force_data(object):
     # \param tag Particle tag to access
     def __getitem__(self, tag):
         if tag >= len(self) or tag < 0:
-            raise IndexError;
-        return force_data_proxy(self.force, tag);
+            raise IndexError
+        return force_data_proxy(self.force, tag)
 
     ## \internal
     # \brief Set a particle's properties
     # \param tag Particle tag to set
     # \param p Value containing properties to set
     def __setitem__(self, tag, p):
-        raise RuntimeError('__setitem__ not implemented');
+        raise RuntimeError("__setitem__ not implemented")
 
     ## \internal
     # \brief Get the number of particles
     def __len__(self):
-        return hoomd.context.current.system_definition.getParticleData().getNGlobal();
+        return hoomd.context.current.system_definition.getParticleData().getNGlobal()
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Force Data for %d particles" % (len(self));
+        result = "Force Data for %d particles" % (len(self))
         return result
 
     ## \internal
     # \brief Return an iterator
     def __iter__(self):
-        return force_data.force_data_iterator(self);
+        return force_data.force_data_iterator(self)
+
 
 class force_data_proxy(object):
-    R""" Access the force on a single particle via a proxy.
+    r""" Access the force on a single particle via a proxy.
 
     force_data_proxy provides access to the current force, virial, and energy of a single particle due to a single
     force computation. See :py:mod:`hoomd.data` for examples.
@@ -1469,44 +1512,46 @@ class force_data_proxy(object):
     # \param force ForceCompute to which this proxy belongs
     # \param tag Tag of this particle in \a force
     def __init__(self, force, tag):
-        self.fdata = force;
-        self.tag = tag;
+        self.fdata = force
+        self.tag = tag
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "";
+        result = ""
         result += "tag         : " + str(self.tag) + "\n"
-        result += "force       : " + str(self.force) + "\n";
-        result += "virial      : " + str(self.virial) + "\n";
-        result += "energy      : " + str(self.energy) + "\n";
-        result += "torque      : " + str(self.torque) + "\n";
-        return result;
-
+        result += "force       : " + str(self.force) + "\n"
+        result += "virial      : " + str(self.virial) + "\n"
+        result += "energy      : " + str(self.energy) + "\n"
+        result += "torque      : " + str(self.torque) + "\n"
+        return result
 
     @property
     def force(self):
-        f = self.fdata.cpp_force.getForce(self.tag);
-        return (f.x, f.y, f.z);
+        f = self.fdata.cpp_force.getForce(self.tag)
+        return (f.x, f.y, f.z)
 
     @property
     def virial(self):
-        return (self.fdata.cpp_force.getVirial(self.tag,0),
-                self.fdata.cpp_force.getVirial(self.tag,1),
-                self.fdata.cpp_force.getVirial(self.tag,2),
-                self.fdata.cpp_force.getVirial(self.tag,3),
-                self.fdata.cpp_force.getVirial(self.tag,4),
-                self.fdata.cpp_force.getVirial(self.tag,5));
+        return (
+            self.fdata.cpp_force.getVirial(self.tag, 0),
+            self.fdata.cpp_force.getVirial(self.tag, 1),
+            self.fdata.cpp_force.getVirial(self.tag, 2),
+            self.fdata.cpp_force.getVirial(self.tag, 3),
+            self.fdata.cpp_force.getVirial(self.tag, 4),
+            self.fdata.cpp_force.getVirial(self.tag, 5),
+        )
 
     @property
     def energy(self):
-        energy = self.fdata.cpp_force.getEnergy(self.tag);
-        return energy;
+        energy = self.fdata.cpp_force.getEnergy(self.tag)
+        return energy
 
     @property
     def torque(self):
-        f = self.fdata.cpp_force.getTorque(self.tag);
+        f = self.fdata.cpp_force.getTorque(self.tag)
         return (f.x, f.y, f.z)
+
 
 ## \internal
 # \brief Access bond data
@@ -1520,27 +1565,29 @@ class bond_data(hoomd.meta._metadata):
     # \brief bond_data iterator
     class bond_data_iterator:
         def __init__(self, data):
-            self.data = data;
-            self.tag = 0;
+            self.data = data
+            self.tag = 0
+
         def __iter__(self):
-            return self;
+            return self
+
         def __next__(self):
             if self.tag == len(self.data):
-                raise StopIteration;
+                raise StopIteration
 
-            result = self.data[self.tag];
-            self.tag += 1;
-            return result;
+            result = self.data[self.tag]
+            self.tag += 1
+            return result
 
         # support python2
-        next = __next__;
+        next = __next__
 
     ## \internal
     # \brief create a bond_data
     #
     # \param bdata BondData to connect
     def __init__(self, bdata):
-        self.bdata = bdata;
+        self.bdata = bdata
 
         # base class constructor
         hoomd.meta._metadata.__init__(self)
@@ -1552,14 +1599,14 @@ class bond_data(hoomd.meta._metadata):
     # \param b Tag of the second particle in the bond
     # \returns Unique tag identifying this bond
     def add(self, type, a, b):
-        typeid = self.bdata.getTypeByName(type);
-        return self.bdata.addBondedGroup(_hoomd.Bond(typeid, int(a), int(b)));
+        typeid = self.bdata.getTypeByName(type)
+        return self.bdata.addBondedGroup(_hoomd.Bond(typeid, int(a), int(b)))
 
     ## \internal
     # \brief Remove a bond by tag
     # \param tag Unique tag of the bond to remove
     def remove(self, tag):
-        self.bdata.removeBondedGroup(tag);
+        self.bdata.removeBondedGroup(tag)
 
     ## \var bdata
     # \internal
@@ -1570,60 +1617,61 @@ class bond_data(hoomd.meta._metadata):
     # \param id Bond id to access
     def __getitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
-        tag = self.bdata.getNthTag(id);
-        return bond_data_proxy(self.bdata, tag);
+            raise IndexError
+        tag = self.bdata.getNthTag(id)
+        return bond_data_proxy(self.bdata, tag)
 
     ## \internal
     # \brief Get a bond_data_proxy reference to the bond with tag \a tag
     # \param tag Bond tag to access
     def get(self, tag):
         if tag > self.bdata.getMaximumTag() or tag < 0:
-            raise IndexError;
-        return bond_data_proxy(self.bdata, tag);
+            raise IndexError
+        return bond_data_proxy(self.bdata, tag)
 
     ## \internal
     # \brief Set a bond's properties
     # \param id Bond id to set
     # \param b Value containing properties to set
     def __setitem__(self, id, b):
-        raise RuntimeError('Cannot change bonds once they are created');
+        raise RuntimeError("Cannot change bonds once they are created")
 
     ## \internal
     # \brief Delete a bond by id
     # \param id Bond id to delete
     def __delitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
-        tag = self.bdata.getNthTag(id);
-        self.bdata.removeBondedGroup(tag);
+            raise IndexError
+        tag = self.bdata.getNthTag(id)
+        self.bdata.removeBondedGroup(tag)
 
     ## \internal
     # \brief Get the number of bonds
     def __len__(self):
-        return self.bdata.getNGlobal();
+        return self.bdata.getNGlobal()
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Bond Data for %d bonds of %d typeid(s)" % (self.bdata.getNGlobal(), self.bdata.getNTypes());
+        result = "Bond Data for %d bonds of %d typeid(s)" % (self.bdata.getNGlobal(), self.bdata.getNTypes())
         return result
 
     ## \internal
     # \brief Return an iterator
     def __iter__(self):
-        return bond_data.bond_data_iterator(self);
+        return bond_data.bond_data_iterator(self)
 
     ## \internal
     # \brief Return metadata for this bond_data instance
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['N'] = len(self)
-        data['types'] = [self.bdata.getNameByType(i) for i in range(self.bdata.getNTypes())];
+        data["N"] = len(self)
+        data["types"] = [self.bdata.getNameByType(i) for i in range(self.bdata.getNTypes())]
         return data
 
+
 class bond_data_proxy(object):
-    R""" Access a single bond via a proxy.
+    r""" Access a single bond via a proxy.
 
     bond_data_proxy provides access to all of the properties of a single bond in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -1646,39 +1694,40 @@ class bond_data_proxy(object):
     # \param bdata BondData to which this proxy belongs
     # \param tag Tag of this bond in \a bdata
     def __init__(self, bdata, tag):
-        self.bdata = bdata;
-        self.tag = tag;
+        self.bdata = bdata
+        self.tag = tag
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "";
-        result += "typeid       : " + str(self.typeid) + "\n";
+        result = ""
+        result += "typeid       : " + str(self.typeid) + "\n"
         result += "a            : " + str(self.a) + "\n"
         result += "b            : " + str(self.b) + "\n"
-        result += "type         : " + str(self.type) + "\n";
-        return result;
+        result += "type         : " + str(self.type) + "\n"
+        return result
 
     @property
     def a(self):
-        bond = self.bdata.getGroupByTag(self.tag);
-        return bond.a;
+        bond = self.bdata.getGroupByTag(self.tag)
+        return bond.a
 
     @property
     def b(self):
-        bond = self.bdata.getGroupByTag(self.tag);
-        return bond.b;
+        bond = self.bdata.getGroupByTag(self.tag)
+        return bond.b
 
     @property
     def typeid(self):
-        bond = self.bdata.getGroupByTag(self.tag);
-        return bond.type;
+        bond = self.bdata.getGroupByTag(self.tag)
+        return bond.type
 
     @property
     def type(self):
-        bond = self.bdata.getGroupByTag(self.tag);
-        typeid = bond.type;
-        return self.bdata.getNameByType(typeid);
+        bond = self.bdata.getGroupByTag(self.tag)
+        typeid = bond.type
+        return self.bdata.getNameByType(typeid)
+
 
 ## \internal
 # \brief Access constraint data
@@ -1692,27 +1741,29 @@ class constraint_data(hoomd.meta._metadata):
     # \brief bond_data iterator
     class constraint_data_iterator:
         def __init__(self, data):
-            self.data = data;
-            self.tag = 0;
+            self.data = data
+            self.tag = 0
+
         def __iter__(self):
-            return self;
+            return self
+
         def __next__(self):
             if self.tag == len(self.data):
-                raise StopIteration;
+                raise StopIteration
 
-            result = self.data[self.tag];
-            self.tag += 1;
-            return result;
+            result = self.data[self.tag]
+            self.tag += 1
+            return result
 
         # support python2
-        next = __next__;
+        next = __next__
 
     ## \internal
     # \brief create a constraint_data
     #
     # \param bdata ConstraintData to connect
     def __init__(self, cdata):
-        self.cdata = cdata;
+        self.cdata = cdata
 
         # base class constructor
         hoomd.meta._metadata.__init__(self)
@@ -1724,13 +1775,13 @@ class constraint_data(hoomd.meta._metadata):
     # \param d Distance of the constraint to add
     # \returns Unique tag identifying this bond
     def add(self, a, b, d):
-        return self.cdata.addBondedGroup(_hoomd.Constraint(float(d), int(a), int(b)));
+        return self.cdata.addBondedGroup(_hoomd.Constraint(float(d), int(a), int(b)))
 
     ## \internal
     # \brief Remove a bond by tag
     # \param tag Unique tag of the bond to remove
     def remove(self, tag):
-        self.cdata.removeBondedGroup(tag);
+        self.cdata.removeBondedGroup(tag)
 
     ## \var cdata
     # \internal
@@ -1741,59 +1792,60 @@ class constraint_data(hoomd.meta._metadata):
     # \param id Constraint id to access
     def __getitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
-        tag = self.cdata.getNthTag(id);
-        return constraint_data_proxy(self.cdata, tag);
+            raise IndexError
+        tag = self.cdata.getNthTag(id)
+        return constraint_data_proxy(self.cdata, tag)
 
     ## \internal
     # \brief Get a constraint_data_proxy reference to the bond with tag \a tag
     # \param tag Bond tag to access
     def get(self, tag):
         if tag > self.cdata.getMaximumTag() or tag < 0:
-            raise IndexError;
-        return constraint_data_proxy(self.cdata, tag);
+            raise IndexError
+        return constraint_data_proxy(self.cdata, tag)
 
     ## \internal
     # \brief Set a constraint's properties
     # \param id constraint id to set
     # \param b Value containing properties to set
     def __setitem__(self, id, b):
-        raise RuntimeError('Cannot change constraints once they are created');
+        raise RuntimeError("Cannot change constraints once they are created")
 
     ## \internal
     # \brief Delete a constraint by id
     # \param id Constraint id to delete
     def __delitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
-        tag = self.cdata.getNthTag(id);
-        self.cdata.removeBondedGroup(tag);
+            raise IndexError
+        tag = self.cdata.getNthTag(id)
+        self.cdata.removeBondedGroup(tag)
 
     ## \internal
     # \brief Get the number of bonds
     def __len__(self):
-        return self.cdata.getNGlobal();
+        return self.cdata.getNGlobal()
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Constraint Data for %d constraints" % (self.cdata.getNGlobal());
+        result = "Constraint Data for %d constraints" % (self.cdata.getNGlobal())
         return result
 
     ## \internal
     # \brief Return an iterator
     def __iter__(self):
-        return constraint_data.constraint_data_iterator(self);
+        return constraint_data.constraint_data_iterator(self)
 
     ## \internal
     # \brief Return metadata for this bond_data instance
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['N'] = len(self)
+        data["N"] = len(self)
         return data
 
+
 class constraint_data_proxy(object):
-    R""" Access a single constraint via a proxy.
+    r""" Access a single constraint via a proxy.
 
     constraint_data_proxy provides access to all of the properties of a single constraint in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -1812,32 +1864,33 @@ class constraint_data_proxy(object):
     # \param cdata ConstraintData to which this proxy belongs
     # \param tag Tag of this constraint in \a cdata
     def __init__(self, cdata, tag):
-        self.cdata = cdata;
-        self.tag = tag;
+        self.cdata = cdata
+        self.tag = tag
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "";
+        result = ""
         result += "a            : " + str(self.a) + "\n"
         result += "b            : " + str(self.b) + "\n"
-        result += "d            : " + str(self.d) + "\n";
-        return result;
+        result += "d            : " + str(self.d) + "\n"
+        return result
 
     @property
     def a(self):
-        constraint = self.cdata.getGroupByTag(self.tag);
-        return constraint.a;
+        constraint = self.cdata.getGroupByTag(self.tag)
+        return constraint.a
 
     @property
     def b(self):
-        constraint = self.cdata.getGroupByTag(self.tag);
-        return constraint.b;
+        constraint = self.cdata.getGroupByTag(self.tag)
+        return constraint.b
 
     @property
     def d(self):
-        constraint = self.cdata.getGroupByTag(self.tag);
-        return constraint.d;
+        constraint = self.cdata.getGroupByTag(self.tag)
+        return constraint.d
+
 
 ## \internal
 # \brief Access angle data
@@ -1851,27 +1904,29 @@ class angle_data(hoomd.meta._metadata):
     # \brief angle_data iterator
     class angle_data_iterator:
         def __init__(self, data):
-            self.data = data;
-            self.index = 0;
+            self.data = data
+            self.index = 0
+
         def __iter__(self):
-            return self;
+            return self
+
         def __next__(self):
             if self.index == len(self.data):
-                raise StopIteration;
+                raise StopIteration
 
-            result = self.data[self.index];
-            self.index += 1;
-            return result;
+            result = self.data[self.index]
+            self.index += 1
+            return result
 
         # support python2
-        next = __next__;
+        next = __next__
 
     ## \internal
     # \brief create a angle_data
     #
     # \param bdata AngleData to connect
     def __init__(self, adata):
-        self.adata = adata;
+        self.adata = adata
 
         # base class constructor
         hoomd.meta._metadata.__init__(self)
@@ -1884,14 +1939,14 @@ class angle_data(hoomd.meta._metadata):
     # \param c Tag of the third particle in the angle
     # \returns Unique tag identifying this bond
     def add(self, type, a, b, c):
-        typeid = self.adata.getTypeByName(type);
-        return self.adata.addBondedGroup(_hoomd.Angle(typeid, int(a), int(b), int(c)));
+        typeid = self.adata.getTypeByName(type)
+        return self.adata.addBondedGroup(_hoomd.Angle(typeid, int(a), int(b), int(c)))
 
     ## \internal
     # \brief Remove an angle by tag
     # \param tag Unique tag of the angle to remove
     def remove(self, tag):
-        self.adata.removeBondedGroup(tag);
+        self.adata.removeBondedGroup(tag)
 
     ## \var adata
     # \internal
@@ -1902,62 +1957,63 @@ class angle_data(hoomd.meta._metadata):
     # \param id Angle id to access
     def __getitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
-        tag = self.adata.getNthTag(id);
-        return angle_data_proxy(self.adata, tag);
+            raise IndexError
+        tag = self.adata.getNthTag(id)
+        return angle_data_proxy(self.adata, tag)
 
     ## \internal
     # \brief Get a angle_data_proxy reference to the angle with tag \a tag
     # \param tag Angle tag to access
     def get(self, tag):
         if tag > self.adata.getMaximumTag() or tag < 0:
-            raise IndexError;
-        return angle_data_proxy(self.adata, tag);
+            raise IndexError
+        return angle_data_proxy(self.adata, tag)
 
     ## \internal
     # \brief Set an angle's properties
     # \param id Angle id to set
     # \param b Value containing properties to set
     def __setitem__(self, id, b):
-        raise RuntimeError('Cannot change angles once they are created');
+        raise RuntimeError("Cannot change angles once they are created")
 
     ## \internal
     # \brief Delete an angle by id
     # \param id Angle id to delete
     def __delitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
+            raise IndexError
 
         # Get the tag of the bond to delete
-        tag = self.adata.getNthTag(id);
-        self.adata.removeBondedGroup(tag);
+        tag = self.adata.getNthTag(id)
+        self.adata.removeBondedGroup(tag)
 
     ## \internal
     # \brief Get the number of angles
     def __len__(self):
-        return self.adata.getNGlobal();
+        return self.adata.getNGlobal()
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Angle Data for %d angles of %d typeid(s)" % (self.adata.getNGlobal(), self.adata.getNTypes());
-        return result;
+        result = "Angle Data for %d angles of %d typeid(s)" % (self.adata.getNGlobal(), self.adata.getNTypes())
+        return result
 
     ## \internal
     # \brief Return an iterator
     def __iter__(self):
-        return angle_data.angle_data_iterator(self);
+        return angle_data.angle_data_iterator(self)
 
     ## \internal
     # \brief Return metadata for this angle_data instance
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['N'] = len(self)
-        data['types'] = [self.adata.getNameByType(i) for i in range(self.adata.getNTypes())];
+        data["N"] = len(self)
+        data["types"] = [self.adata.getNameByType(i) for i in range(self.adata.getNTypes())]
         return data
 
+
 class angle_data_proxy(object):
-    R""" Access a single angle via a proxy.
+    r""" Access a single angle via a proxy.
 
     angle_data_proxy provides access to all of the properties of a single angle in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -1981,46 +2037,47 @@ class angle_data_proxy(object):
     # \param adata AngleData to which this proxy belongs
     # \param tag Tag of this angle in \a adata
     def __init__(self, adata, tag):
-        self.adata = adata;
-        self.tag = tag;
+        self.adata = adata
+        self.tag = tag
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "";
-        result += "tag          : " + str(self.tag) + "\n";
-        result += "typeid       : " + str(self.typeid) + "\n";
+        result = ""
+        result += "tag          : " + str(self.tag) + "\n"
+        result += "typeid       : " + str(self.typeid) + "\n"
         result += "a            : " + str(self.a) + "\n"
         result += "b            : " + str(self.b) + "\n"
         result += "c            : " + str(self.c) + "\n"
-        result += "type         : " + str(self.type) + "\n";
-        return result;
+        result += "type         : " + str(self.type) + "\n"
+        return result
 
     @property
     def a(self):
-        angle = self.adata.getGroupByTag(self.tag);
-        return angle.a;
+        angle = self.adata.getGroupByTag(self.tag)
+        return angle.a
 
     @property
     def b(self):
-        angle = self.adata.getGroupByTag(self.tag);
-        return angle.b;
+        angle = self.adata.getGroupByTag(self.tag)
+        return angle.b
 
     @property
     def c(self):
-        angle = self.adata.getGroupByTag(self.tag);
-        return angle.c;
+        angle = self.adata.getGroupByTag(self.tag)
+        return angle.c
 
     @property
     def typeid(self):
-        angle = self.adata.getGroupByTag(self.tag);
-        return angle.type;
+        angle = self.adata.getGroupByTag(self.tag)
+        return angle.type
 
     @property
     def type(self):
-        angle = self.adata.getGroupByTag(self.tag);
-        typeid = angle.type;
-        return self.adata.getNameByType(typeid);
+        angle = self.adata.getGroupByTag(self.tag)
+        typeid = angle.type
+        return self.adata.getNameByType(typeid)
+
 
 ## \internal
 # \brief Access dihedral data
@@ -2034,27 +2091,29 @@ class dihedral_data(hoomd.meta._metadata):
     # \brief dihedral_data iterator
     class dihedral_data_iterator:
         def __init__(self, data):
-            self.data = data;
-            self.index = 0;
+            self.data = data
+            self.index = 0
+
         def __iter__(self):
-            return self;
+            return self
+
         def __next__(self):
             if self.index == len(self.data):
-                raise StopIteration;
+                raise StopIteration
 
-            result = self.data[self.index];
-            self.index += 1;
-            return result;
+            result = self.data[self.index]
+            self.index += 1
+            return result
 
         # support python2
-        next = __next__;
+        next = __next__
 
     ## \internal
     # \brief create a dihedral_data
     #
     # \param bdata DihedralData to connect
     def __init__(self, ddata):
-        self.ddata = ddata;
+        self.ddata = ddata
 
         # base class constructor
         hoomd.meta._metadata.__init__(self)
@@ -2068,14 +2127,14 @@ class dihedral_data(hoomd.meta._metadata):
     # \param d Tag of the fourth particle in the dihedral
     # \returns Unique tag identifying this bond
     def add(self, type, a, b, c, d):
-        typeid = self.ddata.getTypeByName(type);
-        return self.ddata.addBondedGroup(_hoomd.Dihedral(typeid, int(a), int(b), int(c), int(d)));
+        typeid = self.ddata.getTypeByName(type)
+        return self.ddata.addBondedGroup(_hoomd.Dihedral(typeid, int(a), int(b), int(c), int(d)))
 
     ## \internal
     # \brief Remove an dihedral by tag
     # \param tag Unique tag of the dihedral to remove
     def remove(self, tag):
-        self.ddata.removeBondedGroup(tag);
+        self.ddata.removeBondedGroup(tag)
 
     ## \var ddata
     # \internal
@@ -2086,62 +2145,63 @@ class dihedral_data(hoomd.meta._metadata):
     # \param id Dihedral id to access
     def __getitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
-        tag = self.ddata.getNthTag(id);
-        return dihedral_data_proxy(self.ddata, tag);
+            raise IndexError
+        tag = self.ddata.getNthTag(id)
+        return dihedral_data_proxy(self.ddata, tag)
 
     ## \internal
     # \brief Get a dihedral_data_proxy reference to the dihedral with tag \a tag
     # \param tag Dihedral tag to access
     def get(self, tag):
         if tag > self.ddata.getMaximumTag() or tag < 0:
-            raise IndexError;
-        return dihedral_data_proxy(self.ddata, tag);
+            raise IndexError
+        return dihedral_data_proxy(self.ddata, tag)
 
     ## \internal
     # \brief Set an dihedral's properties
     # \param id dihedral id to set
     # \param b Value containing properties to set
     def __setitem__(self, id, b):
-        raise RuntimeError('Cannot change angles once they are created');
+        raise RuntimeError("Cannot change angles once they are created")
 
     ## \internal
     # \brief Delete an dihedral by id
     # \param id Dihedral id to delete
     def __delitem__(self, id):
         if id >= len(self) or id < 0:
-            raise IndexError;
+            raise IndexError
 
         # Get the tag of the bond to delete
-        tag = self.ddata.getNthTag(id);
-        self.ddata.removeBondedGroup(tag);
+        tag = self.ddata.getNthTag(id)
+        self.ddata.removeBondedGroup(tag)
 
     ## \internal
     # \brief Get the number of angles
     def __len__(self):
-        return self.ddata.getNGlobal();
+        return self.ddata.getNGlobal()
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Dihedral Data for %d angles of %d typeid(s)" % (self.ddata.getNGlobal(), self.ddata.getNTypes());
-        return result;
+        result = "Dihedral Data for %d angles of %d typeid(s)" % (self.ddata.getNGlobal(), self.ddata.getNTypes())
+        return result
 
     ## \internal
     # \brief Return an iterator
     def __iter__(self):
-        return dihedral_data.dihedral_data_iterator(self);
+        return dihedral_data.dihedral_data_iterator(self)
 
     ## \internal
     # \brief Return metadata for this dihedral_data instance
     def get_metadata(self):
         data = hoomd.meta._metadata.get_metadata(self)
-        data['N'] = len(self)
-        data['types'] = [self.ddata.getNameByType(i) for i in range(self.ddata.getNTypes())];
+        data["N"] = len(self)
+        data["types"] = [self.ddata.getNameByType(i) for i in range(self.ddata.getNTypes())]
         return data
 
+
 class dihedral_data_proxy(object):
-    R""" Access a single dihedral via a proxy.
+    r""" Access a single dihedral via a proxy.
 
     dihedral_data_proxy provides access to all of the properties of a single dihedral in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -2161,84 +2221,98 @@ class dihedral_data_proxy(object):
     """
 
     def __init__(self, ddata, tag):
-        self.ddata = ddata;
-        self.tag = tag;
+        self.ddata = ddata
+        self.tag = tag
 
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "";
-        result += "tag          : " + str(self.tag) + "\n";
-        result += "typeid       : " + str(self.typeid) + "\n";
+        result = ""
+        result += "tag          : " + str(self.tag) + "\n"
+        result += "typeid       : " + str(self.typeid) + "\n"
         result += "a            : " + str(self.a) + "\n"
         result += "b            : " + str(self.b) + "\n"
         result += "c            : " + str(self.c) + "\n"
         result += "d            : " + str(self.d) + "\n"
-        result += "type         : " + str(self.type) + "\n";
-        return result;
+        result += "type         : " + str(self.type) + "\n"
+        return result
 
     @property
     def a(self):
-        dihedral = self.ddata.getGroupByTag(self.tag);
-        return dihedral.a;
+        dihedral = self.ddata.getGroupByTag(self.tag)
+        return dihedral.a
+
     @property
     def b(self):
-        dihedral = self.ddata.getGroupByTag(self.tag);
-        return dihedral.b;
+        dihedral = self.ddata.getGroupByTag(self.tag)
+        return dihedral.b
 
     @property
     def c(self):
-        dihedral = self.ddata.getGroupByTag(self.tag);
-        return dihedral.c;
+        dihedral = self.ddata.getGroupByTag(self.tag)
+        return dihedral.c
 
     @property
     def d(self):
-        dihedral = self.ddata.getGroupByTag(self.tag);
-        return dihedral.d;
+        dihedral = self.ddata.getGroupByTag(self.tag)
+        return dihedral.d
 
     @property
     def typeid(self):
-        dihedral = self.ddata.getGroupByTag(self.tag);
-        return dihedral.type;
+        dihedral = self.ddata.getGroupByTag(self.tag)
+        return dihedral.type
 
     @property
     def type(self):
-        dihedral = self.ddata.getGroupByTag(self.tag);
-        typeid = dihedral.type;
-        return self.ddata.getNameByType(typeid);
+        dihedral = self.ddata.getGroupByTag(self.tag)
+        typeid = dihedral.type
+        return self.ddata.getNameByType(typeid)
+
 
 ## \internal
 # \brief Get data.boxdim from a SnapshotSystemData
 def get_snapshot_box(snapshot):
-    b = snapshot._global_box;
-    L = b.getL();
-    return boxdim(Lx=L.x, Ly=L.y, Lz=L.z, xy=b.getTiltFactorXY(), xz=b.getTiltFactorXZ(), yz=b.getTiltFactorYZ(), dimensions=snapshot._dimensions);
+    b = snapshot._global_box
+    L = b.getL()
+    return boxdim(
+        Lx=L.x,
+        Ly=L.y,
+        Lz=L.z,
+        xy=b.getTiltFactorXY(),
+        xz=b.getTiltFactorXZ(),
+        yz=b.getTiltFactorYZ(),
+        dimensions=snapshot._dimensions,
+    )
+
 
 ## \internal
 # \brief Set data.boxdim to a SnapshotSystemData
 def set_snapshot_box(snapshot, box):
-    snapshot._global_box = box._getBoxDim();
-    snapshot._dimensions = box.dimensions;
+    snapshot._global_box = box._getBoxDim()
+    snapshot._dimensions = box.dimensions
+
 
 ## \internal
 # \brief Broadcast snapshot to all ranks
 def broadcast_snapshot(cpp_snapshot):
-    hoomd.context._verify_init();
-    hoomd.util.print_status_line();
+    hoomd.context._verify_init()
+    hoomd.util.print_status_line()
     # broadcast from rank 0
-    cpp_snapshot._broadcast(0, hoomd.context.exec_conf);
+    cpp_snapshot._broadcast(0, hoomd.context.exec_conf)
+
 
 ## \internal
 # \brief Broadcast snapshot to all ranks
 def broadcast_snapshot_all(cpp_snapshot):
-    hoomd.context._verify_init();
-    hoomd.util.print_status_line();
+    hoomd.context._verify_init()
+    hoomd.util.print_status_line()
     # broadcast from rank 0
-    cpp_snapshot._broadcast_all(0, hoomd.context.exec_conf);
+    cpp_snapshot._broadcast_all(0, hoomd.context.exec_conf)
+
 
 # Inject a box property into SnapshotSystemData that provides and accepts boxdim objects
-_hoomd.SnapshotSystemData_float.box = property(get_snapshot_box, set_snapshot_box);
-_hoomd.SnapshotSystemData_double.box = property(get_snapshot_box, set_snapshot_box);
+_hoomd.SnapshotSystemData_float.box = property(get_snapshot_box, set_snapshot_box)
+_hoomd.SnapshotSystemData_double.box = property(get_snapshot_box, set_snapshot_box)
 
 # Inject broadcast methods into SnapshotSystemData
 _hoomd.SnapshotSystemData_float.broadcast = broadcast_snapshot
@@ -2246,8 +2320,19 @@ _hoomd.SnapshotSystemData_double.broadcast = broadcast_snapshot
 _hoomd.SnapshotSystemData_float.broadcast_all = broadcast_snapshot_all
 _hoomd.SnapshotSystemData_double.broadcast_all = broadcast_snapshot_all
 
-def make_snapshot(N, box, particle_types=['A'], bond_types=[], angle_types=[], dihedral_types=[], improper_types=[], pair_types=[], dtype='float'):
-    R""" Make an empty snapshot.
+
+def make_snapshot(
+    N,
+    box,
+    particle_types=["A"],
+    bond_types=[],
+    angle_types=[],
+    dihedral_types=[],
+    improper_types=[],
+    pair_types=[],
+    dtype="float",
+):
+    r""" Make an empty snapshot.
 
     Args:
         N (int): Number of particles to create.
@@ -2286,28 +2371,29 @@ def make_snapshot(N, box, particle_types=['A'], bond_types=[], angle_types=[], d
     See Also:
         :py:func:`hoomd.init.read_snapshot()`
     """
-    if dtype == 'float':
-        snapshot = _hoomd.SnapshotSystemData_float();
-    elif dtype == 'double':
-        snapshot = _hoomd.SnapshotSystemData_double();
+    if dtype == "float":
+        snapshot = _hoomd.SnapshotSystemData_float()
+    elif dtype == "double":
+        snapshot = _hoomd.SnapshotSystemData_double()
     else:
-        raise ValueError("dtype must be either float or double");
+        raise ValueError("dtype must be either float or double")
 
-    snapshot.box = box;
+    snapshot.box = box
     if hoomd.comm.get_rank() == 0:
-        snapshot.particles.resize(N);
+        snapshot.particles.resize(N)
 
-    snapshot.particles.types = particle_types;
-    snapshot.bonds.types = bond_types;
-    snapshot.angles.types = angle_types;
-    snapshot.dihedrals.types = dihedral_types;
-    snapshot.impropers.types = improper_types;
-    snapshot.pairs.types = pair_types;
+    snapshot.particles.types = particle_types
+    snapshot.bonds.types = bond_types
+    snapshot.angles.types = angle_types
+    snapshot.dihedrals.types = dihedral_types
+    snapshot.impropers.types = improper_types
+    snapshot.pairs.types = pair_types
 
-    return snapshot;
+    return snapshot
+
 
 def gsd_snapshot(filename, frame=0):
-    R""" Read a snapshot from a GSD file.
+    r""" Read a snapshot from a GSD file.
 
     Args:
         filename (str): GSD file to read the snapshot from.
@@ -2315,16 +2401,16 @@ def gsd_snapshot(filename, frame=0):
 
     :py:func:`hoomd.data.gsd_snapshot()` opens the given GSD file and reads a snapshot from it.
     """
-    hoomd.context._verify_init();
+    hoomd.context._verify_init()
 
-    reader = _hoomd.GSDReader(hoomd.context.exec_conf, filename, abs(frame), frame < 0);
-    return reader.getSnapshot();
+    reader = _hoomd.GSDReader(hoomd.context.exec_conf, filename, abs(frame), frame < 0)
+    return reader.getSnapshot()
 
 
 # Note: SnapshotParticleData should never be instantiated, it is a placeholder to generate sphinx documentation,
 # as the real SnapshotParticleData lives in c++.
 class SnapshotParticleData:
-    R""" Snapshot of particle data properties.
+    r""" Snapshot of particle data properties.
 
     Users should not create SnapshotParticleData directly. Use :py:func:`hoomd.data.make_snapshot()`
     or :py:meth:`hoomd.data.system_data.take_snapshot()` to make snapshots.
@@ -2350,7 +2436,7 @@ class SnapshotParticleData:
     """
 
     def resize(self, N):
-        R""" Resize the snapshot to hold N particles.
+        r""" Resize the snapshot to hold N particles.
 
         Args:
             N (int): new size of the snapshot.

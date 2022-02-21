@@ -3,7 +3,7 @@
 
 # Maintainer: mphoward
 
-R""" Multiparticle collision dynamics.
+r""" Multiparticle collision dynamics.
 
 Simulating complex fluids and soft matter using conventional molecular dynamics
 methods (:py:mod:`hoomd.md`) can be computationally demanding due to large
@@ -97,30 +97,26 @@ Such modifications will be noted in the change log.
 import hoomd
 from hoomd import _hoomd
 from hoomd.md import _md
-
-from hoomd.mpcd import collide
-from hoomd.mpcd import data
-from hoomd.mpcd import force
-from hoomd.mpcd import init
-from hoomd.mpcd import integrate
-from hoomd.mpcd import stream
-from hoomd.mpcd import update
+from hoomd.mpcd import collide, data, force, init, integrate, stream, update
 
 # add MPCD article citation notice
-_citation = hoomd.cite.article(cite_key='howard2018',
-                               author=['M P Howard', 'A Z Panagiotopoulos', 'A Nikoubashman'],
-                               title='Efficient mesoscale hydrodynamics: Multiparticle collision dynamics with massively parallel GPU acceleration',
-                               journal='Computer Physics Communications',
-                               volume=230,
-                               pages='10--20',
-                               month='September',
-                               year='2018',
-                               doi='10.1016/j.cpc.2018.04.009',
-                               feature='MPCD')
+_citation = hoomd.cite.article(
+    cite_key="howard2018",
+    author=["M P Howard", "A Z Panagiotopoulos", "A Nikoubashman"],
+    title="Efficient mesoscale hydrodynamics: Multiparticle collision dynamics with massively parallel GPU acceleration",
+    journal="Computer Physics Communications",
+    volume=230,
+    pages="10--20",
+    month="September",
+    year="2018",
+    doi="10.1016/j.cpc.2018.04.009",
+    feature="MPCD",
+)
 if hoomd.context.bib is None:
     hoomd.cite._extra_default_entries.append(_citation)
 else:
     hoomd.context.bib.add(_citation)
+
 
 class integrator(hoomd.integrate._integrator):
     """ MPCD integrator
@@ -160,18 +156,19 @@ class integrator(hoomd.integrate._integrator):
         mpcd.integrator(dt=0.01, aniso=True)
 
     """
+
     def __init__(self, dt, aniso=None):
         # check system is initialized
         if hoomd.context.current.mpcd is None:
-            hoomd.context.msg.error('mpcd.integrate: an MPCD system must be initialized before the integrator\n')
-            raise RuntimeError('MPCD system not initialized')
+            hoomd.context.msg.error("mpcd.integrate: an MPCD system must be initialized before the integrator\n")
+            raise RuntimeError("MPCD system not initialized")
 
         hoomd.integrate._integrator.__init__(self)
 
         self.supports_methods = True
         self.dt = dt
         self.aniso = aniso
-        self.metadata_fields = ['dt','aniso']
+        self.metadata_fields = ["dt", "aniso"]
 
         # configure C++ integrator
         self.cpp_integrator = _mpcd.Integrator(hoomd.context.current.mpcd.data, self.dt)
@@ -187,7 +184,8 @@ class integrator(hoomd.integrate._integrator):
     _aniso_modes = {
         None: _md.IntegratorAnisotropicMode.Automatic,
         True: _md.IntegratorAnisotropicMode.Anisotropic,
-        False: _md.IntegratorAnisotropicMode.Isotropic}
+        False: _md.IntegratorAnisotropicMode.Isotropic,
+    }
 
     def set_params(self, dt=None, aniso=None):
         """ Changes parameters of an existing integration mode.
@@ -243,8 +241,8 @@ class integrator(hoomd.integrate._integrator):
         collide = hoomd.context.current.mpcd._collide
         if collide is not None:
             if stream is not None and (collide.period < stream.period or collide.period % stream.period != 0):
-                hoomd.context.msg.error('mpcd.integrate: collision period must be multiple of integration period\n')
-                raise ValueError('Collision period must be multiple of integration period')
+                hoomd.context.msg.error("mpcd.integrate: collision period must be multiple of integration period\n")
+                raise ValueError("Collision period must be multiple of integration period")
 
             self.cpp_integrator.setCollisionMethod(collide._cpp)
         else:
@@ -254,8 +252,8 @@ class integrator(hoomd.integrate._integrator):
         sorter = hoomd.context.current.mpcd.sorter
         if sorter is not None and sorter.enabled:
             if collide is not None and (sorter.period < collide.period or sorter.period % collide.period != 0):
-                hoomd.context.msg.error('mpcd.integrate: sorting period should be a multiple of collision period\n')
-                raise ValueError('Sorting period must be multiple of collision period')
+                hoomd.context.msg.error("mpcd.integrate: sorting period should be a multiple of collision period\n")
+                raise ValueError("Sorting period must be multiple of collision period")
             self.cpp_integrator.setSorter(sorter._cpp)
         else:
             self.cpp_integrator.removeSorter()

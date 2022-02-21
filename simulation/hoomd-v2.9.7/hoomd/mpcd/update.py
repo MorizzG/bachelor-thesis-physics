@@ -3,7 +3,7 @@
 
 # Maintainer: mphoward
 
-R""" MPCD particle updaters
+r""" MPCD particle updaters
 
 Updates properties of MPCD particles.
 
@@ -14,8 +14,9 @@ from hoomd.md import _md
 
 from . import _mpcd
 
+
 class sort(hoomd.meta._metadata):
-    R""" Sorts MPCD particles in memory to improve cache coherency.
+    r""" Sorts MPCD particles in memory to improve cache coherency.
 
     Args:
         system (:py:class:`hoomd.mpcd.data.system`): MPCD system to create sorter for
@@ -55,8 +56,8 @@ class sort(hoomd.meta._metadata):
 
         # check for mpcd initialization
         if system.sorter is not None:
-            hoomd.context.msg.error('mpcd.update: system already has a sorter created!\n')
-            raise RuntimeError('MPCD sorter already created')
+            hoomd.context.msg.error("mpcd.update: system already has a sorter created!\n")
+            raise RuntimeError("MPCD sorter already created")
 
         # create the c++ mirror class
         if not hoomd.context.exec_conf.isCUDAEnabled():
@@ -65,7 +66,7 @@ class sort(hoomd.meta._metadata):
             cpp_class = _mpcd.SorterGPU
         self._cpp = cpp_class(system.data, hoomd.context.current.system.getCurrentTimeStep(), period)
 
-        self.metadata_fields = ['period','enabled']
+        self.metadata_fields = ["period", "enabled"]
         self.period = period
         self.enabled = True
 
@@ -141,12 +142,12 @@ class sort(hoomd.meta._metadata):
         hoomd.util.quiet_status()
 
         # scan through range of sorting periods and log TPS
-        periods = range(start, stop+1, step)
+        periods = range(start, stop + 1, step)
         tps = []
         for p in periods:
             cur_tps = []
             self.set_period(period=p)
-            for i in range(0,3):
+            for i in range(0, 3):
                 hoomd.run(tsteps, quiet=quiet)
                 cur_tps.append(hoomd.context.current.system.getLastTPS())
 
@@ -163,9 +164,9 @@ class sort(hoomd.meta._metadata):
         hoomd.util.unquiet_status()
 
         # output results
-        hoomd.context.msg.notice(2, '--- sort.tune() statistics\n')
-        hoomd.context.msg.notice(2, 'Optimal period = {0}\n'.format(opt_period))
-        hoomd.context.msg.notice(2, '        period = ' + str(periods) + '\n')
-        hoomd.context.msg.notice(2, '          TPS  = ' + str(tps) + '\n')
+        hoomd.context.msg.notice(2, "--- sort.tune() statistics\n")
+        hoomd.context.msg.notice(2, "Optimal period = {0}\n".format(opt_period))
+        hoomd.context.msg.notice(2, "        period = " + str(periods) + "\n")
+        hoomd.context.msg.notice(2, "          TPS  = " + str(tps) + "\n")
 
         return opt_period

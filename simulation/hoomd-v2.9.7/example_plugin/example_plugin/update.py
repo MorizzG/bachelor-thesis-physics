@@ -4,13 +4,13 @@
 # this simple python interface just activates the c++ ExampleUpdater from cppmodule
 # Check out any of the python code in lib/hoomd-python-module/hoomd_script for moreexamples
 
+# Next, since we are extending an updater, we need to bring in the base class updater and some other parts from
+# hoomd_script
+import hoomd
 # First, we need to import the C++ module. It has the same name as this module (example_plugin) but with an underscore
 # in front
 from hoomd.example_plugin import _example_plugin
 
-# Next, since we are extending an updater, we need to bring in the base class updater and some other parts from
-# hoomd_script
-import hoomd
 
 ## Zeroes all particle velocities
 #
@@ -29,15 +29,15 @@ class example(hoomd.update._updater):
     #
     # \a period can be a function: see \ref variable_period_docs for details
     def __init__(self, period=1):
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         # initialize base class
-        hoomd.update._updater.__init__(self);
+        hoomd.update._updater.__init__(self)
 
         # initialize the reflected c++ class
         if not hoomd.context.exec_conf.isCUDAEnabled():
-            self.cpp_updater = _example_plugin.ExampleUpdater(hoomd.context.current.system_definition);
+            self.cpp_updater = _example_plugin.ExampleUpdater(hoomd.context.current.system_definition)
         else:
-            self.cpp_updater = _example_plugin.ExampleUpdaterGPU(hoomd.context.current.system_definition);
+            self.cpp_updater = _example_plugin.ExampleUpdaterGPU(hoomd.context.current.system_definition)
 
-        self.setupUpdater(period);
+        self.setupUpdater(period)

@@ -15,6 +15,4 @@ existing job scripts may need to be updated. **Maintainer:** Joshua A. Anderson,
 """
 
 from hoomd.hpmc import _hpmc
-
-from hoomd.jit import patch
-from hoomd.jit import external
+from hoomd.jit import external, patch

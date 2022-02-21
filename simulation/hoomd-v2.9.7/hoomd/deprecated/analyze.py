@@ -1,15 +1,16 @@
 # Copyright (c) 2009-2019 The Regents of the University of Michigan
 # This file is part of the HOOMD-blue project, released under the BSD 3-Clause License.
 
-R""" Deprecated analyzers.
+r""" Deprecated analyzers.
 """
 
-from hoomd.analyze import _analyzer;
-from hoomd.deprecated import _deprecated;
-import hoomd;
+import hoomd
+from hoomd.analyze import _analyzer
+from hoomd.deprecated import _deprecated
+
 
 class msd(_analyzer):
-    R""" Mean-squared displacement.
+    r""" Mean-squared displacement.
 
     Args:
         filename (str): File to write the data to.
@@ -70,30 +71,32 @@ class msd(_analyzer):
 
     """
 
-    def __init__(self, filename, groups, period, header_prefix='', r0_file=None, overwrite=False, phase=0):
-        hoomd.util.print_status_line();
+    def __init__(self, filename, groups, period, header_prefix="", r0_file=None, overwrite=False, phase=0):
+        hoomd.util.print_status_line()
 
         # initialize base class
-        _analyzer.__init__(self);
+        _analyzer.__init__(self)
 
         # create the c++ mirror class
-        self.cpp_analyzer = _deprecated.MSDAnalyzer(hoomd.context.current.system_definition, filename, header_prefix, overwrite);
-        self.setupAnalyzer(period, phase);
+        self.cpp_analyzer = _deprecated.MSDAnalyzer(
+            hoomd.context.current.system_definition, filename, header_prefix, overwrite
+        )
+        self.setupAnalyzer(period, phase)
 
         # it is an error to specify no groups
         if len(groups) == 0:
-            hoomd.context.msg.error('At least one group must be specified to analyze.msd\n');
-            raise RuntimeError('Error creating analyzer');
+            hoomd.context.msg.error("At least one group must be specified to analyze.msd\n")
+            raise RuntimeError("Error creating analyzer")
 
         # set the group columns
         for cur_group in groups:
-            self.cpp_analyzer.addColumn(cur_group.cpp_group, cur_group.name);
+            self.cpp_analyzer.addColumn(cur_group.cpp_group, cur_group.name)
 
         if r0_file is not None:
-            self.cpp_analyzer.setR0(r0_file);
+            self.cpp_analyzer.setR0(r0_file)
 
     def set_params(self, delimiter=None):
-        R""" Change the parameters of the msd analysis
+        r""" Change the parameters of the msd analysis
 
         Args:
             delimiter (str): New delimiter between columns in the output file (if specified).
@@ -102,7 +105,7 @@ class msd(_analyzer):
 
             msd.set_params(delimiter=',');
         """
-        hoomd.util.print_status_line();
+        hoomd.util.print_status_line()
 
         if delimiter:
-            self.cpp_analyzer.setDelimiter(delimiter);
+            self.cpp_analyzer.setDelimiter(delimiter)

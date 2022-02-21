@@ -51,14 +51,10 @@ import pandas as pd
 
 def main():
     """Execute main function."""
-    comment = datetime.datetime.now().strftime(
-        "%y-%m-%d-%H-%M-%S"
-    )  # This will be written as part of the filename
+    comment = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")  # This will be written as part of the filename
     num_cycles = 105  # number of configurations to do
 
-    parser = argparse.ArgumentParser(
-        description="Run a hoomd simulation using Hi-C data"
-    )
+    parser = argparse.ArgumentParser(description="Run a hoomd simulation using Hi-C data")
 
     # arg_group = parser.add_mutually_exclusive_group(required=True)
 
@@ -75,9 +71,7 @@ def main():
         "n_cell", action="store", type=int, help="Cell to simulate",  # , nargs="*"
     )
 
-    parser.add_argument(
-        "n_chrom", action="store", type=int, help="Chromosome to simulate"
-    )
+    parser.add_argument("n_chrom", action="store", type=int, help="Chromosome to simulate")
 
     args = parser.parse_args()
 
@@ -115,14 +109,10 @@ def main():
     #     f"data/contact_pairs_jan/contact_pairs_cell{n_cell}.pkl"
     # )
 
-    df_contact_pairs = pd.read_pickle(
-        f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl"
-    )
+    df_contact_pairs = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")
 
     # only use contact pairs for selected chromosome
-    df_contact_pairs = df_contact_pairs[
-        (df_contact_pairs["chr_A"] == n_chrom) & (df_contact_pairs["chr_B"] == n_chrom)
-    ]
+    df_contact_pairs = df_contact_pairs[(df_contact_pairs["chr_A"] == n_chrom) & (df_contact_pairs["chr_B"] == n_chrom)]
 
     # convert that raw data to a numpy array of beads in contact
     contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].to_numpy(), axis=0)
