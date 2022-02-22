@@ -98,7 +98,7 @@ def main():
     #         return
 
     lengths = pd.read_pickle("data/chrom_lengths.pkl")
-    
+
     lengths_cum = np.cumsum(lengths).to_numpy()
     lengths_cum = np.insert(lengths_cum, 0, 0)
 
@@ -118,7 +118,7 @@ def main():
     df_contact_pairs = df_contact_pairs[(df_contact_pairs["chr_A"] == n_chrom) & (df_contact_pairs["chr_B"] == n_chrom)]
 
     # convert that raw data to a numpy array of beads in contact
-    contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].to_numpy(), axis=0) - lengths_cum[n_chrom-1]
+    contact_pairs = np.unique(df_contact_pairs[["ind_A", "ind_B"]].to_numpy(), axis=0) - lengths_cum[n_chrom - 1]
 
     N_contact = contact_pairs.shape[0]  # number of contacts
 
@@ -159,7 +159,7 @@ def main():
     # connect all particles of a chromosome to a chain
     x = np.arange(N_particles - 1)
     K = np.column_stack((x, x + 1))  # connect particle N to N+1
-    
+
     # K = np.delete(
     #     K, np.cumsum(lengths.values) - 1, axis=0
     # )  # delete bonds between chromosomes

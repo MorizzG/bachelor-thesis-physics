@@ -13,6 +13,7 @@ import getpass
 import os
 import platform
 import socket
+
 # The following global variables keep track of the walltime and processing time since the import of hoomd
 import time
 

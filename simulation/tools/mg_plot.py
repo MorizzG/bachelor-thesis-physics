@@ -14,7 +14,7 @@ plt.rcParams["font.size"] = 12
 plt.rcParams["axes.linewidth"] = 1.5
 
 
-def new_fig(figsize=(8, 6), *args, **kw_args):
+def new_fig(*args, figsize=(8, 6), **kw_args):
     return plt.subplots(*args, figsize=figsize, **kw_args)
 
 

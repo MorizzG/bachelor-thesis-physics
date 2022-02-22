@@ -96,6 +96,7 @@ will not require any modifications. **Maintainer:** Joshua A. Anderson
 
 # add HPMC article citation notice
 import hoomd
+
 # need to import all submodules defined in this directory
 from hoomd.hpmc import analyze, compute, field, integrate, update, util
 

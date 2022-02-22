@@ -12,6 +12,19 @@ existing job scripts that follow *documented* interfaces for functions and class
 will not require any modifications. **Maintainer:** Joshua A. Anderson
 """
 
-from hoomd.md import (angle, bond, charge, constrain, dihedral, external,
-                      force, improper, integrate, nlist, pair, special_pair,
-                      update, wall)
+from hoomd.md import (
+    angle,
+    bond,
+    charge,
+    constrain,
+    dihedral,
+    external,
+    force,
+    improper,
+    integrate,
+    nlist,
+    pair,
+    special_pair,
+    update,
+    wall,
+)

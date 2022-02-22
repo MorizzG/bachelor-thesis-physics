@@ -7,6 +7,7 @@ Created on Wed Jan 19 20:12:34 2022.
 """
 
 from multiprocessing import Pool
+from os import path
 
 import gsd.hoomd
 import numpy as np
@@ -86,6 +87,8 @@ def cell_file_rmsds(filepath, ref_idx=-1):
         Array of RMSDs
 
     """
+    if not path.exists(filepath):
+        raise ValueError(f"Error: file {filepath} does not exist")
     # all_pos = np.load(f"data/trajs_np/traj_np_cell{cell_n}.npy")
     traj = gsd.hoomd.open(filepath)
 

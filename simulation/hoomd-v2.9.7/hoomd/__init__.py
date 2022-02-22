@@ -39,6 +39,7 @@ will not require any modifications. **Maintainer:** Joshua A. Anderson
 
 import ctypes
 import os
+
 # Maintainer: joaander
 import sys
 
@@ -52,9 +53,25 @@ from hoomd import _hoomd
 if not ("NOT_HOOMD_PYTHON_SITEDIR" in os.environ):
     sys.setdlopenflags(flags)
 
-from hoomd import (analyze, benchmark, cite, comm, compute, context, data,
-                   dump, group, init, integrate, lattice, meta, option, update,
-                   util, variant)
+from hoomd import (
+    analyze,
+    benchmark,
+    cite,
+    comm,
+    compute,
+    context,
+    data,
+    dump,
+    group,
+    init,
+    integrate,
+    lattice,
+    meta,
+    option,
+    update,
+    util,
+    variant,
+)
 from hoomd._hoomd import WalltimeLimitReached
 
 _default_excepthook = sys.excepthook

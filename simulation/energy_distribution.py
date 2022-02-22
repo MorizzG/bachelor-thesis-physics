@@ -6,7 +6,7 @@ Created on Sat Jan 15 19:45:29 2022.
 @author: mg
 """
 
-import argparse
+# import argparse
 
 # import numpy as np
 import pandas as pd
@@ -18,22 +18,22 @@ from tools.mg_plot import new_fig, set_styling
 # %% Parse args
 
 
-parser = argparse.ArgumentParser(description="Display potential energy distribution for simulation")
+# parser = argparse.ArgumentParser(description="Display potential energy distribution for simulation")
 
-arg_group = parser.add_argument(
-    "cell_n", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",  # , nargs="*"
-)
+# arg_group = parser.add_argument(
+#     "n_cell", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",  # , nargs="*"
+# )
 
-args = parser.parse_args()
+# args = parser.parse_args()
 
-cell_n = args.cell_n
+# n_cell = args.n_cell
 
-cell_n = 1
+n_cell = 2
 
 
 # %% Plot energy distribution
 
-df_log = pd.read_csv(f"data/logs/log_cell{cell_n}.log", sep="\t")
+df_log = pd.read_csv(f"data/logs/log_cell{n_cell}.log", sep="\t")  # _chrom5
 
 
 fig, ax = new_fig()
