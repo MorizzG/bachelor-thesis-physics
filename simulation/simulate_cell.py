@@ -45,7 +45,7 @@ def main():
     # arg_group.add_argument("--all", action="store_true", help="Simulate all cells")
 
     parser.add_argument(
-        "cell_n", action="store", type=int, help="Cell to simulate",  # , nargs="*"
+        "n_cell", action="store", type=int, help="Cell to simulate",  # , nargs="*"
     )
 
     args = parser.parse_args()
@@ -71,7 +71,7 @@ def main():
     #         print("Error: invalid cell number")
     #         return
 
-    lengths = pd.read_pickle("data/chromosome_lengths.pkl")
+    lengths = pd.read_pickle("data/chrom_lengths.pkl")
 
     # for n_cell in cells:
     # read the raw contact pair data from file
