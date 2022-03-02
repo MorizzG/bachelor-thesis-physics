@@ -29,7 +29,7 @@ from tools.mg_plot import new_fig, set_styling
 
 # n_cell = args.n_cell
 
-n_cell = 8
+n_cell = 1
 
 
 # %% Plot energy distribution
