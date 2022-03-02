@@ -217,7 +217,7 @@ class _updater(hoomd.meta._metadata):
             else:
                 hoomd.context.msg.error(
                     "Restoring state from {reader_name} is not currently supported for {name}\n".format(
-                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__
+                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__,
                     )
                 )
             raise RuntimeError("Can not restore state information!")
@@ -345,7 +345,7 @@ class box_resize(_updater):
     """
 
     def __init__(
-        self, Lx=None, Ly=None, Lz=None, xy=None, xz=None, yz=None, period=1, L=None, phase=0, scale_particles=True
+        self, Lx=None, Ly=None, Lz=None, xy=None, xz=None, yz=None, period=1, L=None, phase=0, scale_particles=True,
     ):
         hoomd.util.print_status_line()
 

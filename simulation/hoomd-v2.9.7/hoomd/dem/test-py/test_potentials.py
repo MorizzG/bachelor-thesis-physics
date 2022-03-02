@@ -222,7 +222,14 @@ class shape_shape(unittest.TestCase):
         else:
             # cube of edge length 5
             vertices = list(itertools.product(*(3 * [[-2.5, 2.5]])))
-            faces = [[4, 0, 2, 6], [1, 0, 4, 5], [5, 4, 6, 7], [2, 0, 1, 3], [6, 2, 3, 7], [3, 1, 5, 7]]
+            faces = [
+                [4, 0, 2, 6],
+                [1, 0, 4, 5],
+                [5, 4, 6, 7],
+                [2, 0, 1, 3],
+                [6, 2, 3, 7],
+                [3, 1, 5, 7],
+            ]
             potential.setParams("A", vertices, faces, center=False)
             expected_energies = [2, 4, 4, 2]
 

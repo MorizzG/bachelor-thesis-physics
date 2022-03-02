@@ -59,7 +59,14 @@ class utils(unittest.TestCase):
             for (est, real) in zip(com, delta):
                 self.assertAlmostEqual(est, real)
 
-            trueMoment = [16.0 / 3 * massFactor, 0, 0, 16.0 / 3 * massFactor, 0, 16.0 / 3 * massFactor]
+            trueMoment = [
+                16.0 / 3 * massFactor,
+                0,
+                0,
+                16.0 / 3 * massFactor,
+                0,
+                16.0 / 3 * massFactor,
+            ]
             for (est, real) in zip(moment, trueMoment):
                 self.assertAlmostEqual(est, real)
 

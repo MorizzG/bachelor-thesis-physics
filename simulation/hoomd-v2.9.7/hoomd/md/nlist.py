@@ -346,7 +346,9 @@ class nlist:
 
         return self.cpp_nlist.getSmallestRebuild() - 1
 
-    def tune(self, warmup=200000, r_min=0.05, r_max=1.0, jumps=20, steps=5000, set_max_check_period=False, quiet=False):
+    def tune(
+        self, warmup=200000, r_min=0.05, r_max=1.0, jumps=20, steps=5000, set_max_check_period=False, quiet=False,
+    ):
         r""" Make a series of short runs to determine the fastest performing r_buff setting.
 
         Args:
@@ -588,7 +590,9 @@ class cell(nlist):
         significantly degraded performance or incorrect results.
     """
 
-    def __init__(self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, name=None, deterministic=False):
+    def __init__(
+        self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, name=None, deterministic=False,
+    ):
         hoomd.util.print_status_line()
 
         nlist.__init__(self)
@@ -676,14 +680,14 @@ class stencil(nlist):
     """
 
     def __init__(
-        self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, cell_width=None, name=None, deterministic=False
+        self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, cell_width=None, name=None, deterministic=False,
     ):
         hoomd.util.print_status_line()
 
         # register the citation
         c = hoomd.cite.article(
             cite_key="howard2016",
-            author=["M P Howard", "J A Anderson", "A Nikoubashman", "S C Glotzer", "A Z Panagiotopoulos"],
+            author=["M P Howard", "J A Anderson", "A Nikoubashman", "S C Glotzer", "A Z Panagiotopoulos",],
             title="Efficient neighbor list calculation for molecular simulation of colloidal systems using graphics processing units",
             journal="Computer Physics Communications",
             volume=203,
@@ -880,7 +884,7 @@ class tree(nlist):
         # register the citation
         c1 = hoomd.cite.article(
             cite_key="howard2016",
-            author=["M P Howard", "J A Anderson", "A Nikoubashman", "S C Glotzer", "A Z Panagiotopoulos"],
+            author=["M P Howard", "J A Anderson", "A Nikoubashman", "S C Glotzer", "A Z Panagiotopoulos",],
             title="Efficient neighbor list calculation for molecular simulation of colloidal systems using graphics processing units",
             journal="Computer Physics Communications",
             volume=203,

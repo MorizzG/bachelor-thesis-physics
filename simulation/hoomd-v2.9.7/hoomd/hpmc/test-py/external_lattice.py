@@ -274,7 +274,7 @@ class external_field_lattice(unittest.TestCase):
         # d = 0.0014225507698958867, p = 0.19295361127422195
         self.system = init.read_snapshot(self.snapshot3d)
         v = 0.33 * np.array(
-            [(1, 1, 1), (1, -1, 1), (-1, -1, 1), (-1, 1, 1), (1, 1, -1), (1, -1, -1), (-1, -1, -1), (-1, 1, -1)]
+            [(1, 1, 1), (1, -1, 1), (-1, -1, 1), (-1, 1, 1), (1, 1, -1), (1, -1, -1), (-1, -1, -1), (-1, 1, -1),]
         )
         self.mc = hpmc.integrate.convex_polyhedron(seed=2398, d=0.0, a=0.0)
         self.mc.shape_param.set("A", vertices=v)
@@ -300,7 +300,7 @@ class external_field_lattice(unittest.TestCase):
 
         self.system = init.read_snapshot(self.snapshot3d)
         v = 0.33 * np.array(
-            [(1, 1, 1), (1, -1, 1), (-1, -1, 1), (-1, 1, 1), (1, 1, -1), (1, -1, -1), (-1, -1, -1), (-1, 1, -1)]
+            [(1, 1, 1), (1, -1, 1), (-1, -1, 1), (-1, 1, 1), (1, 1, -1), (1, -1, -1), (-1, -1, -1), (-1, 1, -1),]
         )
         r = 0.1234
         self.mc = hpmc.integrate.convex_spheropolyhedron(seed=2398, d=0.0, a=0.0)
@@ -325,7 +325,7 @@ class external_field_lattice(unittest.TestCase):
 
         self.system = init.read_snapshot(self.snapshot3d)
         v = 0.33 * np.array(
-            [(-1, -1, -1), (-1, -1, 1), (-1, 1, -1), (-1, 1, 1), (1, -1, -1), (1, -1, 1), (1, 1, -1), (1, 1, 1)]
+            [(-1, -1, -1), (-1, -1, 1), (-1, 1, -1), (-1, 1, 1), (1, -1, -1), (1, -1, 1), (1, 1, -1), (1, 1, 1),]
         )
         offs = [-1] * 6
         norms = [(-1, 0, 0), (1, 0, 0), (0, 1, 0,), (0, -1, 0), (0, 0, 1), (0, 0, -1)]

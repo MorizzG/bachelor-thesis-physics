@@ -161,7 +161,7 @@ def create_random(N, phi_p=None, name="A", min_dist=0.7, box=None, seed=1, dimen
     generator.addGenerator(
         int(N),
         _deprecated.PolymerParticleGenerator(
-            hoomd.context.exec_conf, 1.0, type_vector, bond_ab, bond_ab, bond_type, 100, box.dimensions
+            hoomd.context.exec_conf, 1.0, type_vector, bond_ab, bond_ab, bond_type, 100, box.dimensions,
         ),
     )
 
@@ -385,7 +385,7 @@ def create_random_polymers(box, polymers, separation, seed=1):
         generator.addGenerator(
             int(poly["count"]),
             _deprecated.PolymerParticleGenerator(
-                hoomd.context.exec_conf, poly["bond_len"], type_vector, bond_a, bond_b, bond_name, 100, box.dimensions
+                hoomd.context.exec_conf, poly["bond_len"], type_vector, bond_a, bond_b, bond_name, 100, box.dimensions,
             ),
         )
 

@@ -358,11 +358,11 @@ class constant(_force):
         self.check_initialization()
         if group is not None:
             self.cpp_force.setGroupForce(
-                group.cpp_group, self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2]
+                group.cpp_group, self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2],
             )
         elif tag is not None:
             self.cpp_force.setParticleForce(
-                tag, self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2]
+                tag, self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2],
             )
         else:
             self.cpp_force.setForce(self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2])

@@ -271,7 +271,7 @@ class decomposition(object):
         # if the box is uniform in all directions, just use these values
         if self.uniform_x and self.uniform_y and self.uniform_z:
             self.cpp_dd = _hoomd.DomainDecomposition(
-                hoomd.context.exec_conf, box.getL(), self.nx, self.ny, self.nz, not hoomd.context.options.onelevel
+                hoomd.context.exec_conf, box.getL(), self.nx, self.ny, self.nz, not hoomd.context.options.onelevel,
             )
             return self.cpp_dd
 

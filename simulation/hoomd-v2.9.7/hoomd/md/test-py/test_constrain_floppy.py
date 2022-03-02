@@ -20,13 +20,13 @@ class test_floppy_bodies(unittest.TestCase):
 
         # Add one to avoid the center particle
         bonds = (
-            np.array([[0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]])
+            np.array([[0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5],])
             + 1
         )
 
         box = hoomd.data.boxdim(L=10)  # Avoid self-interaction
         snapshot = hoomd.data.make_snapshot(
-            N=points.shape[0] + 1, box=box, particle_types=["center", "constituent"], bond_types=["test_bond"]
+            N=points.shape[0] + 1, box=box, particle_types=["center", "constituent"], bond_types=["test_bond"],
         )
         if hoomd.comm.get_rank() == 0:
             snapshot.particles.position[0] = [0, 0, 0]
@@ -57,7 +57,13 @@ class test_floppy_bodies(unittest.TestCase):
         # Need to log quantities for testing.
         log = hoomd.analyze.log(
             filename=None,
-            quantities=["potential_energy", "kinetic_energy", "momentum", "pair_yukawa_energy", "bond_harmonic_energy"],
+            quantities=[
+                "potential_energy",
+                "kinetic_energy",
+                "momentum",
+                "pair_yukawa_energy",
+                "bond_harmonic_energy",
+            ],
             period=10,
         )
 

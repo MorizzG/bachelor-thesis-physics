@@ -91,7 +91,7 @@ class nvt_lj_sphere_energy(unittest.TestCase):
         jit.patch.user(mc, r_cut=rcut, code=lennard_jones)
 
         log = analyze.log(
-            filename=None, quantities=["hpmc_overlap_count", "hpmc_patch_energy"], period=100, overwrite=True
+            filename=None, quantities=["hpmc_overlap_count", "hpmc_patch_energy"], period=100, overwrite=True,
         )
 
         energy_val = []

@@ -8,7 +8,7 @@ with pytest.suppress(ImportError):
     from pybind11_tests import eigen as m
 
     ref = np.array(
-        [[0.0, 3, 0, 0, 0, 11], [22, 0, 0, 0, 17, 11], [7, 5, 0, 1, 0, 11], [0, 0, 0, 0, 0, 11], [0, 0, 14, 0, 8, 11]]
+        [[0.0, 3, 0, 0, 0, 11], [22, 0, 0, 0, 17, 11], [7, 5, 0, 1, 0, 11], [0, 0, 0, 0, 0, 11], [0, 0, 14, 0, 8, 11],]
     )
 
 
@@ -55,7 +55,12 @@ def test_partially_fixed():
     np.testing.assert_array_equal(m.partial_copy_four_cm_c(ref2[(3, 1, 2), :]), ref2[(3, 1, 2), :])
 
     # TypeError should be raise for a shape mismatch
-    functions = [m.partial_copy_four_rm_r, m.partial_copy_four_rm_c, m.partial_copy_four_cm_r, m.partial_copy_four_cm_c]
+    functions = [
+        m.partial_copy_four_rm_r,
+        m.partial_copy_four_rm_c,
+        m.partial_copy_four_cm_r,
+        m.partial_copy_four_cm_c,
+    ]
     matrix_with_wrong_shape = [[1, 2], [3, 4]]
     for f in functions:
         with pytest.raises(TypeError) as excinfo:
@@ -353,7 +358,13 @@ def test_eigen_keepalive():
     cstats = ConstructorStats.get(m.ReturnTester)
     assert cstats.alive() == 1
     unsafe = [a.ref(), a.ref_const(), a.block(1, 2, 3, 4)]
-    copies = [a.copy_get(), a.copy_view(), a.copy_ref(), a.copy_ref_const(), a.copy_block(4, 3, 2, 1)]
+    copies = [
+        a.copy_get(),
+        a.copy_view(),
+        a.copy_ref(),
+        a.copy_ref_const(),
+        a.copy_block(4, 3, 2, 1),
+    ]
     del a
     assert cstats.alive() == 0
     del unsafe

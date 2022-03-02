@@ -99,7 +99,7 @@ class eam(force._force):
             self.nlist.cpp_nlist.setStorageMode(_md.NeighborList.storageMode.full)
 
         hoomd.context.msg.notice(
-            2, "Set r_cut = " + str(self.r_cut_new) + " from potential`s file '" + str(file) + "'.\n"
+            2, "Set r_cut = " + str(self.r_cut_new) + " from potential`s file '" + str(file) + "'.\n",
         )
 
         hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)

@@ -101,7 +101,7 @@ class sdf(_analyzer):
             raise runtime_error("Error initializing analyze.sdf")
 
         self.cpp_analyzer = cls(
-            hoomd.context.current.system_definition, mc.cpp_integrator, xmax, dx, navg, filename, overwrite
+            hoomd.context.current.system_definition, mc.cpp_integrator, xmax, dx, navg, filename, overwrite,
         )
 
         self.setupAnalyzer(period, phase)

@@ -13,7 +13,18 @@ def randomPath(term=0.25):
         + [chr(c) for c in range(ord("0"), ord("9") + 1)]
         + [".", "/"]
     )
-    meaningfulBits = ["frames", "vars", ".f32", ".f64", ".u8", ".u64", ".i32", ".i64", ".ind", ".uni"]
+    meaningfulBits = [
+        "frames",
+        "vars",
+        ".f32",
+        ".f64",
+        ".u8",
+        ".u64",
+        ".i32",
+        ".i64",
+        ".ind",
+        ".uni",
+    ]
     randomBits = ["".join(random.sample(validNameChars, random.randint(1, 10))) for _ in range(20)]
     allBits = meaningfulBits + randomBits
 

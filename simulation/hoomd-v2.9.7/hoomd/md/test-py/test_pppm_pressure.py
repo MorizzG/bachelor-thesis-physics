@@ -38,7 +38,14 @@ class pppm_pressure_tests(unittest.TestCase):
         md.integrate.mode_standard(dt=0.005)
         md.integrate.nve(all)
 
-        logdata = ["temperature", "pressure", "potential_energy", "kinetic_energy", "volume", "pppm_energy"]
+        logdata = [
+            "temperature",
+            "pressure",
+            "potential_energy",
+            "kinetic_energy",
+            "volume",
+            "pppm_energy",
+        ]
 
         log = analyze.log(filename=None, quantities=logdata, period=10, overwrite=True)
 

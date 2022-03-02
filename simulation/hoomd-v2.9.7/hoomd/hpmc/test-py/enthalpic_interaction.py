@@ -171,7 +171,7 @@ class enthalpic_dipole_interaction(unittest.TestCase):
         self.mc = hpmc.integrate.sphere(seed=10, a=0, d=0)
         self.mc.shape_param.set("A", diameter=self.diameter, orientable=True)
         self.patch = jit.patch.user_union(
-            mc=self.mc, r_cut_iso=self.r_cut, code_iso=self.dipole_dipole, r_cut=0.0, code="return 0.0;"
+            mc=self.mc, r_cut_iso=self.r_cut, code_iso=self.dipole_dipole, r_cut=0.0, code="return 0.0;",
         )
         self.log = analyze.log(filename=None, quantities=["hpmc_patch_energy"], period=0, overwrite=True)
         hoomd.run(0, quiet=True)
@@ -300,10 +300,10 @@ class patch_alpha_user_union(unittest.TestCase):
         system = init.read_snapshot(snapshot)
         mc = hpmc.integrate.sphere_union(d=0, a=0, seed=1)
         mc.shape_param.set(
-            "A", diameters=[diameter] * 2, centers=[(0, 0, -diameter / 2), (0, 0, diameter / 2)], overlap=[0] * 2
+            "A", diameters=[diameter] * 2, centers=[(0, 0, -diameter / 2), (0, 0, diameter / 2)], overlap=[0] * 2,
         )
         self.patch = jit.patch.user_union(
-            mc=mc, r_cut=2.5, array_size=2, r_cut_iso=2.5, array_size_iso=2, code=square_well, code_iso=soft_repulsion
+            mc=mc, r_cut=2.5, array_size=2, r_cut_iso=2.5, array_size_iso=2, code=square_well, code_iso=soft_repulsion,
         )
         self.patch.set_params("A", positions=[(0, 0, -diameter / 2), (0, 0, diameter / 2)], typeids=[0, 0])
         self.logger = analyze.log(filename=None, quantities=["hpmc_patch_energy"], period=1)

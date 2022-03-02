@@ -52,7 +52,7 @@ a = (d_eff ** 3.0 / rho_star_ini) ** (1.0 / 3.0)
 class npt_wca_dimer_eos(unittest.TestCase):
     def test_statepoint(self):
         uc = lattice.unitcell(
-            N=1, a1=[a, 0, 0], a2=[0, a, 0], a3=[0, 0, a], dimensions=3, position=[[0, 0, 0]], type_name=["A"]
+            N=1, a1=[a, 0, 0], a2=[0, a, 0], a3=[0, 0, a], dimensions=3, position=[[0, 0, 0]], type_name=["A"],
         )
 
         system = init.create_lattice(unitcell=uc, n=n)

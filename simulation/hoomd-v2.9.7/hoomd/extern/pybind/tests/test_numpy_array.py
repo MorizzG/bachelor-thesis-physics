@@ -76,7 +76,7 @@ def test_dim_check_fail(arr):
 
 
 @pytest.mark.parametrize(
-    "args, ret", [([], [1, 2, 3, 4, 5, 6]), ([1], [4, 5, 6]), ([0, 1], [2, 3, 4, 5, 6]), ([1, 2], [6])]
+    "args, ret", [([], [1, 2, 3, 4, 5, 6]), ([1], [4, 5, 6]), ([0, 1], [2, 3, 4, 5, 6]), ([1, 2], [6])],
 )
 def test_data(arr, args, ret):
     from sys import byteorder
@@ -125,7 +125,16 @@ def test_mutate_data(arr):
 
 
 def test_bounds_check(arr):
-    for func in (m.index_at, m.index_at_t, m.data, m.data_t, m.mutate_data, m.mutate_data_t, m.at_t, m.mutate_at_t):
+    for func in (
+        m.index_at,
+        m.index_at_t,
+        m.data,
+        m.data_t,
+        m.mutate_data,
+        m.mutate_data_t,
+        m.at_t,
+        m.mutate_at_t,
+    ):
         with pytest.raises(IndexError) as excinfo:
             func(arr, 2, 0)
         assert str(excinfo.value) == "index 2 is out of bounds for axis 0 with size 2"

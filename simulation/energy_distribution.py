@@ -10,6 +10,7 @@ Created on Sat Jan 15 19:45:29 2022.
 
 # import numpy as np
 import pandas as pd
+from matplotlib.ticker import FormatStrFormatter
 from tools.mg_plot import new_fig, set_styling
 
 # import matplotlib.pyplot as plt
@@ -28,19 +29,33 @@ from tools.mg_plot import new_fig, set_styling
 
 # n_cell = args.n_cell
 
-n_cell = 2
+n_cell = 8
 
 
 # %% Plot energy distribution
 
-df_log = pd.read_csv(f"data/logs/log_cell{n_cell}.log", sep="\t")  # _chrom5
+for n_cell in range(1, 9):
 
+    df_log = pd.read_csv(f"data/logs/log_cell{n_cell}.log", sep="\t")  # _chrom5
 
-fig, ax = new_fig()
+    energies = df_log["potential_energy"]
 
-ax.plot(range(0, 105), df_log["potential_energy"], "C0.")
+    print(f"Cell {n_cell}")
 
-ax.set_xlabel("configuration number")
-ax.set_ylabel("potential energy")
+    print()
 
-set_styling(ax)  # , y_loc=(2e5, 1e5)
+    print(f"\tAverage percentage deviation: {energies[5:].std() / energies[5:].mean():.2%}")
+
+    print()
+
+    fig, ax = new_fig()
+
+    ax.plot(range(0, 105), energies, "C0.")
+
+    ax.set_xlabel("configuration number")
+    ax.set_ylabel("potential energy")
+
+    # ax.xaxis.set_major_formatter(FormatStrFormatter('% 1.2f'))
+    # ax.ticklabel_format(axis="y", style="plain")
+
+    set_styling(ax)  # , y_loc=(2e5, 1e5)

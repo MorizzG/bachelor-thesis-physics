@@ -105,7 +105,16 @@ class shape_proxy_sanity_checks(unittest.TestCase):
         context.initialize()
 
         # convex_polyhedron
-        v = [(1, 1, 1), (1, -1, 1), (-1, -1, 1), (-1, 1, 1), (1, 1, -1), (1, -1, -1), (-1, -1, -1), (-1, 1, -1)]
+        v = [
+            (1, 1, 1),
+            (1, -1, 1),
+            (-1, -1, 1),
+            (-1, 1, 1),
+            (1, 1, -1),
+            (1, -1, -1),
+            (-1, -1, -1),
+            (-1, 1, -1),
+        ]
         self.system = init.read_snapshot(self.snapshot)
         self.mc = hpmc.integrate.convex_polyhedron(seed=2398, d=0.1, a=0.1)
         self.mc.shape_param.set("A", vertices=v)
@@ -116,7 +125,16 @@ class shape_proxy_sanity_checks(unittest.TestCase):
         context.initialize()
 
         # convex_spheropolyhedron
-        v = [(1, 1, 1), (1, -1, 1), (-1, -1, 1), (-1, 1, 1), (1, 1, -1), (1, -1, -1), (-1, -1, -1), (-1, 1, -1)]
+        v = [
+            (1, 1, 1),
+            (1, -1, 1),
+            (-1, -1, 1),
+            (-1, 1, 1),
+            (1, 1, -1),
+            (1, -1, -1),
+            (-1, -1, -1),
+            (-1, 1, -1),
+        ]
         r = 0.1234
         self.system = init.read_snapshot(self.snapshot)
         self.mc = hpmc.integrate.convex_spheropolyhedron(seed=2398, d=0.1, a=0.1)
@@ -129,7 +147,16 @@ class shape_proxy_sanity_checks(unittest.TestCase):
         context.initialize()
 
         # faceted_sphere
-        v = [(-1, -1, -1), (-1, -1, 1), (-1, 1, -1), (-1, 1, 1), (1, -1, -1), (1, -1, 1), (1, 1, -1), (1, 1, 1)]
+        v = [
+            (-1, -1, -1),
+            (-1, -1, 1),
+            (-1, 1, -1),
+            (-1, 1, 1),
+            (1, -1, -1),
+            (1, -1, 1),
+            (1, 1, -1),
+            (1, 1, 1),
+        ]
         offs = [-1] * 6
         norms = [(-1, 0, 0), (1, 0, 0), (0, 1, 0,), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
         diam = 2

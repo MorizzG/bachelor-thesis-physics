@@ -38,7 +38,9 @@ class faceted_ellipsoid(unittest.TestCase):
         context.current.sorter.set_params(grid=8)
 
         mc = hpmc.integrate.faceted_ellipsoid(seed=123, d=0, a=0)
-        mc.shape_param.set("A", a=a, b=b, c=c, offsets=offsets, vertices=vertices, normals=normals, origin=(0, 0, 0))
+        mc.shape_param.set(
+            "A", a=a, b=b, c=c, offsets=offsets, vertices=vertices, normals=normals, origin=(0, 0, 0),
+        )
 
         run(1)
         self.assertEqual(mc.count_overlaps(), 0)

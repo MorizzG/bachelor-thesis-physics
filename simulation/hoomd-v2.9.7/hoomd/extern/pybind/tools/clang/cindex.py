@@ -405,7 +405,7 @@ class Diagnostic(object):
         return conf.lib.clang_getCString(disable)
 
     def __repr__(self):
-        return "<Diagnostic severity %r, location %r, spelling %r>" % (self.severity, self.location, self.spelling)
+        return "<Diagnostic severity %r, location %r, spelling %r>" % (self.severity, self.location, self.spelling,)
 
     def from_param(self):
         return self.ptr
@@ -3075,8 +3075,8 @@ functionList = [
         c_object_p,
         CompilationDatabase.from_result,
     ),
-    ("clang_CompilationDatabase_getAllCompileCommands", [c_object_p], c_object_p, CompileCommands.from_result),
-    ("clang_CompilationDatabase_getCompileCommands", [c_object_p, c_char_p], c_object_p, CompileCommands.from_result),
+    ("clang_CompilationDatabase_getAllCompileCommands", [c_object_p], c_object_p, CompileCommands.from_result,),
+    ("clang_CompilationDatabase_getCompileCommands", [c_object_p, c_char_p], c_object_p, CompileCommands.from_result,),
     ("clang_CompileCommands_dispose", [c_object_p]),
     ("clang_CompileCommands_getCommand", [c_object_p, c_uint], c_object_p),
     ("clang_CompileCommands_getSize", [c_object_p], c_uint),
@@ -3084,7 +3084,7 @@ functionList = [
     ("clang_CompileCommand_getDirectory", [c_object_p], _CXString, _CXString.from_result),
     ("clang_CompileCommand_getFilename", [c_object_p], _CXString, _CXString.from_result),
     ("clang_CompileCommand_getNumArgs", [c_object_p], c_uint),
-    ("clang_codeCompleteAt", [TranslationUnit, c_char_p, c_int, c_int, c_void_p, c_int, c_int], POINTER(CCRStructure)),
+    ("clang_codeCompleteAt", [TranslationUnit, c_char_p, c_int, c_int, c_void_p, c_int, c_int], POINTER(CCRStructure),),
     ("clang_codeCompleteGetDiagnostic", [CodeCompletionResults, c_int], Diagnostic),
     ("clang_codeCompleteGetNumDiagnostics", [CodeCompletionResults], c_int),
     ("clang_createIndex", [c_int, c_int], c_object_p),
@@ -3149,12 +3149,12 @@ functionList = [
     ("clang_getDiagnostic", [c_object_p, c_uint], c_object_p),
     ("clang_getDiagnosticCategory", [Diagnostic], c_uint),
     ("clang_getDiagnosticCategoryText", [Diagnostic], _CXString, _CXString.from_result),
-    ("clang_getDiagnosticFixIt", [Diagnostic, c_uint, POINTER(SourceRange)], _CXString, _CXString.from_result),
+    ("clang_getDiagnosticFixIt", [Diagnostic, c_uint, POINTER(SourceRange)], _CXString, _CXString.from_result,),
     ("clang_getDiagnosticInSet", [c_object_p, c_uint], c_object_p),
     ("clang_getDiagnosticLocation", [Diagnostic], SourceLocation),
     ("clang_getDiagnosticNumFixIts", [Diagnostic], c_uint),
     ("clang_getDiagnosticNumRanges", [Diagnostic], c_uint),
-    ("clang_getDiagnosticOption", [Diagnostic, POINTER(_CXString)], _CXString, _CXString.from_result),
+    ("clang_getDiagnosticOption", [Diagnostic, POINTER(_CXString)], _CXString, _CXString.from_result,),
     ("clang_getDiagnosticRange", [Diagnostic, c_uint], SourceRange),
     ("clang_getDiagnosticSeverity", [Diagnostic], c_int),
     ("clang_getDiagnosticSpelling", [Diagnostic], _CXString, _CXString.from_result),
@@ -3218,7 +3218,7 @@ functionList = [
     ("clang_isUnexposed", [CursorKind], bool),
     ("clang_isVirtualBase", [Cursor], bool),
     ("clang_isVolatileQualifiedType", [Type], bool),
-    ("clang_parseTranslationUnit", [Index, c_char_p, c_void_p, c_int, c_void_p, c_int, c_int], c_object_p),
+    ("clang_parseTranslationUnit", [Index, c_char_p, c_void_p, c_int, c_void_p, c_int, c_int], c_object_p,),
     ("clang_reparseTranslationUnit", [TranslationUnit, c_int, c_void_p, c_int], c_int),
     ("clang_saveTranslationUnit", [TranslationUnit, c_char_p, c_uint], c_int),
     ("clang_tokenize", [TranslationUnit, SourceRange, POINTER(POINTER(Token)), POINTER(c_uint)]),

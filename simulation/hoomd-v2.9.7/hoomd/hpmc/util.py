@@ -387,7 +387,7 @@ class compress:
             "hpmc_boxmc_shear_acceptance",
         ]
         self.mclog = hoomd.analyze.log(
-            filename=self.log_file, quantities=log_values, period=self.tuner_period, header_prefix="#", overwrite=True
+            filename=self.log_file, quantities=log_values, period=self.tuner_period, header_prefix="#", overwrite=True,
         )
         self.mclog.disable()  # will be enabled and disabled by call to run()
 

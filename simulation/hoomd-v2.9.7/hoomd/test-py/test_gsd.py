@@ -148,7 +148,9 @@ class gsd_write_tests(unittest.TestCase):
             self.assertRaises(RuntimeError, data.gsd_snapshot, self.tmp_file, frame=1)
 
     def test_dynamic(self):
-        dump.gsd(filename=self.tmp_file, group=group.all(), period=1, dynamic=["momentum"], overwrite=True)
+        dump.gsd(
+            filename=self.tmp_file, group=group.all(), period=1, dynamic=["momentum"], overwrite=True,
+        )
         run(1)
         data.gsd_snapshot(self.tmp_file, frame=0)
         if comm.get_rank() == 0:
@@ -532,7 +534,9 @@ class gsd_default_type(unittest.TestCase):
 
         self.s.restore_snapshot(self.snapshot)
         run(1)
-        dump.gsd(filename=self.tmp_file, group=group.all(), dynamic=["attribute", "momentum"], period=None)
+        dump.gsd(
+            filename=self.tmp_file, group=group.all(), dynamic=["attribute", "momentum"], period=None,
+        )
 
         # validate the resulting gsd file
         snap = data.gsd_snapshot(self.tmp_file, frame=0)
@@ -557,7 +561,9 @@ class gsd_default_type(unittest.TestCase):
         context.current.sorter.set_params(grid=8)
 
         # write out frame 0
-        dump.gsd(filename=self.tmp_file, group=group.all(), period=1, overwrite=True, dynamic=["attribute", "momentum"])
+        dump.gsd(
+            filename=self.tmp_file, group=group.all(), period=1, overwrite=True, dynamic=["attribute", "momentum"],
+        )
         run(1)
 
         # reset values to default and write out the second frame

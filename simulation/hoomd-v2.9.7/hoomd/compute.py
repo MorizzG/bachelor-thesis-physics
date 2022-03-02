@@ -134,7 +134,7 @@ class _compute:
             else:
                 hoomd.context.msg.error(
                     "Restoring state from {reader_name} is not currently supported for {name}\n".format(
-                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__
+                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__,
                     )
                 )
             raise RuntimeError("Can not restore state information!")

@@ -267,7 +267,7 @@ class boxmc(_updater):
                 self.shear_delta = [float(d) for d in delta]
 
         self.cpp_updater.shear(
-            self.shear_delta[0], self.shear_delta[1], self.shear_delta[2], self.shear_reduce, self.shear_weight
+            self.shear_delta[0], self.shear_delta[1], self.shear_delta[2], self.shear_reduce, self.shear_weight,
         )
         return {"delta": self.shear_delta, "weight": self.shear_weight, "reduce": self.shear_reduce}
 
@@ -460,7 +460,7 @@ class wall(_updater):
             raise RuntimeError("Error initializing update.wall")
 
         self.cpp_updater = cls(
-            hoomd.context.current.system_definition, mc.cpp_integrator, walls.cpp_compute, py_updater, move_ratio, seed
+            hoomd.context.current.system_definition, mc.cpp_integrator, walls.cpp_compute, py_updater, move_ratio, seed,
         )
         self.setupUpdater(period)
 
@@ -945,7 +945,9 @@ class clusters(_updater):
         # register the clusters updater
         self.setupUpdater(period)
 
-    def set_params(self, move_ratio=None, flip_probability=None, swap_move_ratio=None, delta_mu=None, swap_types=None):
+    def set_params(
+        self, move_ratio=None, flip_probability=None, swap_move_ratio=None, delta_mu=None, swap_types=None,
+    ):
         r""" Set options for the clusters moves.
 
         Args:

@@ -186,7 +186,7 @@ class implicit_test(unittest.TestCase):
 
         # check against reference value within reference error + measurement error
         self.assertLessEqual(
-            math.fabs(eta_p_avg - eta_p_ref[(phi_c, eta_p_r)][0]), ci * (eta_p_ref[(phi_c, eta_p_r)][1] + eta_p_err)
+            math.fabs(eta_p_avg - eta_p_ref[(phi_c, eta_p_r)][0]), ci * (eta_p_ref[(phi_c, eta_p_r)][1] + eta_p_err),
         )
 
     def tearDown(self):
