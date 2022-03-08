@@ -22,7 +22,7 @@ from hoomd.md import _md, force
 
 
 class coeff:
-    r""" Define bond coefficients.
+    r"""Define bond coefficients.
 
     The coefficients for all bond potentials are specified using this class. Coefficients are
     specified per bond type.
@@ -73,7 +73,7 @@ class coeff:
         self.default_coeff[name] = value
 
     def set(self, type, **coeffs):
-        r""" Sets parameters for bond types.
+        r"""Sets parameters for bond types.
 
         Args:
             type (str): Type of bond (or a list of type names)
@@ -260,7 +260,7 @@ class _bond(force._force):
 
 
 class harmonic(_bond):
-    r""" Harmonic bond potential.
+    r"""Harmonic bond potential.
 
     Args:
         name (str): Name of the bond instance.
@@ -517,7 +517,7 @@ class table(force._force):
             self.update_bond_table(i, func, rmin, rmax, coeff)
 
     def set_from_file(self, bondname, filename):
-        r""" Set a bond pair interaction from a file.
+        r"""Set a bond pair interaction from a file.
 
         Args:
             bondname (str): Name of bond

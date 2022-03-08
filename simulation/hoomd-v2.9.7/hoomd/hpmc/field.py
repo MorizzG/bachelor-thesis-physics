@@ -133,7 +133,7 @@ class lattice_field(_external):
             mc.set_external(self)
 
     def set_references(self, position=[], orientation=[]):
-        r""" Reset the reference positions or reference orientations.
+        r"""Reset the reference positions or reference orientations.
 
         Args:
             position (list): list of positions to restrain each particle.
@@ -153,7 +153,7 @@ class lattice_field(_external):
         self.cpp_compute.setReferences(enlist(position), enlist(orientation))
 
     def set_params(self, k, q):
-        r""" Set the translational and rotational spring constants.
+        r"""Set the translational and rotational spring constants.
 
         Args:
             k (float): translational spring constant.
@@ -173,7 +173,7 @@ class lattice_field(_external):
         self.cpp_compute.setParams(float(k), float(q))
 
     def reset(self, timestep=None):
-        r""" Reset the statistics counters.
+        r"""Reset the statistics counters.
 
         Args:
             timestep (int): the timestep to pass into the reset function.
@@ -195,7 +195,7 @@ class lattice_field(_external):
         self.cpp_compute.reset(timestep)
 
     def get_energy(self):
-        r"""    Get the current energy of the lattice field.
+        r"""Get the current energy of the lattice field.
                 This is a collective call and must be called on all ranks.
         Example::
             mc = hpmc.integrate.sphere(seed=415236);
@@ -208,7 +208,7 @@ class lattice_field(_external):
         return self.cpp_compute.getEnergy(timestep)
 
     def get_average_energy(self):
-        r"""    Get the average energy per particle of the lattice field.
+        r"""Get the average energy per particle of the lattice field.
                 This is a collective call and must be called on all ranks.
 
         Example::
@@ -223,7 +223,7 @@ class lattice_field(_external):
         return self.cpp_compute.getAvgEnergy(timestep)
 
     def get_sigma_energy(self):
-        r"""    Gives the standard deviation of the average energy per particle of the lattice field.
+        r"""Gives the standard deviation of the average energy per particle of the lattice field.
                 This is a collective call and must be called on all ranks.
 
         Example::
@@ -239,7 +239,7 @@ class lattice_field(_external):
 
 
 class external_field_composite(_external):
-    r""" Manage multiple external fields.
+    r"""Manage multiple external fields.
 
     Args:
         mc (:py:mod:`hoomd.hpmc.integrate`): MC integrator (don't specify a new integrator later, external_field_composite will continue to use the old one)
@@ -307,7 +307,7 @@ class external_field_composite(_external):
             self.add_field(fields=fields)
 
     def add_field(self, fields):
-        r""" Add an external field to the ensemble.
+        r"""Add an external field to the ensemble.
 
         Args:
             fields (list): list of fields to add
@@ -328,7 +328,7 @@ class external_field_composite(_external):
 
 
 class wall(_external):
-    r""" Manage walls (an external field type).
+    r"""Manage walls (an external field type).
 
     Args:
         mc (:py:mod:`hoomd.hpmc.integrate`):MC integrator.
@@ -397,7 +397,7 @@ class wall(_external):
             mc.set_external(self)
 
     def count_overlaps(self, exit_early=False):
-        r""" Count the overlaps associated with the walls.
+        r"""Count the overlaps associated with the walls.
 
         Args:
             exit_early (bool): When True, stop counting overlaps after the first one is found.
@@ -420,7 +420,7 @@ class wall(_external):
         return self.cpp_compute.countOverlaps(hoomd.context.current.system.getCurrentTimeStep(), exit_early)
 
     def add_sphere_wall(self, radius, origin, inside=True):
-        r""" Add a spherical wall to the simulation.
+        r"""Add a spherical wall to the simulation.
 
         Args:
             radius (float): radius of spherical wall
@@ -439,7 +439,7 @@ class wall(_external):
         self.cpp_compute.AddSphereWall(_hpmc.make_sphere_wall(radius, origin, inside))
 
     def set_sphere_wall(self, index, radius, origin, inside=True):
-        r""" Change the parameters associated with a particular sphere wall.
+        r"""Change the parameters associated with a particular sphere wall.
 
         Args:
             index (int): index of the sphere wall to be modified. indices begin at 0 in the order the sphere walls were added to the system.
@@ -460,7 +460,7 @@ class wall(_external):
         self.cpp_compute.SetSphereWallParameter(index, _hpmc.make_sphere_wall(radius, origin, inside))
 
     def get_sphere_wall_param(self, index, param):
-        r""" Access a parameter associated with a particular sphere wall.
+        r"""Access a parameter associated with a particular sphere wall.
 
         Args:
             index (int): index of the sphere wall to be accessed. indices begin at 0 in the order the sphere walls were added to the system.
@@ -492,7 +492,7 @@ class wall(_external):
             raise RuntimeError("Error: compute.wall")
 
     def remove_sphere_wall(self, index):
-        r""" Remove a particular sphere wall from the simulation.
+        r"""Remove a particular sphere wall from the simulation.
 
         Args:
             index (int): index of the sphere wall to be removed. indices begin at 0 in the order the sphere walls were added to the system.
@@ -509,7 +509,7 @@ class wall(_external):
         self.cpp_compute.RemoveSphereWall(index)
 
     def get_num_sphere_walls(self):
-        r""" Get the current number of sphere walls in the simulation.
+        r"""Get the current number of sphere walls in the simulation.
 
         Returns: the current number of sphere walls in the simulation
 
@@ -525,7 +525,7 @@ class wall(_external):
         return self.cpp_compute.getNumSphereWalls()
 
     def add_cylinder_wall(self, radius, origin, orientation, inside=True):
-        r""" Add a cylindrical wall to the simulation.
+        r"""Add a cylindrical wall to the simulation.
 
         Args:
             radius (float): radius of cylindrical wall
@@ -547,7 +547,7 @@ class wall(_external):
         self.cpp_compute.AddCylinderWall(param)
 
     def set_cylinder_wall(self, index, radius, origin, orientation, inside=True):
-        r""" Change the parameters associated with a particular cylinder wall.
+        r"""Change the parameters associated with a particular cylinder wall.
 
         Args:
             index (int): index of the cylinder wall to be modified. indices begin at 0 in the order the cylinder walls were added to the system.
@@ -571,7 +571,7 @@ class wall(_external):
         self.cpp_compute.SetCylinderWallParameter(index, param)
 
     def get_cylinder_wall_param(self, index, param):
-        r""" Access a parameter associated with a particular cylinder wall.
+        r"""Access a parameter associated with a particular cylinder wall.
 
         Args:
             index (int): index of the cylinder wall to be accessed. indices begin at 0 in the order the cylinder walls were added to the system.
@@ -606,7 +606,7 @@ class wall(_external):
             raise RuntimeError("Error: compute.wall")
 
     def remove_cylinder_wall(self, index):
-        r""" Remove a particular cylinder wall from the simulation.
+        r"""Remove a particular cylinder wall from the simulation.
 
         Args:
             index (int): index of the cylinder wall to be removed. indices begin at 0 in the order the cylinder walls were added to the system.
@@ -623,7 +623,7 @@ class wall(_external):
         self.cpp_compute.RemoveCylinderWall(index)
 
     def get_num_cylinder_walls(self):
-        r""" Get the current number of cylinder walls in the simulation.
+        r"""Get the current number of cylinder walls in the simulation.
 
         Returns:
             The current number of cylinder walls in the simulation.
@@ -640,7 +640,7 @@ class wall(_external):
         return self.cpp_compute.getNumCylinderWalls()
 
     def add_plane_wall(self, normal, origin):
-        r""" Add a plane wall to the simulation.
+        r"""Add a plane wall to the simulation.
 
         Args:
             normal (tuple): vector normal to the plane. this, in combination with a point on the plane, defines the plane entirely. It will be normalized automatically by hpmc.
@@ -658,7 +658,7 @@ class wall(_external):
         self.cpp_compute.AddPlaneWall(_hpmc.make_plane_wall(normal, origin, True))
 
     def set_plane_wall(self, index, normal, origin):
-        r""" Change the parameters associated with a particular plane wall.
+        r"""Change the parameters associated with a particular plane wall.
 
         Args:
             index (int): index of the plane wall to be modified. indices begin at 0 in the order the plane walls were added to the system.
@@ -678,7 +678,7 @@ class wall(_external):
         self.cpp_compute.SetPlaneWallParameter(index, _hpmc.make_plane_wall(normal, origin, True))
 
     def get_plane_wall_param(self, index, param):
-        r""" Access a parameter associated with a particular plane wall.
+        r"""Access a parameter associated with a particular plane wall.
 
         Args:
             index (int): index of the plane wall to be accessed. indices begin at 0 in the order the plane walls were added to the system.
@@ -708,7 +708,7 @@ class wall(_external):
             raise RuntimeError("Error: compute.wall")
 
     def remove_plane_wall(self, index):
-        r""" Remove a particular plane wall from the simulation.
+        r"""Remove a particular plane wall from the simulation.
 
         Args:
             index (int): index of the plane wall to be removed. indices begin at 0 in the order the plane walls were added to the system.
@@ -725,7 +725,7 @@ class wall(_external):
         self.cpp_compute.RemovePlaneWall(index)
 
     def get_num_plane_walls(self):
-        r""" Get the current number of plane walls in the simulation.
+        r"""Get the current number of plane walls in the simulation.
 
         Returns:
             The current number of plane walls in the simulation.
@@ -742,7 +742,7 @@ class wall(_external):
         return self.cpp_compute.getNumPlaneWalls()
 
     def set_volume(self, volume):
-        r""" Set the volume associated with the intersection of all walls in the system.
+        r"""Set the volume associated with the intersection of all walls in the system.
 
         This number will subsequently change when the box is resized and walls are scaled appropriately.
 
@@ -758,7 +758,7 @@ class wall(_external):
         self.cpp_compute.setVolume(volume)
 
     def get_volume(self):
-        r""" Get the current volume associated with the intersection of all walls in the system.
+        r"""Get the current volume associated with the intersection of all walls in the system.
 
         If this quantity has not previously been set by the user, this returns a meaningless value.
 
@@ -779,7 +779,7 @@ class wall(_external):
         return self.cpp_compute.getVolume()
 
     def get_curr_box(self):
-        r""" Get the simulation box that the wall class is currently storing.
+        r"""Get the simulation box that the wall class is currently storing.
 
         Returns:
             The boxdim object that the wall class is currently storing.
@@ -805,7 +805,7 @@ class wall(_external):
         )
 
     def set_curr_box(self, Lx=None, Ly=None, Lz=None, xy=None, xz=None, yz=None):
-        r""" Set the simulation box that the wall class is currently storing.
+        r"""Set the simulation box that the wall class is currently storing.
 
         You may want to set this independently so that you can cleverly control whether or not the walls actually scale in case you manually resize your simulation box.
         The walls scale automatically when they get the signal that the global box, associated with the system definition, has scaled. They do so, however, with a scale factor associated with
@@ -854,7 +854,7 @@ class wall(_external):
 
 
 class frenkel_ladd_energy(_compute):
-    r""" Compute the Frenkel-Ladd Energy of a crystal.
+    r"""Compute the Frenkel-Ladd Energy of a crystal.
 
     Args:
         ln_gamma (float): log of the translational spring constant
@@ -919,7 +919,7 @@ class frenkel_ladd_energy(_compute):
         self.remove_drift = hoomd.hpmc.update.remove_drift(self.mc, self.lattice, period=drift_period)
 
     def reset_statistics(self):
-        r""" Reset the statistics counters.
+        r"""Reset the statistics counters.
 
         Example::
 
@@ -936,7 +936,7 @@ class frenkel_ladd_energy(_compute):
         self.lattice.reset(0)
 
     def set_params(self, ln_gamma=None, q_factor=None):
-        r""" Set the Frenkel-Ladd parameters.
+        r"""Set the Frenkel-Ladd parameters.
 
         Args:
             ln_gamma (float): log of the translational spring constant
@@ -965,7 +965,7 @@ class frenkel_ladd_energy(_compute):
 
 
 class callback(_external):
-    r""" Use a python-defined energy function in MC integration
+    r"""Use a python-defined energy function in MC integration
 
     Args:
 

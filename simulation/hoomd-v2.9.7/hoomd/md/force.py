@@ -78,7 +78,7 @@ class _force(hoomd.meta._metadata):
             raise RuntimeError()
 
     def disable(self, log=False):
-        r""" Disable the force.
+        r"""Disable the force.
 
         Args:
             log (bool): Set to True if you plan to continue logging the potential energy associated with this force.
@@ -117,7 +117,7 @@ class _force(hoomd.meta._metadata):
             hoomd.context.current.forces.remove(self)
 
     def enable(self):
-        r""" Enable the force.
+        r"""Enable the force.
 
         Examples::
 
@@ -142,7 +142,7 @@ class _force(hoomd.meta._metadata):
         self.log = True
 
     def get_energy(self, group):
-        r""" Get the energy of a particle group.
+        r"""Get the energy of a particle group.
 
         Args:
             group (:py:mod:`hoomd.group`): The particle group to query the energy for.
@@ -158,7 +158,7 @@ class _force(hoomd.meta._metadata):
         return self.cpp_force.calcEnergyGroup(group.cpp_group)
 
     def get_net_force(self, group):
-        r""" Get the force of a particle group.
+        r"""Get the force of a particle group.
 
         Args:
             group (:py:mod:`hoomd.group`): The particle group to query the force for.
@@ -179,7 +179,7 @@ class _force(hoomd.meta._metadata):
         )
 
     def get_net_virial(self, group):
-        r""" Get the virial of a particle group.
+        r"""Get the virial of a particle group.
 
         Args:
             group (:py:mod:`hoomd.group`): The particle group to query the virial for.
@@ -226,7 +226,7 @@ _force.cur_id = 0
 
 
 class constant(_force):
-    r""" Constant force.
+    r"""Constant force.
 
     Args:
         fvec (tuple): force vector (in force units)
@@ -358,11 +358,23 @@ class constant(_force):
         self.check_initialization()
         if group is not None:
             self.cpp_force.setGroupForce(
-                group.cpp_group, self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2],
+                group.cpp_group,
+                self.fvec[0],
+                self.fvec[1],
+                self.fvec[2],
+                self.tvec[0],
+                self.tvec[1],
+                self.tvec[2],
             )
         elif tag is not None:
             self.cpp_force.setParticleForce(
-                tag, self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2],
+                tag,
+                self.fvec[0],
+                self.fvec[1],
+                self.fvec[2],
+                self.tvec[0],
+                self.tvec[1],
+                self.tvec[2],
             )
         else:
             self.cpp_force.setForce(self.fvec[0], self.fvec[1], self.fvec[2], self.tvec[0], self.tvec[1], self.tvec[2])
@@ -395,7 +407,7 @@ class constant(_force):
 
 
 class active(_force):
-    r""" Active force.
+    r"""Active force.
 
     Args:
         seed (int): required user-specified seed number for random number generator.
@@ -536,7 +548,7 @@ class active(_force):
 
 
 class dipole(_force):
-    r""" Treat particles as dipoles in an electric field.
+    r"""Treat particles as dipoles in an electric field.
 
     Args:
         field_x (float): x-component of the field (units?)
@@ -570,7 +582,7 @@ class dipole(_force):
         self.field_z = field_z
 
     def set_params(field_x, field_y, field_z, p):
-        r""" Change the constant field and dipole moment.
+        r"""Change the constant field and dipole moment.
 
         Args:
             field_x (float): x-component of the field (units?)

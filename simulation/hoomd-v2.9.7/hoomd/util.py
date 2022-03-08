@@ -39,7 +39,7 @@ _status_quiet_count = 0
 
 
 def quiet_status():
-    r""" Quiet the status line output.
+    r"""Quiet the status line output.
 
     After calling :py:func:`hoomd.util.quiet_status()`, hoomd will no longer print out the line of
     code that executes each hoomd script command. Call :py:func:`hoomd.util.unquiet_status()` to
@@ -52,7 +52,7 @@ def quiet_status():
 
 
 def unquiet_status():
-    r""" Resume the status line output.
+    r"""Resume the status line output.
 
     See Also:
         :py:func:`hoomd.util.quiet_status()`
@@ -113,7 +113,7 @@ def print_status_line():
 
 
 def cuda_profile_start():
-    """ Start CUDA profiling.
+    """Start CUDA profiling.
 
     When using nvvp to profile CUDA kernels in hoomd jobs, you usually don't care about all the initialization and
     startup. cuda_profile_start() allows you to not even record that. To use, uncheck the box "start profiling on
@@ -141,10 +141,10 @@ def cuda_profile_start():
 
 
 def cuda_profile_stop():
-    """ Stop CUDA profiling.
+    """Stop CUDA profiling.
 
-        See Also:
-            :py:func:`cuda_profile_start()`.
+    See Also:
+        :py:func:`cuda_profile_start()`.
     """
     # check if initialization has occurred
     if not hoomd.init.is_initialized():

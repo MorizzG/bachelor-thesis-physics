@@ -6,32 +6,41 @@ Created on Wed Jan 12 15:56:38 2022.
 @author: mg
 """
 
-import sys
+# import sys
 from multiprocessing import Pool
 
 # import pandas as pd
 import gsd.hoomd
 import numpy as np
-import scipy.spatial
+# import scipy.spatial
 
-# if len(sys.argv) != 2:
-#     print("Invalid number of arguments")
-#     print("Usage: simulation.py [num]")
-#     print("where [num] is either 'all' or the number of the cell")
-#     sys.exit(1)
+import argparse
+
+NUM_THREADS = 8
 
 
-# try:
-#     cell_n = int(sys.argv[1])
-#     if cell_n < 1 or cell_n > 8:
-#         raise ValueError()
-# except ValueError:
-#     print("Error: invalid cell number")
-#     sys.exit(1)
+# %% Parse args
 
-cell_n = 1
+parser = argparse.ArgumentParser(description="Calculate chromosome contactivity")
 
-f = gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb")
+arg_group = parser.add_argument(
+    "n_cell",
+    action="store",
+    nargs="?",
+    type=int,
+    default=1,
+    help="Which cell to calculate",
+)
+
+args = parser.parse_args()
+
+n_cell = args.n_cell
+
+
+def calc_all_dists(n):
+    return np.linalg.norm(np.array([pos[n] - pos[m] for m in range(len_pos)]), axis=1)
+
+f = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}.gsd", "rb")
 
 snap = f[-1]
 
@@ -40,14 +49,13 @@ pos = snap.particles.position
 len_pos = len(pos)
 
 
-def calc_all_dists(n):
-    return np.linalg.norm(np.array([pos[n] - pos[m] for m in range(len_pos)]), axis=1)
+if __name__ == "__main__":
+    print("starting")
 
+    p = Pool(NUM_THREADS)
 
-p = Pool()
+    dists = np.stack(p.map(calc_all_dists, range(len_pos)))
 
-dists = np.stack(p.map(calc_all_dists, range(len_pos)))
+    # dists = scipy.spatial.distance_matrix(pos, pos)
 
-# dists2 = scipy.spacial.distance_matrix(pos, pos)
-
-np.save(f"data/dists/dists_cell{cell_n}", dists)
+    np.save(f"data/dists/dists_cell{n_cell}", dists)

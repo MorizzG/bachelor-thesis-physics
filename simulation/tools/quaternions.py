@@ -47,7 +47,7 @@ class Quaternion:
 
     @property
     def abs(self):
-        return q0 ** 2 + np.dot(self.q, self.q)
+        return q0**2 + np.dot(self.q, self.q)
 
     def __str__(self):
         return f"({self.q0}, {self.q1}, {self.q2}, {self.q3})"
@@ -77,8 +77,20 @@ class Quaternion:
         (q0, q1, q2, q3) = tuple(self.to_array())
         return np.array(
             [
-                [2 * (q0 ** 2 + q1 ** 2) - 1, 2 * (q1 * q2 - q0 * q3), 2 * (q1 * q3 + q0 * q2),],
-                [2 * (q1 * q2 + q0 * q3), 2 * (q0 ** 2 + q2 ** 2) - 1, 2 * (q2 * q3 - q0 * q1),],
-                [2 * (q1 * q3 - q0 * q2), 2 * (q2 * q3 + q0 * q1), 2 * (q0 ** 2 + q3 ** 2) - 1,],
+                [
+                    2 * (q0**2 + q1**2) - 1,
+                    2 * (q1 * q2 - q0 * q3),
+                    2 * (q1 * q3 + q0 * q2),
+                ],
+                [
+                    2 * (q1 * q2 + q0 * q3),
+                    2 * (q0**2 + q2**2) - 1,
+                    2 * (q2 * q3 - q0 * q1),
+                ],
+                [
+                    2 * (q1 * q3 - q0 * q2),
+                    2 * (q2 * q3 + q0 * q1),
+                    2 * (q0**2 + q3**2) - 1,
+                ],
             ]
         )

@@ -104,7 +104,7 @@ def _latticeToHoomd(a1, a2, a3=[0.0, 0.0, 1.0], ndim=3):
 
 
 class unitcell(object):
-    r""" Define a unit cell.
+    r"""Define a unit cell.
 
     Args:
         N (int): Number of particles in the unit cell.
@@ -220,7 +220,7 @@ class unitcell(object):
                 raise ValueError("Particle properties must have length N")
 
     def get_type_list(self):
-        r""" Get a list of the unique type names in the unit cell.
+        r"""Get a list of the unique type names in the unit cell.
 
         Returns:
             A :py:class:`list` of the unique type names present in the unit cell.
@@ -234,7 +234,7 @@ class unitcell(object):
         return type_list
 
     def get_typeid_mapping(self):
-        r""" Get a type name to typeid mapping.
+        r"""Get a type name to typeid mapping.
 
         Returns:
             A :py:class:`dict` that maps type names to integer type ids.
@@ -251,7 +251,7 @@ class unitcell(object):
         return mapping
 
     def get_snapshot(self):
-        r""" Get a snapshot.
+        r"""Get a snapshot.
 
         Returns:
             A snapshot representing the lattice.

@@ -42,17 +42,23 @@ n = 10
 
 sigma = 1
 V_intersection = 1.0 / 12.0 * math.pi * (2 * sigma + len_cyl) * (sigma - len_cyl) * (sigma - len_cyl)
-V_dumbbell = 2 * math.pi / 6 * sigma ** 3.0 - V_intersection
+V_dumbbell = 2 * math.pi / 6 * sigma**3.0 - V_intersection
 d_eff = (V_dumbbell * 6 / (math.pi)) ** (1.0 / 3.0)
 
 rho_star_ini = 0.1
-a = (d_eff ** 3.0 / rho_star_ini) ** (1.0 / 3.0)
+a = (d_eff**3.0 / rho_star_ini) ** (1.0 / 3.0)
 
 
 class npt_wca_dimer_eos(unittest.TestCase):
     def test_statepoint(self):
         uc = lattice.unitcell(
-            N=1, a1=[a, 0, 0], a2=[0, a, 0], a3=[0, 0, a], dimensions=3, position=[[0, 0, 0]], type_name=["A"],
+            N=1,
+            a1=[a, 0, 0],
+            a2=[0, a, 0],
+            a3=[0, 0, a],
+            dimensions=3,
+            position=[[0, 0, 0]],
+            type_name=["A"],
         )
 
         system = init.create_lattice(unitcell=uc, n=n)
@@ -118,7 +124,7 @@ class npt_wca_dimer_eos(unittest.TestCase):
         from hoomd import jit
 
         jit.patch.user(mc, r_cut=rcut, code=dumbbell)
-        boxmc = hpmc.update.boxmc(mc, betaP=P_star / d_eff ** 3.0, seed=seed + 1)
+        boxmc = hpmc.update.boxmc(mc, betaP=P_star / d_eff**3.0, seed=seed + 1)
         boxmc.ln_volume(delta=0.001, weight=1)
 
         mc_tune = hpmc.util.tune(mc, tunables=["d", "a"], max_val=[4, 0.5], gamma=1, target=0.3)
@@ -132,7 +138,7 @@ class npt_wca_dimer_eos(unittest.TestCase):
             rho = N / log.query("volume")
             rho_val.append(rho)
             if timestep % 1000 == 0:
-                context.msg.notice(1, "rho_star = {:.5f}\n".format(rho * d_eff ** 3.0))
+                context.msg.notice(1, "rho_star = {:.5f}\n".format(rho * d_eff**3.0))
 
         for i in range(10):
             run(1000)
@@ -151,7 +157,7 @@ class npt_wca_dimer_eos(unittest.TestCase):
         context.msg.notice(
             1,
             "P_star = {:.3f} rho_star = {:.5f}+-{:.5f} (tgt: {:.5f})\n".format(
-                P_star, rho_avg * d_eff ** 3.0, rho_err * d_eff ** 3.0, rho_star_ref
+                P_star, rho_avg * d_eff**3.0, rho_err * d_eff**3.0, rho_star_ref
             ),
         )
 
@@ -163,8 +169,8 @@ class npt_wca_dimer_eos(unittest.TestCase):
 
         # compare if error is within confidence interval
         self.assertLessEqual(
-            math.fabs(rho_avg * d_eff ** 3.0 - rho_star_ref),
-            ci * (rho_star_ref * rho_star_rel_err + rho_err * d_eff ** 3.0),
+            math.fabs(rho_avg * d_eff**3.0 - rho_star_ref),
+            ci * (rho_star_ref * rho_star_rel_err + rho_err * d_eff**3.0),
         )
 
 

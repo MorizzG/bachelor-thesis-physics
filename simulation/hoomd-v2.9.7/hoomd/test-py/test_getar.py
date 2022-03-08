@@ -193,7 +193,7 @@ if gtar is not None:
 
             for _ in range(10):
                 with hoomd.context.initialize():
-                    seed = random.randint(1, 2 ** 32 - 1)
+                    seed = random.randint(1, 2**32 - 1)
                     sys1 = RandomSystem(seed)
                     if hoomd.comm.get_rank() == 0:
                         sys1.writeGetar(fname)

@@ -26,7 +26,7 @@ import scipy.spatial
 # from tools.mg_plot import new_fig, set_styling
 
 
-NUM_THREADS = 8
+NUM_THREADS = 4
 
 
 # %% Parse args
@@ -34,17 +34,22 @@ NUM_THREADS = 8
 parser = argparse.ArgumentParser(description="Calculate chromosome contactivity")
 
 arg_group = parser.add_argument(
-    "cell_n", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",
+    "n_cell",
+    action="store",
+    nargs="?",
+    type=int,
+    default=1,
+    help="Which cell to calculate",
 )
 
 args = parser.parse_args()
 
-cell_n = args.cell_n
+n_cell = args.n_cell
 
 
 # %% Read trajectory data
 
-f = gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb")
+f = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}.gsd", "rb")
 
 pos_all = np.stack([snap.particles.position for snap in f[5:]], axis=0)
 
@@ -132,4 +137,4 @@ if __name__ == "__main__":
 
     num_contacts_sparse = scipy.sparse.bsr_matrix(num_contacts, dtype="uint8")
 
-    scipy.sparse.save_npz(f"data/contact_matrices/contact_matrix_cell{cell_n}", num_contacts_sparse)
+    scipy.sparse.save_npz(f"data/contact_matrices/contact_matrix_cell{n_cell}", num_contacts_sparse)

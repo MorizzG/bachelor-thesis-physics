@@ -26,7 +26,7 @@ from hoomd.md import pair
 
 
 class pppm(force._force):
-    r""" Long-range electrostatics computed with the PPPM method.
+    r"""Long-range electrostatics computed with the PPPM method.
 
     Args:
         group (:py:mod:`hoomd.group`): Group on which to apply long range PPPM forces. The short range part is always applied between
@@ -150,7 +150,7 @@ class pppm(force._force):
         hoomd.util.unquiet_status()
 
     def set_params(self, Nx, Ny, Nz, order, rcut, alpha=0.0):
-        """ Sets PPPM parameters.
+        """Sets PPPM parameters.
 
         Args:
             Nx (int): Number of grid points in x direction

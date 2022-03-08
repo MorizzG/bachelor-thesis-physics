@@ -14,7 +14,7 @@ from hoomd.jit import _jit
 
 
 class user(field._external):
-    r''' Define an external field imposed on all particles in the system.
+    r'''Define an external field imposed on all particles in the system.
 
     Args:
         code (str): C++ code to compile

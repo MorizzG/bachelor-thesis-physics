@@ -203,7 +203,10 @@ class WCA(hoomd.md.force._force, _DEMBase):
         cpp_force = cppForces[key]
 
         self.cpp_force = cpp_force(
-            hoomd.context.current.system_definition, self.nlist.cpp_nlist, self.r_cut, potentialParams,
+            hoomd.context.current.system_definition,
+            self.nlist.cpp_nlist,
+            self.r_cut,
+            potentialParams,
         )
 
         if self.dimensions == 2:
@@ -337,7 +340,10 @@ class SWCA(hoomd.md.force._force, _DEMBase):
         cpp_force = cppForces[key]
 
         self.cpp_force = cpp_force(
-            hoomd.context.current.system_definition, self.nlist.cpp_nlist, self.r_cut, potentialParams,
+            hoomd.context.current.system_definition,
+            self.nlist.cpp_nlist,
+            self.r_cut,
+            potentialParams,
         )
 
         if self.dimensions == 2:

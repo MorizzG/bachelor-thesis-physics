@@ -506,7 +506,7 @@ from hoomd import _hoomd
 
 
 class boxdim(hoomd.meta._metadata):
-    r""" Define box dimensions.
+    r"""Define box dimensions.
 
     Args:
         Lx (float): box extent in the x direction (distance units)
@@ -582,7 +582,7 @@ class boxdim(hoomd.meta._metadata):
         hoomd.meta._metadata.__init__(self)
 
     def scale(self, sx=1.0, sy=1.0, sz=1.0, s=None):
-        r""" Scale box dimensions.
+        r"""Scale box dimensions.
 
         Args:
             sx (float): scale factor in the x direction
@@ -606,7 +606,7 @@ class boxdim(hoomd.meta._metadata):
         return self
 
     def set_volume(self, volume):
-        r""" Set the box volume.
+        r"""Set the box volume.
 
         Args:
             volume (float): new box volume (area if dimensions=2)
@@ -628,7 +628,7 @@ class boxdim(hoomd.meta._metadata):
         return self
 
     def get_volume(self):
-        r""" Get the box volume.
+        r"""Get the box volume.
 
         Returns:
             The box volume (area in 2D).
@@ -637,7 +637,7 @@ class boxdim(hoomd.meta._metadata):
         return b.getVolume(self.dimensions == 2)
 
     def get_lattice_vector(self, i):
-        r""" Get a lattice vector.
+        r"""Get a lattice vector.
 
         Args:
             i (int): (=0,1,2) direction of lattice vector
@@ -651,7 +651,7 @@ class boxdim(hoomd.meta._metadata):
         return (v.x, v.y, v.z)
 
     def wrap(self, v, img=(0, 0, 0)):
-        r""" Wrap a vector using the periodic boundary conditions.
+        r"""Wrap a vector using the periodic boundary conditions.
 
         Args:
             v (tuple): The vector to wrap
@@ -668,7 +668,7 @@ class boxdim(hoomd.meta._metadata):
         return (u.x, u.y, u.z), img
 
     def min_image(self, v):
-        r""" Apply the minimum image convention to a vector using periodic boundary conditions.
+        r"""Apply the minimum image convention to a vector using periodic boundary conditions.
 
         Args:
             v (tuple): The vector to apply minimum image to
@@ -682,7 +682,7 @@ class boxdim(hoomd.meta._metadata):
         return (u.x, u.y, u.z)
 
     def make_fraction(self, v):
-        r""" Scale a vector to fractional coordinates.
+        r"""Scale a vector to fractional coordinates.
 
         Args:
             v (tuple): The vector to convert to fractional coordinates
@@ -740,7 +740,7 @@ class boxdim(hoomd.meta._metadata):
 
 
 class system_data(hoomd.meta._metadata):
-    r""" Access system data
+    r"""Access system data
 
     system_data provides access to the different data structures that define the current state of the simulation.
     See :py:mod:`hoomd.data` for a full explanation of how to use by example.
@@ -771,7 +771,7 @@ class system_data(hoomd.meta._metadata):
         hoomd.meta._metadata.__init__(self)
 
     def take_snapshot(self, particles=True, bonds=False, pairs=False, integrators=False, all=False, dtype="float"):
-        r""" Take a snapshot of the current system data.
+        r"""Take a snapshot of the current system data.
 
         Args:
             particles (bool): When True, particle data is included in the snapshot.
@@ -821,7 +821,7 @@ class system_data(hoomd.meta._metadata):
         return cpp_snapshot
 
     def replicate(self, nx=1, ny=1, nz=1):
-        r""" Replicates the system along the three spatial dimensions.
+        r"""Replicates the system along the three spatial dimensions.
 
         Args:
             nx (int): Number of times to replicate the system along the x-direction
@@ -877,7 +877,7 @@ class system_data(hoomd.meta._metadata):
         hoomd.util.unquiet_status()
 
     def restore_snapshot(self, snapshot):
-        r""" Re-initializes the system from a snapshot.
+        r"""Re-initializes the system from a snapshot.
 
         Args:
             snapshot:. The snapshot to initialize the system from.
@@ -1175,7 +1175,10 @@ class particle_data(hoomd.meta._metadata):
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Particle Data for %d particles of %d type(s)" % (self.pdata.getNGlobal(), self.pdata.getNTypes(),)
+        result = "Particle Data for %d particles of %d type(s)" % (
+            self.pdata.getNGlobal(),
+            self.pdata.getNTypes(),
+        )
         return result
 
     ## \internal
@@ -1193,7 +1196,7 @@ class particle_data(hoomd.meta._metadata):
 
 
 class particle_data_proxy(object):
-    r""" Access a single particle via a proxy.
+    r"""Access a single particle via a proxy.
 
     particle_data_proxy provides access to all of the properties of a single particle in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -1494,7 +1497,7 @@ class force_data(object):
 
 
 class force_data_proxy(object):
-    r""" Access the force on a single particle via a proxy.
+    r"""Access the force on a single particle via a proxy.
 
     force_data_proxy provides access to the current force, virial, and energy of a single particle due to a single
     force computation. See :py:mod:`hoomd.data` for examples.
@@ -1653,7 +1656,10 @@ class bond_data(hoomd.meta._metadata):
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Bond Data for %d bonds of %d typeid(s)" % (self.bdata.getNGlobal(), self.bdata.getNTypes(),)
+        result = "Bond Data for %d bonds of %d typeid(s)" % (
+            self.bdata.getNGlobal(),
+            self.bdata.getNTypes(),
+        )
         return result
 
     ## \internal
@@ -1671,7 +1677,7 @@ class bond_data(hoomd.meta._metadata):
 
 
 class bond_data_proxy(object):
-    r""" Access a single bond via a proxy.
+    r"""Access a single bond via a proxy.
 
     bond_data_proxy provides access to all of the properties of a single bond in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -1845,7 +1851,7 @@ class constraint_data(hoomd.meta._metadata):
 
 
 class constraint_data_proxy(object):
-    r""" Access a single constraint via a proxy.
+    r"""Access a single constraint via a proxy.
 
     constraint_data_proxy provides access to all of the properties of a single constraint in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -1995,7 +2001,10 @@ class angle_data(hoomd.meta._metadata):
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Angle Data for %d angles of %d typeid(s)" % (self.adata.getNGlobal(), self.adata.getNTypes(),)
+        result = "Angle Data for %d angles of %d typeid(s)" % (
+            self.adata.getNGlobal(),
+            self.adata.getNTypes(),
+        )
         return result
 
     ## \internal
@@ -2013,7 +2022,7 @@ class angle_data(hoomd.meta._metadata):
 
 
 class angle_data_proxy(object):
-    r""" Access a single angle via a proxy.
+    r"""Access a single angle via a proxy.
 
     angle_data_proxy provides access to all of the properties of a single angle in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -2183,7 +2192,10 @@ class dihedral_data(hoomd.meta._metadata):
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Dihedral Data for %d angles of %d typeid(s)" % (self.ddata.getNGlobal(), self.ddata.getNTypes(),)
+        result = "Dihedral Data for %d angles of %d typeid(s)" % (
+            self.ddata.getNGlobal(),
+            self.ddata.getNTypes(),
+        )
         return result
 
     ## \internal
@@ -2201,7 +2213,7 @@ class dihedral_data(hoomd.meta._metadata):
 
 
 class dihedral_data_proxy(object):
-    r""" Access a single dihedral via a proxy.
+    r"""Access a single dihedral via a proxy.
 
     dihedral_data_proxy provides access to all of the properties of a single dihedral in the system.
     See :py:mod:`hoomd.data` for examples.
@@ -2332,7 +2344,7 @@ def make_snapshot(
     pair_types=[],
     dtype="float",
 ):
-    r""" Make an empty snapshot.
+    r"""Make an empty snapshot.
 
     Args:
         N (int): Number of particles to create.
@@ -2393,7 +2405,7 @@ def make_snapshot(
 
 
 def gsd_snapshot(filename, frame=0):
-    r""" Read a snapshot from a GSD file.
+    r"""Read a snapshot from a GSD file.
 
     Args:
         filename (str): GSD file to read the snapshot from.
@@ -2410,7 +2422,7 @@ def gsd_snapshot(filename, frame=0):
 # Note: SnapshotParticleData should never be instantiated, it is a placeholder to generate sphinx documentation,
 # as the real SnapshotParticleData lives in c++.
 class SnapshotParticleData:
-    r""" Snapshot of particle data properties.
+    r"""Snapshot of particle data properties.
 
     Users should not create SnapshotParticleData directly. Use :py:func:`hoomd.data.make_snapshot()`
     or :py:meth:`hoomd.data.system_data.take_snapshot()` to make snapshots.
@@ -2436,7 +2448,7 @@ class SnapshotParticleData:
     """
 
     def resize(self, N):
-        r""" Resize the snapshot to hold N particles.
+        r"""Resize the snapshot to hold N particles.
 
         Args:
             N (int): new size of the snapshot.

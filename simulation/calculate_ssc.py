@@ -66,11 +66,13 @@ def make_hic_contact_matrix(n_cell: int) -> sp.csr_matrix:
         CSR sparse contact matrix
     """
     cps = np.unique(
-        pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")[["ind_A", "ind_B"]].to_numpy(), axis=0,
+        pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")[["ind_A", "ind_B"]].to_numpy(),
+        axis=0,
     )
 
     hic_contact_mat = sp.coo_matrix(
-        (np.repeat(1, cps.shape[0]), (cps[:, 0], cps[:, 1])), shape=(N_PARTICLES, N_PARTICLES),
+        (np.repeat(1, cps.shape[0]), (cps[:, 0], cps[:, 1])),
+        shape=(N_PARTICLES, N_PARTICLES),
     ).tocsr()
 
     # cps = cps[cps.argsort(axis=0)[:, 0]]  # sort by first entry
@@ -129,7 +131,14 @@ def _f(h):
             sim_contact_mat1 = load_sim_contact_matrix(n_cell1)
             sim_contact_mat2 = load_sim_contact_matrix(n_cell2)
 
-            s = scc.genome_scc(sim_contact_mat1, sim_contact_mat2, BIN_SIZE, chroms_lengths, MAX_DIST, h,)
+            s = scc.genome_scc(
+                sim_contact_mat1,
+                sim_contact_mat2,
+                BIN_SIZE,
+                chroms_lengths,
+                MAX_DIST,
+                h,
+            )
 
             mat[i, j] = s
             mat[j, i] = s
@@ -138,77 +147,77 @@ def _f(h):
 
 chroms_lengths = pd.read_pickle("data/chrom_lengths.pkl").to_numpy()
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    # %% h_train
+#     # %% h_train
 
-    print()
+#     print()
 
-    # n_cell1 = 1
-    # n_cell2 = 2
+#     # n_cell1 = 1
+#     # n_cell2 = 2
 
-    # sim_contact_mat1 = load_sim_contact_matrix(n_cell1)
-    # sim_contact_mat2 = load_sim_contact_matrix(n_cell2)
+#     # sim_contact_mat1 = load_sim_contact_matrix(n_cell1)
+#     # sim_contact_mat2 = load_sim_contact_matrix(n_cell2)
 
-    n_cell = 2
+#     n_cell = 2
 
-    sim_contact_mat = load_sim_contact_matrix(n_cell)
+#     sim_contact_mat = load_sim_contact_matrix(n_cell)
 
-    hic_contact_mat = make_hic_contact_matrix(n_cell)
+#     hic_contact_mat = make_hic_contact_matrix(n_cell)
 
-    h, sccs = scc.h_train(sim_contact_mat, hic_contact_mat, BIN_SIZE, chroms_lengths, MAX_DIST, h_max=10)
+#     h, sccs = scc.h_train(sim_contact_mat, hic_contact_mat, BIN_SIZE, chroms_lengths, MAX_DIST, h_max=10)
 
-    print(f"Found best h-value {h=}")
+#     print(f"Found best h-value {h=}")
 
-    # h_vals = range(11)
+#     # h_vals = range(11)
 
-    # scc_vals = [0.360, 0.133, 0.168, 0.217, 0.259, 0.292, 0.314, 0.330, 0.345, 0.353, 0.355]
+#     # scc_vals = [0.360, 0.133, 0.168, 0.217, 0.259, 0.292, 0.314, 0.330, 0.345, 0.353, 0.355]
 
-    fig, ax = new_fig()
+#     fig, ax = new_fig()
 
-    ax.plot(range(len(sccs)), sccs, "C0-o")
+#     ax.plot(range(len(sccs)), sccs, "C0-o")
 
-    ax.set_xlabel("h-value")
-    ax.set_ylabel("SCC")
+#     ax.set_xlabel("h-value")
+#     ax.set_ylabel("SCC")
 
-    ax.set_ylim(0, 0.5)
+#     ax.set_ylim(0, 0.5)
 
-    set_styling(ax, x_loc=1)
+#     set_styling(ax, x_loc=1)
 
-    fig.show()
+#     fig.show()
 
-    # %% Hi-C vs simulated Data
+#     # %% Hi-C vs simulated Data
 
-    print("Starting Hi-C vs Sim SCC")
-    print()
+#     print("Starting Hi-C vs Sim SCC")
+#     print()
 
-    sccs = np.empty(8)
+#     sccs = np.empty(8)
 
-    for n, n_cell in enumerate(range(1, 9)):
-        sim_contact_mat = load_sim_contact_matrix(n_cell)
+#     for n, n_cell in enumerate(range(1, 9)):
+#         sim_contact_mat = load_sim_contact_matrix(n_cell)
 
-        hic_contact_mat = make_hic_contact_matrix(n_cell)
+#         hic_contact_mat = make_hic_contact_matrix(n_cell)
 
-        s = scc.genome_scc(sim_contact_mat, hic_contact_mat, BIN_SIZE, chroms_lengths, MAX_DIST, h=7)
+#         s = scc.genome_scc(sim_contact_mat, hic_contact_mat, BIN_SIZE, chroms_lengths, MAX_DIST, h=7)
 
-        print(f"\tCell {n_cell}: {s:.3}")
+#         print(f"\tCell {n_cell}: {s:.3}")
 
-        sccs[n] = s
+#         sccs[n] = s
 
-    # plt.figure()
+#     # plt.figure()
 
-    fig, ax = new_fig()
+#     fig, ax = new_fig()
 
-    ax.plot(range(1, 9), sccs, "C0o")
+#     ax.plot(range(1, 9), sccs, "C0o")
 
-    ax.set_ylim(0, 1)
+#     ax.set_ylim(0, 1)
 
-    ax.set_xlabel("Cell number")
-    ax.set_ylabel("SCC")
+#     ax.set_xlabel("Cell number")
+#     ax.set_ylabel("SCC")
 
-    set_styling(ax, x_loc=1)
+#     set_styling(ax, x_loc=1)
 
-    fig.show()
+#     fig.show()
 
 # %% Many h-values test
 
@@ -280,43 +289,43 @@ if __name__ == "__main__":
 # plt.figure()
 
 # %%
-#     print()
+print()
 
-#     print("SCC values between Hi-C data")
+print("SCC values between Hi-C data")
 
-#     print()
+print()
 
-#     scc_mat = np.empty((8,8))
+scc_mat = np.empty((8,8))
 
-#     hic_contact_mats = []
+hic_contact_mats = []
 
-#     for i in range(8):
-#         hic_contact_mats += [make_hic_contact_matrix(i+1)]
+for i in range(8):
+    hic_contact_mats += [make_hic_contact_matrix(i+1)]
 
-#     for i in range(8):
-#         for j in range(8):
-#             scc_mat[i,j] = scc.genome_scc(hic_contact_mats[i], hic_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7)
+for i in range(8):
+    for j in range(8):
+        scc_mat[i,j] = scc.genome_scc(hic_contact_mats[i], hic_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7)
 
-#     print(scc_mat)
+print(scc_mat)
 
-# # %%
-#     print()
+# %%
+print()
 
-#     print("SCC values between simulation data")
+print("SCC values between simulation data")
 
-#     print()
+print()
 
-#     scc_mat = np.empty((8,8))
+scc_mat = np.empty((8,8))
 
-#     sim_contact_mats = []
+sim_contact_mats = []
 
-#     for i in range(8):
-#         sim_contact_mats += [load_sim_contact_matrix(i+1)]
+for i in range(8):
+    sim_contact_mats += [load_sim_contact_matrix(i+1)]
 
-#     for i in range(8):
-#         for j in range(8):
-#             scc_mat[i,j] = scc.genome_scc(sim_contact_mats[i], sim_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7)
+for i in range(8):
+    for j in range(8):
+        scc_mat[i,j] = scc.genome_scc(sim_contact_mats[i], sim_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7)
 
-#     print(scc_mat)
+print(scc_mat)
 
 # input()

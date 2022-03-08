@@ -62,7 +62,7 @@ class _constant(_variant):
 
 
 class linear_interp(_variant):
-    r""" Linearly interpolated variant.
+    r"""Linearly interpolated variant.
 
     Args:
         points (list): Set points in the linear interpolation (see below)

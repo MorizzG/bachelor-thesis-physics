@@ -16,7 +16,7 @@ P_ref_err = 0.0002
 # actual
 
 n = 256
-N = n ** 2
+N = n**2
 a = math.sqrt(math.pi / (4 * phi_p_ref))
 
 
@@ -36,7 +36,8 @@ class diskEOS_test(unittest.TestCase):
             period=100,
         )
         self.log.register_callback(
-            "phi_p", lambda timestep: len(self.system.particles) / self.system.box.get_volume() * math.pi / 4.0,
+            "phi_p",
+            lambda timestep: len(self.system.particles) / self.system.box.get_volume() * math.pi / 4.0,
         )
 
         # warm up

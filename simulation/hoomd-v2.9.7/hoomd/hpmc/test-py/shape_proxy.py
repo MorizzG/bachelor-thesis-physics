@@ -158,7 +158,18 @@ class shape_proxy_sanity_checks(unittest.TestCase):
             (1, 1, 1),
         ]
         offs = [-1] * 6
-        norms = [(-1, 0, 0), (1, 0, 0), (0, 1, 0,), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
+        norms = [
+            (-1, 0, 0),
+            (1, 0, 0),
+            (
+                0,
+                1,
+                0,
+            ),
+            (0, -1, 0),
+            (0, 0, 1),
+            (0, 0, -1),
+        ]
         diam = 2
         orig = (0, 0, 0)
         self.system = init.read_snapshot(self.snapshot)

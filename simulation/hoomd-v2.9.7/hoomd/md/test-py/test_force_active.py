@@ -28,7 +28,9 @@ class force_active_tests(unittest.TestCase):
 
     # tests options to md.force.active
     def test_options(self):
-        np.random.seed(2,)
+        np.random.seed(
+            2,
+        )
         activity = [tuple(((np.random.rand(3) - 0.5) * 2.0)) for i in range(100)]  # random forces
         md.force.active(seed=2, f_lst=activity, group=group.all(), rotation_diff=1.0, orientation_link=False)
         md.force.active(seed=2, f_lst=activity, group=group.all(), rotation_diff=0.0, orientation_link=True)

@@ -46,7 +46,11 @@ class init_create_random_polymer_tests(unittest.TestCase):
     # checks that invalid arguments are detected
     def test_bad_polymers(self):
         self.assertRaises(
-            Exception, deprecated.init.create_random_polymers, box=self.box, polymers=[], separation=self.separation,
+            Exception,
+            deprecated.init.create_random_polymers,
+            box=self.box,
+            polymers=[],
+            separation=self.separation,
         )
         self.assertRaises(
             Exception,
@@ -56,7 +60,11 @@ class init_create_random_polymer_tests(unittest.TestCase):
             separation=self.separation,
         )
         self.assertRaises(
-            Exception, deprecated.init.create_random_polymers, box=self.box, polymers=5, separation=self.separation,
+            Exception,
+            deprecated.init.create_random_polymers,
+            box=self.box,
+            polymers=5,
+            separation=self.separation,
         )
         self.assertRaises(
             Exception,

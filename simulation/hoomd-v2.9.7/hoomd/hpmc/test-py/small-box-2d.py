@@ -139,7 +139,10 @@ class pair_smallbox2d_test3(unittest.TestCase):
         self.mc.set_params(nselect=4, d=100.0)  # generates a lot of overlaps
 
         analyze.log(
-            filename="small-box-2d-large-moves.log", quantities=["hpmc_overlap_count"], period=1, overwrite=True,
+            filename="small-box-2d-large-moves.log",
+            quantities=["hpmc_overlap_count"],
+            period=1,
+            overwrite=True,
         )
         run(500)
 

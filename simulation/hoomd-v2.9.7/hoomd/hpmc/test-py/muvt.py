@@ -90,7 +90,18 @@ class muvt_updater_test(unittest.TestCase):
         self.mc.set_params(deterministic=True)
         self.mc.shape_param.set(
             "A",
-            normals=[(-1, 0, 0), (1, 0, 0), (0, 1, 0,), (0, -1, 0), (0, 0, 1), (0, 0, -1)],
+            normals=[
+                (-1, 0, 0),
+                (1, 0, 0),
+                (
+                    0,
+                    1,
+                    0,
+                ),
+                (0, -1, 0),
+                (0, 0, 1),
+                (0, 0, -1),
+            ],
             offsets=[-1] * 6,
             vertices=[
                 (-1, -1, -1),

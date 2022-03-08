@@ -124,7 +124,10 @@ def _parse_command_line(arg_string=None):
         help="(MPI only) Disable two-level (node-local) decomposition",
     )
     parser.add_option(
-        "--single-mpi", dest="single_mpi", action="store_true", help="Allow single-threaded HOOMD builds in MPI jobs",
+        "--single-mpi",
+        dest="single_mpi",
+        action="store_true",
+        help="Allow single-threaded HOOMD builds in MPI jobs",
     )
     parser.add_option("--user", dest="user", help="User options")
     parser.add_option("--nthreads", dest="nthreads", help="Number of TBB threads")
@@ -237,7 +240,7 @@ def _parse_command_line(arg_string=None):
 
 
 def get_user():
-    r""" Get user options.
+    r"""Get user options.
 
     Return:
         List of user options passed in via --user="arg1 arg2 ..."
@@ -247,7 +250,7 @@ def get_user():
 
 
 def set_notice_level(notice_level):
-    r""" Set the notice level.
+    r"""Set the notice level.
 
     Args:
         notice_level (int). The maximum notice level to print.
@@ -272,7 +275,7 @@ def set_notice_level(notice_level):
 
 
 def set_msg_file(fname):
-    r""" Set the message file.
+    r"""Set the message file.
 
     Args:
         fname (str): Specifies the name of the file to write. The file will be overwritten.
@@ -296,7 +299,7 @@ def set_msg_file(fname):
 
 
 def set_autotuner_params(enable=True, period=100000):
-    r""" Set autotuner parameters.
+    r"""Set autotuner parameters.
 
     Args:
         enable (bool). Set to True to enable autotuning. Set to False to disable.
@@ -312,7 +315,7 @@ def set_autotuner_params(enable=True, period=100000):
 
 
 def set_num_threads(num_threads):
-    r""" Set the number of CPU (TBB) threads HOOMD uses
+    r"""Set the number of CPU (TBB) threads HOOMD uses
 
     Args:
         num_threads (int): The number of threads

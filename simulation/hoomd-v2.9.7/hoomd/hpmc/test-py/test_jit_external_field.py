@@ -28,7 +28,11 @@ class jit_external_field(unittest.TestCase):
 
         # Expand system, add walls, and add gravity
         hoomd.update.box_resize(
-            Lx=system.box.Lx * 1.5, Ly=system.box.Ly * 1.5, Lz=system.box.Lz * 20, scale_particles=False, period=None,
+            Lx=system.box.Lx * 1.5,
+            Ly=system.box.Ly * 1.5,
+            Lz=system.box.Lz * 20,
+            scale_particles=False,
+            period=None,
         )
         wall = hpmc.field.wall(mc)
         wall.add_plane_wall([0, 0, 1], [0, 0, -system.box.Lz / 2])

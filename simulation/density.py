@@ -17,9 +17,7 @@ def density_grid(pos):
 
     lims = [(np.floor(lower), np.ceil(higher)) for (lower, higher) in lims]
 
-    side_lens = [int(higher-lower) for (lower, higher) in lims]
-
-
+    side_lens = [int(higher - lower) for (lower, higher) in lims]
 
 
 n_cell = 2

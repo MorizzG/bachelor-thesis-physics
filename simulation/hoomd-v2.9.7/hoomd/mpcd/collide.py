@@ -24,7 +24,7 @@ from . import _mpcd
 
 
 class _collision_method(hoomd.meta._metadata):
-    """ Base collision method
+    """Base collision method
 
     Args:
         seed (int): Seed to the collision method random number generator (must be positive)
@@ -67,7 +67,7 @@ class _collision_method(hoomd.meta._metadata):
         hoomd.util.unquiet_status()
 
     def embed(self, group):
-        """ Embed a particle group into the MPCD collision
+        """Embed a particle group into the MPCD collision
 
         Args:
             group (:py:mod:`hoomd.group`): Group of particles to embed
@@ -97,7 +97,7 @@ class _collision_method(hoomd.meta._metadata):
         self._cpp.setEmbeddedGroup(group.cpp_group)
 
     def enable(self):
-        """ Enable the collision method
+        """Enable the collision method
 
         Examples::
 
@@ -115,7 +115,7 @@ class _collision_method(hoomd.meta._metadata):
         hoomd.context.current.mpcd._collide = self
 
     def disable(self):
-        """ Disable the collision method
+        """Disable the collision method
 
         Examples::
 
@@ -132,7 +132,7 @@ class _collision_method(hoomd.meta._metadata):
         hoomd.context.current.mpcd._collide = None
 
     def set_period(self, period):
-        """ Set the collision period.
+        """Set the collision period.
 
         Args:
             period (int): New collision period.
@@ -167,7 +167,7 @@ class _collision_method(hoomd.meta._metadata):
 
 
 class at(_collision_method):
-    r""" Andersen thermostat method
+    r"""Andersen thermostat method
 
     Args:
         seed (int): Seed to the collision method random number generator (must be positive)
@@ -247,7 +247,7 @@ class at(_collision_method):
         hoomd.util.unquiet_status()
 
     def set_params(self, shift=None, kT=None):
-        """ Set parameters for the SRD collision method
+        """Set parameters for the SRD collision method
 
         Args:
             shift (bool): If True, perform a random shift of the underlying cell list.
@@ -272,7 +272,7 @@ class at(_collision_method):
 
 
 class srd(_collision_method):
-    r""" Stochastic rotation dynamics method
+    r"""Stochastic rotation dynamics method
 
     Args:
         seed (int): Seed to the collision method random number generator (must be positive)
@@ -355,7 +355,7 @@ class srd(_collision_method):
         hoomd.util.unquiet_status()
 
     def set_params(self, angle=None, shift=None, kT=None):
-        """ Set parameters for the SRD collision method
+        """Set parameters for the SRD collision method
 
         Args:
             angle (float): SRD rotation angle (degrees)

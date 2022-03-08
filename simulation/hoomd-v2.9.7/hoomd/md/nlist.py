@@ -49,7 +49,7 @@ from hoomd.md import _md
 
 
 class nlist:
-    r""" Base class neighbor list.
+    r"""Base class neighbor list.
 
     Methods provided by this base class are available to all subclasses.
     """
@@ -128,7 +128,7 @@ class nlist:
             hoomd.util.unquiet_status()
 
     def set_params(self, r_buff=None, check_period=None, d_max=None, dist_check=True):
-        r""" Change neighbor list parameters.
+        r"""Change neighbor list parameters.
 
         Args:
 
@@ -197,7 +197,7 @@ class nlist:
             self.cpp_nlist.setMaximumDiameter(d_max)
 
     def reset_exclusions(self, exclusions=None):
-        r""" Resets all exclusions in the neighborlist.
+        r"""Resets all exclusions in the neighborlist.
 
         Args:
             exclusions (list): Select which interactions should be excluded from the pair interaction calculation.
@@ -327,7 +327,7 @@ class nlist:
         self.cpp_nlist.addExclusion(i, j)
 
     def query_update_period(self):
-        r""" Query the maximum possible check_period.
+        r"""Query the maximum possible check_period.
 
         :py:meth:`query_update_period` examines the counts of nlist rebuilds during the previous :py:func:`hoomd.run()`.
         It returns ``s-1``, where *s* is the smallest update period experienced during that time.
@@ -347,9 +347,16 @@ class nlist:
         return self.cpp_nlist.getSmallestRebuild() - 1
 
     def tune(
-        self, warmup=200000, r_min=0.05, r_max=1.0, jumps=20, steps=5000, set_max_check_period=False, quiet=False,
+        self,
+        warmup=200000,
+        r_min=0.05,
+        r_max=1.0,
+        jumps=20,
+        steps=5000,
+        set_max_check_period=False,
+        quiet=False,
     ):
-        r""" Make a series of short runs to determine the fastest performing r_buff setting.
+        r"""Make a series of short runs to determine the fastest performing r_buff setting.
 
         Args:
             warmup (int): Number of time steps to run() to warm up the benchmark
@@ -557,7 +564,7 @@ class rcut:
 
 
 class cell(nlist):
-    r""" Cell list based neighbor list
+    r"""Cell list based neighbor list
 
     Args:
         r_buff (float):  Buffer width.
@@ -591,7 +598,13 @@ class cell(nlist):
     """
 
     def __init__(
-        self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, name=None, deterministic=False,
+        self,
+        r_buff=0.4,
+        check_period=1,
+        d_max=None,
+        dist_check=True,
+        name=None,
+        deterministic=False,
     ):
         hoomd.util.print_status_line()
 
@@ -633,7 +646,7 @@ cell.cur_id = 0
 
 
 class stencil(nlist):
-    r""" Cell list based neighbor list using stencils
+    r"""Cell list based neighbor list using stencils
 
     Args:
         r_buff (float):  Buffer width.
@@ -680,14 +693,27 @@ class stencil(nlist):
     """
 
     def __init__(
-        self, r_buff=0.4, check_period=1, d_max=None, dist_check=True, cell_width=None, name=None, deterministic=False,
+        self,
+        r_buff=0.4,
+        check_period=1,
+        d_max=None,
+        dist_check=True,
+        cell_width=None,
+        name=None,
+        deterministic=False,
     ):
         hoomd.util.print_status_line()
 
         # register the citation
         c = hoomd.cite.article(
             cite_key="howard2016",
-            author=["M P Howard", "J A Anderson", "A Nikoubashman", "S C Glotzer", "A Z Panagiotopoulos",],
+            author=[
+                "M P Howard",
+                "J A Anderson",
+                "A Nikoubashman",
+                "S C Glotzer",
+                "A Z Panagiotopoulos",
+            ],
             title="Efficient neighbor list calculation for molecular simulation of colloidal systems using graphics processing units",
             journal="Computer Physics Communications",
             volume=203,
@@ -740,7 +766,7 @@ class stencil(nlist):
         hoomd.util.unquiet_status()
 
     def set_cell_width(self, cell_width):
-        r""" Set the cell width
+        r"""Set the cell width
 
         Args:
             cell_width (float): New cell width.
@@ -750,7 +776,7 @@ class stencil(nlist):
             self.cpp_nlist.setCellWidth(float(cell_width))
 
     def tune_cell_width(self, warmup=200000, min_width=None, max_width=None, jumps=20, steps=5000):
-        r""" Make a series of short runs to determine the fastest performing bin width.
+        r"""Make a series of short runs to determine the fastest performing bin width.
 
         Args:
             warmup (int): Number of time steps to run() to warm up the benchmark
@@ -843,7 +869,7 @@ stencil.cur_id = 0
 
 
 class tree(nlist):
-    r""" Bounding volume hierarchy based neighbor list.
+    r"""Bounding volume hierarchy based neighbor list.
 
     Args:
         r_buff (float):  Buffer width.
@@ -884,7 +910,13 @@ class tree(nlist):
         # register the citation
         c1 = hoomd.cite.article(
             cite_key="howard2016",
-            author=["M P Howard", "J A Anderson", "A Nikoubashman", "S C Glotzer", "A Z Panagiotopoulos",],
+            author=[
+                "M P Howard",
+                "J A Anderson",
+                "A Nikoubashman",
+                "S C Glotzer",
+                "A Z Panagiotopoulos",
+            ],
             title="Efficient neighbor list calculation for molecular simulation of colloidal systems using graphics processing units",
             journal="Computer Physics Communications",
             volume=203,

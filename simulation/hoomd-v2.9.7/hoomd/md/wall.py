@@ -34,7 +34,7 @@ from hoomd.md import _md, external
 
 
 class group(object):
-    r""" Defines a wall group.
+    r"""Defines a wall group.
 
     Args:
         walls (list): Wall objects to be included in the group.
@@ -140,7 +140,7 @@ class group(object):
             self.add(wall)
 
     def add(self, wall):
-        r""" Generic wall add for wall objects.
+        r"""Generic wall add for wall objects.
 
         Generic convenience function to add any wall object to the group.
         Accepts :py:class:`sphere`, :py:class:`cylinder`, :py:class:`plane`, and lists of any
@@ -166,7 +166,7 @@ class group(object):
             print("Input of type " + str(type(wall)) + " is not allowed.")
 
     def add_sphere(self, r, origin, inside=True):
-        r""" Adds a sphere to the wall group.
+        r"""Adds a sphere to the wall group.
 
         Args:
             r (float): Sphere radius (in distance units)
@@ -178,7 +178,7 @@ class group(object):
         self.spheres.append(sphere(r, origin, inside))
 
     def add_cylinder(self, r, origin, axis, inside=True):
-        r""" Adds a cylinder to the wall group.
+        r"""Adds a cylinder to the wall group.
 
         Args:
             r (float): Cylinder radius (in distance units)
@@ -191,7 +191,7 @@ class group(object):
         self.cylinders.append(cylinder(r, origin, axis, inside))
 
     def add_plane(self, origin, normal, inside=True):
-        r""" Adds a plane to the wall group.
+        r"""Adds a plane to the wall group.
 
         Args:
             origin (tuple): Plane origin (in x,y,z coordinates)
@@ -203,7 +203,7 @@ class group(object):
         self.planes.append(plane(origin, normal, inside))
 
     def del_sphere(self, *indexs):
-        r""" Deletes the sphere or spheres in index.
+        r"""Deletes the sphere or spheres in index.
 
         Args:
             index (list): The index of sphere(s) desired to delete. Accepts int, range, and lists.
@@ -225,7 +225,7 @@ class group(object):
                     raise RuntimeError("del_sphere failed")
 
     def del_cylinder(self, *indexs):
-        r""" Deletes the cylinder or cylinders in index.
+        r"""Deletes the cylinder or cylinders in index.
 
         Args:
             index (list): The index of cylinder(s) desired to delete. Accepts int, range, and lists.
@@ -247,7 +247,7 @@ class group(object):
                     raise RuntimeError("del_cylinder failed")
 
     def del_plane(self, *indexs):
-        r""" Deletes the plane or planes in index.
+        r"""Deletes the plane or planes in index.
 
         Args:
             index (list): The index of plane(s) desired to delete. Accepts int, range, and lists.
@@ -294,7 +294,7 @@ class group(object):
 
 
 class sphere(object):
-    r""" Sphere wall.
+    r"""Sphere wall.
 
     Args:
         r (float): Sphere radius (in distance units)
@@ -368,11 +368,15 @@ class sphere(object):
         return "Radius=%s\tOrigin=%s\tInside=%s" % (str(self.r), str(self.origin), str(self.inside))
 
     def __repr__(self):
-        return "{'r': %s, 'origin': %s, 'inside': %s}" % (str(self.r), str(self.origin), str(self.inside),)
+        return "{'r': %s, 'origin': %s, 'inside': %s}" % (
+            str(self.r),
+            str(self.origin),
+            str(self.inside),
+        )
 
 
 class cylinder(object):
-    r""" Cylinder wall.
+    r"""Cylinder wall.
 
     Args:
         r (float): Cylinder radius (in distance units)
@@ -430,7 +434,7 @@ class cylinder(object):
 
 
 class plane(object):
-    r""" Plane wall.
+    r"""Plane wall.
 
     Args:
         origin (tuple): Plane origin (in x,y,z coordinates)\n <i>Default : (0.0, 0.0, 0.0)</i>
@@ -469,10 +473,18 @@ class plane(object):
         self._normal = _hoomd.make_scalar3(*normal)
 
     def __str__(self):
-        return "Origin=%s\tNormal=%s\tInside=%s" % (str(self.origin), str(self.normal), str(self.inside),)
+        return "Origin=%s\tNormal=%s\tInside=%s" % (
+            str(self.origin),
+            str(self.normal),
+            str(self.inside),
+        )
 
     def __repr__(self):
-        return "{'origin':%s, 'normal': %s, 'inside': %s}" % (str(self.origin), str(self.normal), str(self.inside),)
+        return "{'origin':%s, 'normal': %s, 'inside': %s}" % (
+            str(self.origin),
+            str(self.normal),
+            str(self.inside),
+        )
 
 
 #           *** Potentials ***
@@ -666,7 +678,7 @@ class wallpotential(external._external_force):
 
 
 class lj(wallpotential):
-    r""" Lennard-Jones wall potential.
+    r"""Lennard-Jones wall potential.
 
     Args:
         walls (:py:class:`group`): Wall group containing half-space geometries for the force to act in.
@@ -734,7 +746,7 @@ class lj(wallpotential):
 
 
 class gauss(wallpotential):
-    r""" Gaussian wall potential.
+    r"""Gaussian wall potential.
 
     Args:
         walls (:py:class:`group`): Wall group containing half-space geometries for the force to act in.
@@ -786,7 +798,7 @@ class gauss(wallpotential):
 
 
 class slj(wallpotential):
-    r""" Shifted Lennard-Jones wall potential
+    r"""Shifted Lennard-Jones wall potential
 
     Args:
         walls (:py:class:`group`): Wall group containing half-space geometries for the force to act in.
@@ -854,7 +866,7 @@ class slj(wallpotential):
 
 
 class yukawa(wallpotential):
-    r""" Yukawa wall potential.
+    r"""Yukawa wall potential.
 
     Args:
         walls (:py:class:`group`): Wall group containing half-space geometries for the force to act in.
@@ -906,7 +918,7 @@ class yukawa(wallpotential):
 
 
 class morse(wallpotential):
-    r""" Morse wall potential.
+    r"""Morse wall potential.
 
     Args:
         walls (:py:class:`group`): Wall group containing half-space geometries for the force to act in.
@@ -956,12 +968,14 @@ class morse(wallpotential):
         r0 = coeff["r0"]
 
         return _md.make_wall_morse_params(
-            _hoomd.make_scalar4(D0, alpha, r0, 0.0), coeff["r_cut"] * coeff["r_cut"], coeff["r_extrap"],
+            _hoomd.make_scalar4(D0, alpha, r0, 0.0),
+            coeff["r_cut"] * coeff["r_cut"],
+            coeff["r_extrap"],
         )
 
 
 class force_shifted_lj(wallpotential):
-    r""" Force-shifted Lennard-Jones wall potential.
+    r"""Force-shifted Lennard-Jones wall potential.
 
     Args:
         walls (:py:class:`group`): Wall group containing half-space geometries for the force to act in.
@@ -1019,7 +1033,7 @@ class force_shifted_lj(wallpotential):
 
 
 class mie(wallpotential):
-    r""" Mie potential wall potential.
+    r"""Mie potential wall potential.
 
     Args:
         walls (:py:class:`group`): Wall group containing half-space geometries for the force to act in.
@@ -1074,5 +1088,7 @@ class mie(wallpotential):
         mie3 = n
         mie4 = m
         return _md.make_wall_mie_params(
-            _hoomd.make_scalar4(mie1, mie2, mie3, mie4), coeff["r_cut"] * coeff["r_cut"], coeff["r_extrap"],
+            _hoomd.make_scalar4(mie1, mie2, mie3, mie4),
+            coeff["r_cut"] * coeff["r_cut"],
+            coeff["r_extrap"],
         )

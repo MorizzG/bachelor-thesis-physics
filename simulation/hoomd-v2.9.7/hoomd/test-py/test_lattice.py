@@ -52,7 +52,12 @@ class lattice_hex_test(unittest.TestCase):
                 snap.particles.position[1, 1] *= -1
             numpy.testing.assert_allclose(
                 snap.particles.position,
-                [[0, -1 * math.sqrt(3), 0], [-1, -2 * math.sqrt(3), 0], [0, math.sqrt(3), 0], [-1, 0, 0],],
+                [
+                    [0, -1 * math.sqrt(3), 0],
+                    [-1, -2 * math.sqrt(3), 0],
+                    [0, math.sqrt(3), 0],
+                    [-1, 0, 0],
+                ],
                 rtol=1e-5,
             )
 

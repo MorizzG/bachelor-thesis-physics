@@ -24,7 +24,11 @@ class update_mueller_plathe_flow(unittest.TestCase):
         const_flow = variant.linear_interp([(0, 0), (1e8, 0.03 * dt * 1e8)])
         # simple creation
         flow = md.update.mueller_plathe_flow(
-            group.all(), const_flow, md.update.mueller_plathe_flow.Z, md.update.mueller_plathe_flow.X, Nslabs,
+            group.all(),
+            const_flow,
+            md.update.mueller_plathe_flow.Z,
+            md.update.mueller_plathe_flow.X,
+            Nslabs,
         )
         run(10)
 

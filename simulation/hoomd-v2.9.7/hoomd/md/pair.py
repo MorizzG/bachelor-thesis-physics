@@ -38,7 +38,7 @@ from hoomd.md import nlist as nl  # to avoid naming conflicts
 
 
 class coeff:
-    r""" Define pair coefficients
+    r"""Define pair coefficients
 
     All pair forces use :py:class:`coeff` to specify the coefficients between different
     pairs of particles indexed by type. The set of pair coefficients is a symmetric
@@ -114,7 +114,7 @@ class coeff:
         self.default_coeff[name] = value
 
     def set(self, a, b, **coeffs):
-        r""" Sets parameters for one type pair.
+        r"""Sets parameters for one type pair.
 
         Args:
             a (str): First particle type in the pair (or a list of type names)
@@ -381,7 +381,7 @@ class pair(force._force):
         self.nlist.update_rcut()
 
     def set_params(self, mode=None):
-        r""" Set parameters controlling the way forces are computed.
+        r"""Set parameters controlling the way forces are computed.
 
         Args:
             mode (str): (if set) Set the mode with which potentials are handled at the cutoff.
@@ -509,7 +509,7 @@ class pair(force._force):
         return data
 
     def compute_energy(self, tags1, tags2):
-        r""" Compute the energy between two sets of particles.
+        r"""Compute the energy between two sets of particles.
 
         Args:
             tags1 (``ndarray<int32>``): a numpy array of particle tags in the first group
@@ -833,7 +833,7 @@ class slj(pair):
         return _hoomd.make_scalar2(lj1, lj2)
 
     def set_params(self, mode=None):
-        r""" Set parameters controlling the way forces are computed.
+        r"""Set parameters controlling the way forces are computed.
 
         See :py:meth:`pair.set_params()`.
 
@@ -1003,7 +1003,7 @@ class ewald(pair):
         return _hoomd.make_scalar2(kappa, alpha)
 
     def set_params(self, coeff):
-        """ :py:class:`ewald` has no energy shift modes """
+        """:py:class:`ewald` has no energy shift modes"""
 
         raise RuntimeError("Not implemented for DPD Conservative")
         return
@@ -1209,7 +1209,7 @@ class table(force._force):
                 self.update_pair_table(i, j, func, rmin, rmax, coeff)
 
     def set_from_file(self, a, b, filename):
-        r""" Set a pair interaction from a file.
+        r"""Set a pair interaction from a file.
 
         Args:
             a (str): Name of type A in pair
@@ -1498,7 +1498,7 @@ class dpd(pair):
         self.cpp_force.setT(kT.cpp_variant)
 
     def set_params(self, kT=None):
-        r""" Changes parameters.
+        r"""Changes parameters.
 
         Args:
             kT (:py:mod:`hoomd.variant` or :py:obj:`float`): Temperature of thermostat (in energy units).
@@ -1613,7 +1613,7 @@ class dpd_conservative(pair):
         return _hoomd.make_scalar2(a, gamma)
 
     def set_params(self, coeff):
-        """ :py:class:`dpd_conservative` has no energy shift modes """
+        """:py:class:`dpd_conservative` has no energy shift modes"""
 
         raise RuntimeError("Not implemented for DPD Conservative")
         return
@@ -1753,7 +1753,7 @@ class dpdlj(pair):
         self.cpp_force.setT(kT.cpp_variant)
 
     def set_params(self, kT=None, mode=None):
-        r""" Changes parameters.
+        r"""Changes parameters.
 
         Args:
             T (:py:mod:`hoomd.variant` or :py:obj:`float`): Temperature (if set) (in energy units)
@@ -2046,14 +2046,14 @@ class zbl(pair):
         return _hoomd.make_scalar2(Zsq, aF)
 
     def set_params(self, coeff):
-        """ :py:class:`zbl` has no energy shift modes """
+        """:py:class:`zbl` has no energy shift modes"""
 
         raise RuntimeError("Not implemented for DPD Conservative")
         return
 
 
 class tersoff(pair):
-    r""" Tersoff Potential.
+    r"""Tersoff Potential.
 
     Args:
         r_cut (float): Default cutoff radius (in distance units).
@@ -2154,7 +2154,15 @@ class tersoff(pair):
         ang_consts = _hoomd.make_scalar3(c2, d2, m)
 
         return _md.make_tersoff_params(
-            cutoff_d, tersoff_coeffs, exp_consts, dimer_r, n, gamman, lambda3_cube, ang_consts, alpha,
+            cutoff_d,
+            tersoff_coeffs,
+            exp_consts,
+            dimer_r,
+            n,
+            gamman,
+            lambda3_cube,
+            ang_consts,
+            alpha,
         )
 
 
@@ -2475,7 +2483,7 @@ class gb(ai_pair):
 
 
 class dipole(ai_pair):
-    r""" Screened dipole-dipole interactions.
+    r"""Screened dipole-dipole interactions.
 
     Args:
         r_cut (float): Default cutoff radius (in distance units).
@@ -2549,14 +2557,14 @@ class dipole(ai_pair):
         return _md.make_pair_dipole_params(mu, A, kappa)
 
     def set_params(self, *args, **kwargs):
-        """ :py:class:`dipole` has no energy shift modes """
+        """:py:class:`dipole` has no energy shift modes"""
 
         raise RuntimeError("Not implemented for dipole")
         return
 
 
 class reaction_field(pair):
-    r""" Onsager reaction field pair potential.
+    r"""Onsager reaction field pair potential.
 
     Args:
         r_cut (float): Default cutoff radius (in distance units).
@@ -2652,7 +2660,7 @@ class reaction_field(pair):
 
 
 class DLVO(pair):
-    r""" DLVO colloidal interaction
+    r"""DLVO colloidal interaction
 
     :py:class:`DLVO` specifies that a DLVO dispersion and electrostatic interaction should be
     applied between every non-excluded particle pair in the simulation.
@@ -2752,7 +2760,7 @@ class DLVO(pair):
 
 
 class square_density(pair):
-    r""" Soft potential for simulating a van-der-Waals liquid
+    r"""Soft potential for simulating a van-der-Waals liquid
 
     Args:
         r_cut (float): Default cutoff radius (in distance units).

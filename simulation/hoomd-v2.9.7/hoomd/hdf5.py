@@ -26,7 +26,7 @@ except ImportError as error:
 
 
 class File(h5py.File):
-    r""" Thin wrapper of the h5py.File class.
+    r"""Thin wrapper of the h5py.File class.
 
     This class ensures, that opening and close operations within a
     context manager are only executed on the root MPI rank.
@@ -46,7 +46,7 @@ class File(h5py.File):
 
 
 class log(hoomd.analyze._analyzer):
-    r""" Log a number of calculated quantities or matrices to a hdf5 file.
+    r"""Log a number of calculated quantities or matrices to a hdf5 file.
 
     Args:
         h5file(:py:class:`hoomd.hdf5.File`): Instance describing the opened h5file.
@@ -118,7 +118,7 @@ class log(hoomd.analyze._analyzer):
         hoomd.context.current.loggers.append(self)
 
     def set_params(self, quantities=None, matrix_quantities=None):
-        r""" Change the parameters of the log.
+        r"""Change the parameters of the log.
 
         Warning:
            Do not change the number or order of logged non-matrix quantities compared to values stored in the file.
@@ -172,7 +172,7 @@ class log(hoomd.analyze._analyzer):
             return self.cpp_analyzer.getMatrixQuantity(quantity, timestep)
 
     def register_callback(self, name, callback, matrix=False):
-        r""" Register a callback to produce a logged quantity.
+        r"""Register a callback to produce a logged quantity.
 
         Args:
             name (str): Name of the quantity
@@ -213,7 +213,7 @@ class log(hoomd.analyze._analyzer):
         hoomd.context.current.system.registerLogger(self.cpp_analyzer)
 
     def disable(self):
-        r""" Disable the logger.
+        r"""Disable the logger.
 
         Examples::
 
@@ -232,7 +232,7 @@ class log(hoomd.analyze._analyzer):
         hoomd.context.current.loggers.remove(self)
 
     def enable(self):
-        r""" Enables the logger
+        r"""Enables the logger
 
         Examples::
 
@@ -283,7 +283,9 @@ class log(hoomd.analyze._analyzer):
                 raise RuntimeError("Error write quantities with log_hdf5.")
 
             data_set.resize(old_size + 1, axis=0)
-            data_set[old_size,] = new_array
+            data_set[
+                old_size,
+            ] = new_array
 
     # \internal
     # \brief Writes the logged matrix quantities to file
@@ -336,7 +338,9 @@ class log(hoomd.analyze._analyzer):
                 old_size = data_set.shape[0]
 
                 data_set.resize(old_size + 1, axis=0)
-                data_set[old_size,] = new_matrix
+                data_set[
+                    old_size,
+                ] = new_matrix
 
     # \internal
     # \brief prepare and check the hdf5 file for non-matrix quantity dump

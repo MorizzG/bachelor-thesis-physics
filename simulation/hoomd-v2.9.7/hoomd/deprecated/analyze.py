@@ -10,7 +10,7 @@ from hoomd.deprecated import _deprecated
 
 
 class msd(_analyzer):
-    r""" Mean-squared displacement.
+    r"""Mean-squared displacement.
 
     Args:
         filename (str): File to write the data to.
@@ -96,7 +96,7 @@ class msd(_analyzer):
             self.cpp_analyzer.setR0(r0_file)
 
     def set_params(self, delimiter=None):
-        r""" Change the parameters of the msd analysis
+        r"""Change the parameters of the msd analysis
 
         Args:
             delimiter (str): New delimiter between columns in the output file (if specified).

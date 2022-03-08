@@ -91,9 +91,15 @@ __version__ = "{0}.{1}.{2}".format(*_hoomd.__version__)
 
 
 def run(
-    tsteps, profile=False, limit_hours=None, limit_multiple=1, callback_period=0, callback=None, quiet=False,
+    tsteps,
+    profile=False,
+    limit_hours=None,
+    limit_multiple=1,
+    callback_period=0,
+    callback=None,
+    quiet=False,
 ):
-    """ Runs the simulation for a given number of time steps.
+    """Runs the simulation for a given number of time steps.
 
     Args:
 
@@ -251,7 +257,7 @@ def run_upto(step, **keywords):
 
 
 def get_step():
-    """ Get the current simulation time step.
+    """Get the current simulation time step.
 
     Returns:
         The current simulation time step.

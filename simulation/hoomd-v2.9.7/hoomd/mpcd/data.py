@@ -111,7 +111,7 @@ from . import _mpcd, update
 
 
 class snapshot(hoomd.meta._metadata):
-    r""" MPCD system snapshot
+    r"""MPCD system snapshot
 
     Args:
         sys_snap (object): The C++ representation of the system data snapshot
@@ -135,12 +135,11 @@ class snapshot(hoomd.meta._metadata):
 
     @property
     def particles(self):
-        r""" MPCD particle data snapshot
-        """
+        r"""MPCD particle data snapshot"""
         return self.sys_snap.particles
 
     def replicate(self, nx=1, ny=1, nz=1):
-        r""" Replicate the MPCD system snapshot
+        r"""Replicate the MPCD system snapshot
 
         Args:
             nx (int): Number of times to replicate snapshot in *x*
@@ -174,7 +173,7 @@ class snapshot(hoomd.meta._metadata):
 
 
 class system(hoomd.meta._metadata):
-    r""" MPCD system data
+    r"""MPCD system data
 
     Args:
         sysdata (object): C++ representation of the MPCD system data
@@ -228,7 +227,7 @@ class system(hoomd.meta._metadata):
         return self.data.getCellList()
 
     def restore_snapshot(self, snapshot):
-        r""" Replaces the current MPCD system state
+        r"""Replaces the current MPCD system state
 
         Args:
             snapshot (:py:class:`hoomd.mpcd.data.snapshot`): MPCD system snapshot
@@ -247,7 +246,7 @@ class system(hoomd.meta._metadata):
         self.data.initializeFromSnapshot(snapshot.sys_snap)
 
     def set_params(self, cell=None):
-        r""" Set parameters of the MPCD system
+        r"""Set parameters of the MPCD system
 
         Args:
             cell (float): Edge length of an MPCD cell.
@@ -265,7 +264,7 @@ class system(hoomd.meta._metadata):
             self.cell.cell_size = cell
 
     def take_snapshot(self, particles=True):
-        r""" Takes a snapshot of the current state of the MPCD system
+        r"""Takes a snapshot of the current state of the MPCD system
 
         Args:
             particles (bool): If true, include particle data in snapshot

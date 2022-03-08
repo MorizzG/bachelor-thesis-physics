@@ -465,7 +465,12 @@ class shape_union(unittest.TestCase):
                     for n in range(m + 1, self.N):
                         # print(dimer_overlap(system, cube_verts, dimer_pos[i], dimer_ors[i], dimer_pos[j], dimer_ors[j]))
                         if dimer_overlap_manual(
-                            system, cube_verts, dimer_pos[m], dimer_ors[m], dimer_pos[n], dimer_ors[n],
+                            system,
+                            cube_verts,
+                            dimer_pos[m],
+                            dimer_ors[m],
+                            dimer_pos[n],
+                            dimer_ors[n],
                         ):
                             overlaps = True
                             break

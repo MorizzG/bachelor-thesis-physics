@@ -179,7 +179,7 @@ class compressor(unittest.TestCase):
         self.args = {
             "ptypes": ["A"],
             "pnums": [1],
-            "pvolumes": [4.0 / 3.0 * np.pi * 0.5 ** 3],
+            "pvolumes": [4.0 / 3.0 * np.pi * 0.5**3],
             "pverts": [],
             "num_comp_steps": 5e4,
             "log_file": self.fname,
@@ -213,7 +213,7 @@ class compressor(unittest.TestCase):
     def test_2sphere(self):
         self.args["ptypes"] = ["A"]
         self.args["pnums"] = [2]
-        self.args["pvolumes"] = [4.0 / 3.0 * np.pi * 0.5 ** 3]
+        self.args["pvolumes"] = [4.0 / 3.0 * np.pi * 0.5**3]
         self.args["num_comp_steps"] = 4e5
         self.args["pf_tol"] = 1e-4
         self.args["pmin"] = 5

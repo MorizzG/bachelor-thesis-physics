@@ -262,7 +262,13 @@ class article(_citation):
         if self.author is not None:
             out += self.format_authors(True)
             out += ". "
-        out += '"%s", %s %s (%s) %s' % (self.title, self.journal, str(self.volume), str(self.year), str(self.pages),)
+        out += '"%s", %s %s (%s) %s' % (
+            self.title,
+            self.journal,
+            str(self.volume),
+            str(self.year),
+            str(self.pages),
+        )
         return out
 
 
@@ -478,7 +484,7 @@ def _ensure_global_bib():
 
 
 def save(file="hoomd.bib"):
-    """ Saves the automatically generated bibliography to a BibTeX file
+    """Saves the automatically generated bibliography to a BibTeX file
 
     Args:
 

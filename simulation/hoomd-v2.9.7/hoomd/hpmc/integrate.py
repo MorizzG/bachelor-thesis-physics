@@ -11,7 +11,7 @@ from hoomd.integrate import _integrator
 
 
 class interaction_matrix:
-    r""" Define pairwise interaction matrix
+    r"""Define pairwise interaction matrix
 
     All shapes use :py:class:`interaction_matrix` to define the interaction matrix between different
     pairs of particles indexed by type. The set of pair coefficients is a symmetric
@@ -59,7 +59,7 @@ class interaction_matrix:
     # \brief Contains the matrix of set values in a dictionary
 
     def set(self, a, b, enable):
-        r""" Sets parameters for one type pair.
+        r"""Sets parameters for one type pair.
 
         Args:
             a (str): First particle type in the pair (or a list of type names)
@@ -150,7 +150,7 @@ def cite_depletants():
 
 
 class mode_hpmc(_integrator):
-    r""" Base class HPMC integrator.
+    r"""Base class HPMC integrator.
 
     :py:class:`mode_hpmc` is the base class for all HPMC integrators. It provides common interface elements.
     Users should not instantiate this class directly. Methods documented here are available to all hpmc
@@ -330,7 +330,7 @@ class mode_hpmc(_integrator):
             self.shape_param[type].is_set = True
 
     def setup_pos_writer(self, pos, colors={}):
-        r""" Set pos_writer definitions for specified shape parameters.
+        r"""Set pos_writer definitions for specified shape parameters.
 
         Args:
             pos (:py:class:`hoomd.deprecated.dump.pos`): pos writer to setup
@@ -414,7 +414,7 @@ class mode_hpmc(_integrator):
         ntrial=None,
         deterministic=None,
     ):
-        r""" Changes parameters of an existing integration mode.
+        r"""Changes parameters of an existing integration mode.
 
         Args:
             d (float): (if set) Maximum move displacement, Scalar to set for all types, or a dict containing {type:size} to set by type.
@@ -442,7 +442,8 @@ class mode_hpmc(_integrator):
             if isinstance(d, dict):
                 for t, t_d in d.items():
                     self.cpp_integrator.setD(
-                        t_d, hoomd.context.current.system_definition.getParticleData().getTypeByName(t),
+                        t_d,
+                        hoomd.context.current.system_definition.getParticleData().getTypeByName(t),
                     )
             else:
                 for i in range(hoomd.context.current.system_definition.getParticleData().getNTypes()):
@@ -452,7 +453,8 @@ class mode_hpmc(_integrator):
             if isinstance(a, dict):
                 for t, t_a in a.items():
                     self.cpp_integrator.setA(
-                        t_a, hoomd.context.current.system_definition.getParticleData().getTypeByName(t),
+                        t_a,
+                        hoomd.context.current.system_definition.getParticleData().getTypeByName(t),
                     )
             else:
                 for i in range(hoomd.context.current.system_definition.getParticleData().getNTypes()):
@@ -487,7 +489,7 @@ class mode_hpmc(_integrator):
             self.cpp_integrator.setDeterministic(deterministic)
 
     def map_overlaps(self):
-        r""" Build an overlap map of the system
+        r"""Build an overlap map of the system
 
         Returns:
             List of tuples. True/false value of the i,j entry indicates overlap/non-overlap of the ith and jth particles (by tag)
@@ -507,7 +509,7 @@ class mode_hpmc(_integrator):
         return list(zip(*[iter(overlap_map)] * N))
 
     def count_overlaps(self):
-        r""" Count the number of overlaps.
+        r"""Count the number of overlaps.
 
         Returns:
             The number of overlaps in the current system configuration
@@ -524,7 +526,7 @@ class mode_hpmc(_integrator):
         return self.cpp_integrator.countOverlaps(hoomd.context.current.system.getCurrentTimeStep(), False)
 
     def test_overlap(self, type_i, type_j, rij, qi, qj, use_images=True, exclude_self=False):
-        r""" Test overlap between two particles.
+        r"""Test overlap between two particles.
 
         Args:
             type_i (str): Type of first particle
@@ -552,7 +554,7 @@ class mode_hpmc(_integrator):
         return self.cpp_integrator.py_test_overlap(ti, tj, rij, qi, qj, use_images, exclude_self)
 
     def get_translate_acceptance(self):
-        r""" Get the average acceptance ratio for translate moves.
+        r"""Get the average acceptance ratio for translate moves.
 
         Returns:
             The average translate accept ratio during the last :py:func:`hoomd.run()`.
@@ -569,7 +571,7 @@ class mode_hpmc(_integrator):
         return counters.getTranslateAcceptance()
 
     def get_rotate_acceptance(self):
-        r""" Get the average acceptance ratio for rotate moves.
+        r"""Get the average acceptance ratio for rotate moves.
 
         Returns:
             The average rotate accept ratio during the last :py:func:`hoomd.run()`.
@@ -586,7 +588,7 @@ class mode_hpmc(_integrator):
         return counters.getRotateAcceptance()
 
     def get_mps(self):
-        r""" Get the number of trial moves per second.
+        r"""Get the number of trial moves per second.
 
         Returns:
             The number of trial moves per second performed during the last :py:func:`hoomd.run()`.
@@ -595,7 +597,7 @@ class mode_hpmc(_integrator):
         return self.cpp_integrator.getMPS()
 
     def get_counters(self):
-        r""" Get all trial move counters.
+        r"""Get all trial move counters.
 
         Returns:
             A dictionary containing all trial moves counted during the last :py:func:`hoomd.run()`.
@@ -624,7 +626,7 @@ class mode_hpmc(_integrator):
         )
 
     def get_d(self, type=None):
-        r""" Get the maximum trial displacement.
+        r"""Get the maximum trial displacement.
 
         Args:
             type (str): Type name to query.
@@ -641,7 +643,7 @@ class mode_hpmc(_integrator):
             )
 
     def get_a(self, type=None):
-        r""" Get the maximum trial rotation.
+        r"""Get the maximum trial rotation.
 
         Args:
             type (str): Type name to query.
@@ -658,7 +660,7 @@ class mode_hpmc(_integrator):
             )
 
     def get_move_ratio(self):
-        r""" Get the current probability of attempting translation moves.
+        r"""Get the current probability of attempting translation moves.
 
         Returns: The current value of the 'move_ratio' parameter of the integrator.
 
@@ -666,7 +668,7 @@ class mode_hpmc(_integrator):
         return self.cpp_integrator.getMoveRatio()
 
     def get_nselect(self):
-        r""" Get nselect parameter.
+        r"""Get nselect parameter.
 
         Returns:
             The current value of the 'nselect' parameter of the integrator.
@@ -675,7 +677,7 @@ class mode_hpmc(_integrator):
         return self.cpp_integrator.getNSelect()
 
     def get_ntrial(self):
-        r""" Get ntrial parameter.
+        r"""Get ntrial parameter.
 
         Returns:
             The current value of the 'ntrial' parameter of the integrator.
@@ -690,7 +692,7 @@ class mode_hpmc(_integrator):
         return self.cpp_integrator.getNTrial()
 
     def get_nR(self):
-        r""" Get depletant density
+        r"""Get depletant density
 
         Returns:
             The current value of the 'nR' parameter of the integrator.
@@ -705,7 +707,7 @@ class mode_hpmc(_integrator):
         return self.cpp_integrator.getDepletantDensity()
 
     def get_depletant_type(self):
-        r""" Get the depletant type
+        r"""Get the depletant type
 
         Returns:
             The type of particle used as depletant (the 'depletant_type' argument of the integrator).
@@ -721,7 +723,7 @@ class mode_hpmc(_integrator):
         return hoomd.context.current.system_definition.getParticleData().getNameByType(typeid)
 
     def get_configurational_bias_ratio(self):
-        r""" Get the average ratio of configurational bias attempts to depletant insertion moves.
+        r"""Get the average ratio of configurational bias attempts to depletant insertion moves.
 
         Only supported with **depletant_mode=='circumsphere'**.
 
@@ -788,7 +790,7 @@ def depletant_mode_circumsphere(depletant_mode):
 
 
 class sphere(mode_hpmc):
-    r""" HPMC integration for spheres (2D/3D).
+    r"""HPMC integration for spheres (2D/3D).
 
     Args:
         seed (int): Random number seed
@@ -916,7 +918,7 @@ class sphere(mode_hpmc):
 
 
 class convex_polygon(mode_hpmc):
-    r""" HPMC integration for convex polygons (2D).
+    r"""HPMC integration for convex polygons (2D).
 
     Args:
         seed (int): Random number seed
@@ -1013,7 +1015,7 @@ class convex_polygon(mode_hpmc):
 
 
 class convex_spheropolygon(mode_hpmc):
-    r""" HPMC integration for convex spheropolygons (2D).
+    r"""HPMC integration for convex spheropolygons (2D).
 
     Args:
         seed (int): Random number seed.
@@ -1118,7 +1120,7 @@ class convex_spheropolygon(mode_hpmc):
 
 
 class simple_polygon(mode_hpmc):
-    r""" HPMC integration for simple polygons (2D).
+    r"""HPMC integration for simple polygons (2D).
 
     Args:
         seed (int): Random number seed.
@@ -1393,7 +1395,7 @@ class polyhedron(mode_hpmc):
 
 
 class convex_polyhedron(mode_hpmc):
-    r""" HPMC integration for convex polyhedra (3D).
+    r"""HPMC integration for convex polyhedra (3D).
 
     Args:
         seed (int): Random number seed.
@@ -1537,7 +1539,7 @@ class convex_polyhedron(mode_hpmc):
 
 
 class faceted_ellipsoid(mode_hpmc):
-    r""" HPMC integration for faceted ellipsoids (3D).
+    r"""HPMC integration for faceted ellipsoids (3D).
 
     Args:
         seed (int): Random number seed.
@@ -1681,7 +1683,7 @@ class faceted_ellipsoid(mode_hpmc):
 
 
 class faceted_sphere(faceted_ellipsoid):
-    r""" HPMC integration for faceted spheres (3D).
+    r"""HPMC integration for faceted spheres (3D).
 
     Args:
         seed (int): Random number seed.
@@ -1792,7 +1794,7 @@ class faceted_sphere(faceted_ellipsoid):
 
 
 class sphinx(mode_hpmc):
-    r""" HPMC integration for sphinx particles (3D).
+    r"""HPMC integration for sphinx particles (3D).
 
     Args:
         seed (int): Random number seed.
@@ -1919,7 +1921,7 @@ class sphinx(mode_hpmc):
 
 
 class convex_spheropolyhedron(mode_hpmc):
-    r""" HPMC integration for spheropolyhedra (3D).
+    r"""HPMC integration for spheropolyhedra (3D).
 
     Args:
         seed (int): Random number seed.
@@ -2076,7 +2078,7 @@ class convex_spheropolyhedron(mode_hpmc):
 
 
 class ellipsoid(mode_hpmc):
-    r""" HPMC integration for ellipsoids (2D/3D).
+    r"""HPMC integration for ellipsoids (2D/3D).
 
     Args:
         seed (int): Random number seed.
@@ -2198,7 +2200,7 @@ class ellipsoid(mode_hpmc):
 
 
 class sphere_union(mode_hpmc):
-    r""" HPMC integration for unions of spheres (3D).
+    r"""HPMC integration for unions of spheres (3D).
 
     This shape uses an internal OBB tree for fast collision queries.
     Depending on the number of constituent spheres in the tree, different values of the number of
@@ -2340,7 +2342,7 @@ class sphere_union(mode_hpmc):
 
 
 class convex_spheropolyhedron_union(mode_hpmc):
-    r""" HPMC integration for unions of convex polyhedra (3D).
+    r"""HPMC integration for unions of convex polyhedra (3D).
 
     Args:
         seed (int): Random number seed.
@@ -2385,7 +2387,14 @@ class convex_spheropolyhedron_union(mode_hpmc):
     """
 
     def __init__(
-        self, seed, d=0.1, a=0.1, move_ratio=0.5, nselect=4, implicit=False, depletant_mode="circumsphere",
+        self,
+        seed,
+        d=0.1,
+        a=0.1,
+        move_ratio=0.5,
+        nselect=4,
+        implicit=False,
+        depletant_mode="circumsphere",
     ):
         hoomd.util.print_status_line()
 
@@ -2481,7 +2490,7 @@ class convex_spheropolyhedron_union(mode_hpmc):
 
 
 class convex_polyhedron_union(convex_spheropolyhedron_union):
-    r""" HPMC integration for unions of convex polyhedra (3D).
+    r"""HPMC integration for unions of convex polyhedra (3D).
 
      .. deprecated:: 2.4
         Replaced by :py:class:`convex_spheropolyhedron_union`. This class stays in place for compatibility with older scripts.
@@ -2529,7 +2538,14 @@ class convex_polyhedron_union(convex_spheropolyhedron_union):
     """
 
     def __init__(
-        self, seed, d=0.1, a=0.1, move_ratio=0.5, nselect=4, implicit=False, depletant_mode="circumsphere",
+        self,
+        seed,
+        d=0.1,
+        a=0.1,
+        move_ratio=0.5,
+        nselect=4,
+        implicit=False,
+        depletant_mode="circumsphere",
     ):
         hoomd.util.print_status_line()
 
@@ -2538,7 +2554,7 @@ class convex_polyhedron_union(convex_spheropolyhedron_union):
 
 
 class faceted_ellipsoid_union(mode_hpmc):
-    r""" HPMC integration for unions of faceted ellipsoids (3D).
+    r"""HPMC integration for unions of faceted ellipsoids (3D).
 
     Args:
         seed (int): Random number seed.
@@ -2592,7 +2608,14 @@ class faceted_ellipsoid_union(mode_hpmc):
     """
 
     def __init__(
-        self, seed, d=0.1, a=0.1, move_ratio=0.5, nselect=4, implicit=False, depletant_mode="circumsphere",
+        self,
+        seed,
+        d=0.1,
+        a=0.1,
+        move_ratio=0.5,
+        nselect=4,
+        implicit=False,
+        depletant_mode="circumsphere",
     ):
         hoomd.util.print_status_line()
 

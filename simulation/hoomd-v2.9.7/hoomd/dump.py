@@ -19,7 +19,7 @@ from hoomd import _hoomd
 
 
 class dcd(hoomd.analyze._analyzer):
-    r""" Writes simulation snapshots in the DCD format
+    r"""Writes simulation snapshots in the DCD format
 
     Args:
         filename (str): File name to write.
@@ -87,7 +87,11 @@ class dcd(hoomd.analyze._analyzer):
             hoomd.util.unquiet_status()
 
         self.cpp_analyzer = _hoomd.DCDDumpWriter(
-            hoomd.context.current.system_definition, filename, int(reported_period), group.cpp_group, overwrite,
+            hoomd.context.current.system_definition,
+            filename,
+            int(reported_period),
+            group.cpp_group,
+            overwrite,
         )
         self.cpp_analyzer.setUnwrapFull(unwrap_full)
         self.cpp_analyzer.setUnwrapRigid(unwrap_rigid)
@@ -101,7 +105,7 @@ class dcd(hoomd.analyze._analyzer):
         self.metadata_fields = ["filename", "period", "group"]
 
     def enable(self):
-        """ The DCD dump writer cannot be re-enabled """
+        """The DCD dump writer cannot be re-enabled"""
         hoomd.util.print_status_line()
 
         if self.enabled == False:
@@ -218,7 +222,14 @@ class getar(hoomd.analyze._analyzer):
     }
 
     substitutions = {
-        "all": ["particle_all", "angle_all", "bond_all", "dihedral_all", "improper_all", "global_all",],
+        "all": [
+            "particle_all",
+            "angle_all",
+            "bond_all",
+            "dihedral_all",
+            "improper_all",
+            "global_all",
+        ],
         "particle_all": [
             "angular_momentum",
             "body",
@@ -534,7 +545,7 @@ class getar(hoomd.analyze._analyzer):
 
 
 class gsd(hoomd.analyze._analyzer):
-    r""" Writes simulation snapshots in the GSD format
+    r"""Writes simulation snapshots in the GSD format
 
     Args:
         filename (str): File name to write
@@ -701,7 +712,7 @@ class gsd(hoomd.analyze._analyzer):
         self.metadata_fields = ["filename", "period", "group", "phase"]
 
     def write_restart(self):
-        """ Write a restart file at the current time step.
+        """Write a restart file at the current time step.
 
         Call :py:meth:`write_restart` at the end of a simulation where are writing a gsd restart file with
         ``truncate=True`` to ensure that you have the final frame of the simulation written before exiting.

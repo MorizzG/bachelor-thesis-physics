@@ -29,7 +29,7 @@ class hpmc_gsd_shape_spec(unittest.TestCase):
         elif dim == 3:
             system = hoomd.init.create_lattice(unitcell=hoomd.lattice.sc(a=5.50), n=5)
         snapshot = system.take_snapshot(all=True)
-        bindex = np.random.choice(range(5 ** dim), int(0.5 * 5 ** dim), replace=False)
+        bindex = np.random.choice(range(5**dim), int(0.5 * 5**dim), replace=False)
         if comm.get_rank() == 0:
             snapshot.particles.types = ["A", "B"]
             snapshot.particles.typeid[bindex] = 1
@@ -112,7 +112,8 @@ class hpmc_gsd_shape_spec(unittest.TestCase):
         ]
         tetra_verts = [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]]
         shape_params = dict(
-            A=dict(vertices=cube_verts, sweep_radius=0.1), B=dict(vertices=tetra_verts, sweep_radius=0.2),
+            A=dict(vertices=cube_verts, sweep_radius=0.1),
+            B=dict(vertices=tetra_verts, sweep_radius=0.2),
         )
         expected_shapespec = [
             dict(type="ConvexPolyhedron", rounding_radius=0.1, vertices=cube_verts),
@@ -154,7 +155,8 @@ class hpmc_gsd_shape_spec(unittest.TestCase):
         tetra_verts = [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]]
         tetra_faces = [[0, 1, 2], [3, 0, 2], [3, 2, 1], [3, 1, 0]]
         shape_params = dict(
-            A=dict(vertices=cube_verts, faces=cube_faces), B=dict(vertices=tetra_verts, faces=tetra_faces),
+            A=dict(vertices=cube_verts, faces=cube_faces),
+            B=dict(vertices=tetra_verts, faces=tetra_faces),
         )
         expected_shapespec = [
             dict(type="Mesh", vertices=cube_verts, indices=cube_faces),
@@ -187,7 +189,10 @@ class hpmc_gsd_shape_spec(unittest.TestCase):
     def test_convex_spheropolygon(self):
         sq_verts = [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]]
         trg_verts = [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5]]
-        shape_params = dict(A=dict(vertices=sq_verts, sweep_radius=0.3), B=dict(vertices=trg_verts, sweep_radius=0.13),)
+        shape_params = dict(
+            A=dict(vertices=sq_verts, sweep_radius=0.3),
+            B=dict(vertices=trg_verts, sweep_radius=0.13),
+        )
         expected_shapespec = [
             dict(type="Polygon", rounding_radius=0.3, vertices=sq_verts),
             dict(type="Polygon", rounding_radius=0.13, vertices=trg_verts),
@@ -203,7 +208,10 @@ class hpmc_gsd_shape_spec(unittest.TestCase):
     def test_convex_spheropolygon_with_sphere(self):
         sq_verts = [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]]
         sph_verts = [[0.0, 0.0]]
-        shape_params = dict(A=dict(vertices=sq_verts, sweep_radius=0.3), B=dict(vertices=sph_verts, sweep_radius=1.2),)
+        shape_params = dict(
+            A=dict(vertices=sq_verts, sweep_radius=0.3),
+            B=dict(vertices=sph_verts, sweep_radius=1.2),
+        )
         expected_shapespec = [
             dict(type="Polygon", rounding_radius=0.3, vertices=sq_verts),
             dict(type="Sphere", diameter=2 * shape_params["B"]["sweep_radius"]),

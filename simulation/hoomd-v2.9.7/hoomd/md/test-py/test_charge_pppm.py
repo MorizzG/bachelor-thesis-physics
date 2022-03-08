@@ -61,7 +61,7 @@ class charge_pppm_tests(unittest.TestCase):
 class charge_pppm_bond_exclusions_test(unittest.TestCase):
     def test_exclusion_energy(self):
         # initialize a two particle system in a large box, to minimize effect of PBC
-        snap = data.make_snapshot(N=2, particle_types=[u"A1"], bond_types=["bondA"], box=data.boxdim(L=50))
+        snap = data.make_snapshot(N=2, particle_types=["A1"], bond_types=["bondA"], box=data.boxdim(L=50))
 
         if comm.get_rank() == 0:
             snap.particles.position[0] = (0, 0, 0)
@@ -77,7 +77,11 @@ class charge_pppm_bond_exclusions_test(unittest.TestCase):
 
         # rcut should be larger than distance of pair, so we have a split into short range and long range energy
         c.set_params(Nx=128, Ny=128, Nz=128, order=7, rcut=3)
-        log = analyze.log(quantities=["potential_energy", "pair_ewald_energy", "pppm_energy"], period=1, filename=None,)
+        log = analyze.log(
+            quantities=["potential_energy", "pair_ewald_energy", "pppm_energy"],
+            period=1,
+            filename=None,
+        )
         md.integrate.mode_standard(dt=0.0)
         md.integrate.nve(group.all())
         # trick to allow larger decompositions
@@ -126,7 +130,7 @@ class charge_pppm_twoparticle_tests(unittest.TestCase):
     def setUp(self):
         print
         # initialize a two particle system in a triclinic box
-        snap = data.make_snapshot(N=2, particle_types=[u"A1"], box=data.boxdim(xy=0.5, xz=0.5, yz=0.5, L=10))
+        snap = data.make_snapshot(N=2, particle_types=["A1"], box=data.boxdim(xy=0.5, xz=0.5, yz=0.5, L=10))
 
         if comm.get_rank() == 0:
             snap.particles.position[0] = (0, 0, 0)
@@ -224,7 +228,7 @@ class charge_pppm_screening_test(unittest.TestCase):
     def setUp(self):
         print
         # initialize a two particle system in a triclinic box
-        snap = data.make_snapshot(N=2, particle_types=[u"A1"], box=data.boxdim(L=10))
+        snap = data.make_snapshot(N=2, particle_types=["A1"], box=data.boxdim(L=10))
 
         if comm.get_rank() == 0:
             snap.particles.position[0] = (0, 0, 0)
@@ -277,7 +281,7 @@ class charge_pppm_screening_test(unittest.TestCase):
 class charge_pppm_rigid_body_test(unittest.TestCase):
     def setUp(self):
         # initialize a two particle system in a cubic box
-        snap = data.make_snapshot(N=1, particle_types=[u"A"], box=data.boxdim(L=15))
+        snap = data.make_snapshot(N=1, particle_types=["A"], box=data.boxdim(L=15))
         if comm.get_rank() == 0:
             snap.particles.position[0] = (0, 0, 0)
             snap.particles.orientation[0] = (1, 0, 0, 0)
@@ -335,7 +339,11 @@ class charge_pppm_rigid_body_test(unittest.TestCase):
         c = md.charge.pppm(all, nlist=nl)
         kappa = 0.1
         c.set_params(Nx=128, Ny=128, Nz=128, order=7, rcut=1.5, alpha=kappa)
-        log = analyze.log(quantities=["potential_energy", "pppm_energy", "pair_ewald_energy"], period=1, filename=None,)
+        log = analyze.log(
+            quantities=["potential_energy", "pppm_energy", "pair_ewald_energy"],
+            period=1,
+            filename=None,
+        )
         md.integrate.mode_standard(dt=0.0)
         md.integrate.nve(group.rigid_center())
         # trick to allow larger decompositions

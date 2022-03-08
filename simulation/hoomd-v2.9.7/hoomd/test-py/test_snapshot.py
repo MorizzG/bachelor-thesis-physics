@@ -17,7 +17,10 @@ class init_take_restore_snapshot(unittest.TestCase):
     def setUp(self):
         self.s = init.read_gsd(
             os.path.join(
-                os.path.dirname(os.path.dirname(__file__)), "md", "test-py", "test_data_polymer_system_small.gsd",
+                os.path.dirname(os.path.dirname(__file__)),
+                "md",
+                "test-py",
+                "test_data_polymer_system_small.gsd",
             )
         )
         self.assertTrue(self.s)
@@ -148,7 +151,10 @@ class init_verify_npy_dtype(unittest.TestCase):
     def setUp(self):
         self.s = init.read_gsd(
             os.path.join(
-                os.path.dirname(os.path.dirname(__file__)), "md", "test-py", "test_data_polymer_system_small2.gsd",
+                os.path.dirname(os.path.dirname(__file__)),
+                "md",
+                "test-py",
+                "test_data_polymer_system_small2.gsd",
             )
         )
         self.assertTrue(self.s)

@@ -125,7 +125,9 @@ def h_train(
         return h_value, sccs
 
     if h_value == h_max:
-        print("Note: It's likely that your searching range is too " "narrow. Try to expand the range and rerun it.\n",)
+        print(
+            "Note: It's likely that your searching range is too " "narrow. Try to expand the range and rerun it.\n",
+        )
         return h_value, sccs
     # Return last h value with improvement >= 0.01
     # print(f"{sccs=}")

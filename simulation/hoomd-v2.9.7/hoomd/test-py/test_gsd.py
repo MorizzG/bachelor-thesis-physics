@@ -149,7 +149,11 @@ class gsd_write_tests(unittest.TestCase):
 
     def test_dynamic(self):
         dump.gsd(
-            filename=self.tmp_file, group=group.all(), period=1, dynamic=["momentum"], overwrite=True,
+            filename=self.tmp_file,
+            group=group.all(),
+            period=1,
+            dynamic=["momentum"],
+            overwrite=True,
         )
         run(1)
         data.gsd_snapshot(self.tmp_file, frame=0)
@@ -535,7 +539,10 @@ class gsd_default_type(unittest.TestCase):
         self.s.restore_snapshot(self.snapshot)
         run(1)
         dump.gsd(
-            filename=self.tmp_file, group=group.all(), dynamic=["attribute", "momentum"], period=None,
+            filename=self.tmp_file,
+            group=group.all(),
+            dynamic=["attribute", "momentum"],
+            period=None,
         )
 
         # validate the resulting gsd file
@@ -562,7 +569,11 @@ class gsd_default_type(unittest.TestCase):
 
         # write out frame 0
         dump.gsd(
-            filename=self.tmp_file, group=group.all(), period=1, overwrite=True, dynamic=["attribute", "momentum"],
+            filename=self.tmp_file,
+            group=group.all(),
+            period=1,
+            overwrite=True,
+            dynamic=["attribute", "momentum"],
         )
         run(1)
 

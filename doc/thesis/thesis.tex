@@ -34,7 +34,7 @@
 
 \usepackage{mathtools}
 \usepackage{amssymb,amsfonts}
-% \usepackage{physics}
+\usepackage{physics}
 \usepackage[separate-uncertainty=true,per-mode=power,group-separator={,}]{siunitx} % ,per-mode=fraction 
 % \usepackage[version=4]{mhchem}
 % \usepackage{dsfont}
@@ -217,6 +217,24 @@ DNA is in the nucleus. Structure of DNA is important. DNA structure is lost duri
 
 \bigskip
 
+\section{Mathematical Tools} % (fold)
+\label{sec:mathematical_tools}
+
+\subsection{RMSD} % (fold)
+\label{sec:rmsd}
+
+The root-mean-square deviation (RMSD) is a mathematical tools for comparing how similar two ordered sets of 3-dimensional points of equal length are and is given for the two sets \( \set{x_i} \) and \( \set{y_i} \) by the formula
+
+\[
+  \text{RMSD} = \sqrt{ \frac{n} \sum_i \norm{x_i - y_i}^2 }
+\]
+
+
+
+% section rmsd (end)
+
+% section mathematical_tools (end)
+
 
 
 %_______________________________________________________________________________
@@ -234,85 +252,109 @@ DNA is in the nucleus. Structure of DNA is important. DNA structure is lost duri
 % chapter introduction (end)
 
 %_______________________________________________________________________________
-\chapter{Simulation} % (fold)
-\label{cha:simulation}
-
-\section{Model and Simulation Protocol} % (fold)
-\label{sec:model_and_simulation_protocol}
-
-The simulation protocol was for the most part carried over from \cite{wettermann_minimal_2020}. The main file for simulating the genome structure of an entire cell is \verb|simulate_cell.py|. Additionally simulations of single chromosomes were carried out; the protocol for these simulations is identical to those of the entire genome, except only the chromosome in question was modelled . The simulation is a molecular dynamics simulation using the HOOMD-blue\cite{anderson_hoomd-blue_2020} toolkit. Each chromosome is modelled as beads on a string, where each bead represents a bin of \(\SI{100000}{bp}\). This is the same resolution as was chosen in \cite{wettermann_minimal_2020}, and represents a compromise between the resolution of our simulation and the \textcolor{orange}{resolution}\todo{find better word} of the contact data we have available: a higher resolution, i.e. a smaller bin size of for example \(\SI{40000}{bp}\), would increase the resolution of our simulation and enable us to see smaller structures, but at the same time would spread our fixed number of contacts across a higher number of beads. This would make in particular make the effect of having captured only a fraction of all possible contacts more prominent. \todo{insert reference to table of fraction of contacts captured}. Vice versa, decreasing the bin size would help mitigate the partial capture of contacts, but limit our spatial resolution in the simulation. With this resolution our genome is represented by 20 chains varying in length between 500 and 2,000 beads (the exact lengths for each chromosome can be found in Table~\ref{tab:chrom_lengths}), or 25,714 beads in total. This does not represent the entirety of the mouse genome, whose length is approximately \(\SI{2632}{Mbp}\)\footnote{Mouse Genome Assembly GRCm39 from \url{https://www.ncbi.nlm.nih.gov/grc/mouse/data}, visited on 26.02.2022}, or 26,321 beads at our resolution of \(\SI{100000}{bp \per bead}\). The reason for this is that all beads at the boundary of a chromosome, that had no contact in any of the eight cells, were dropped from the simulation, since their impact was assumed to be only very marginal. Boundary beads that had contacts in some cells but not others were kept in the simulation of all cell in order to keep the simulation data comparable across cells.
-
-The model itself is a generic bead-spring polymer model in which three kinds of bonds are defined. The first two kind of bonds are harmonic bonds between two beads with the general protential
-
-\[
-  V(r) = \frac{2} \kappa \left( r - r_0 \right)^2
-\]
-
-where \(\kappa\) is the force constant determining the stiffness of the bond and \(r_0\) is the preferred bond distance. The first kind of harmonic bonds are the backbone bonds connecting adjacent beads in each chromosome. For these bonds \(\kappa = 2000\) and \(r_0 = 1.0 \). The other harmonic bonds in the simulation are the pre-defined contacts derived from the Hi-C data set from\cite{stevens_3d_2017}. Here, again a force constant of \(\kappa = 2000\) is chosen, the preferred bond distance on the other hand is set a little bit larger at \(r_0 = 1.5\) in accordance with \cite{wettermann_minimal_2020}. The third kind of bond is a Gaussian pair potential of the form
-
-\[
-  V(r) = \begin{cases}
-    \epsilon \exp \left[ - \frac{2} \left( \frac{r}{\sigma} \right)^2 \right] & r < r_\text{cut} \\
-    0 & r \geq r_\text{cut}
-  \end{cases}
-\]
-
-between all beads designed to push all non-bonded beads away from each other. This potential is used in 2 forms in different steps of the simulation: a full form with \(\sigma = 1.0\) and \(r_\text{cut} = 3.5\) and a reduced form with \(\sigma = 0.1\) and \(r_\text{cut} = 0.4\). In both cases \(\epsilon = 100\). On one hand, this reproduced the fact that at physiological conditions DNA is negatively charged and thus repels each other. \textcolor{orange}{On the other hand it represents an excluded volume potential that pushes all beads away from each other}\todo{Rewrite?}. An overview of all the potentials in the simulation can be seen in Figure~\ref{img:potentials}.
-
-\begin{figure}[ht]
-\centering
-  \includegraphics[width=\figwidth]{potentials.png}
-  \caption{Potentials used in the simulation. Bonds and contacts are harmonic potentials of the form \(V(r) = 1000 (r - r_0)^2\), with bonds having an \(r_0\) of 1.0 and contacts gaving an \(r_0\) of 1.5. Gauss potentials are of the form \(V(r) = 100 \exp\left[- \frac{2} \left( \frac{r}{\sigma} \right)^2 \right]\) and are set to 0 for \(r\) greater than the cutoff value \(r_\text{cut}\).}
-  \label{img:potentials}
-\end{figure}
-
-The system is initalised by distributing all the beads randomly throughout the simulation box (uniform distribution, using \verb|numpy.uniform.random|\cite{harris_array_2020}). The bonds are set and the simulation is repeatedly run using a Langevin integrator (\verb|hoomd.md.integrate.langevin|\cite{anderson_hoomd-blue_2020}, \(dt=0.001\), \(kT = 1.0\)) through the following steps:
-
-\begin{itemize}[label=\(\bullet\)]
-  \item 80,000 time steps with no excluded volume potentials
-  \item 50,000 time steps with reduced volume potentials
-  \item 50,000 time steps with full excluded volume potentials
-\end{itemize}
-
-Bonds and contacts are active at all of those steps. After each cycle the current state is saved to a \verb|.gsd| trajectory file. These steps were repeated in each simulation for a total of 105 cycles. The first few cycles have to be discarded as the system takes some time to find its ground state, although certain problems can arise here that will be discussed later in \ref{sec:problems_with_the_simulation}.
-
-% section model_and_simulation_protocol (end)
-
-\section{Simulation results} % (fold)
-\label{sec:simulation_results}
-
-Each simulation will yield 105 sequential configuration, i.e. the simulation state is not reset after each simulation cycle , but instead the final state of each cycle is the initial state of the next cycle. This has the advantage of giving the system time to \textcolor{orange}{tune in}\todo{better word? \enquote{einschwingen}}, but also the disadvantage of the possiblility that certain end configurations will never be reached in a simulation run after it has tuned in to a different locally minimal configuration. The potential energies of the simulation run of cell 2 can be seen in Figure~\ref{img:potential_energy_cell2}. While the first two configurations show a potential energy significantly larger than the later ones, the system quickly converges to a potential energy of about \(\num{7950000}\) and then shows only small deviations of less than \(1 \%\). Thus both the length of the settling period and the potential energy of the configurations matches \cite{wettermann_minimal_2020} extremely well. \textcolor{orange}{To minimise the effect of the settling period the first 5 configurations of each simulation run will generally be excluded in all subsequent analyses where the data from all configurations are combined.}
-
-Likewise, Figure~\ref{img:distance_pdf_cell2} shows the distance distribution of the bonds and (predetermined) contacts across all configurations of the simulation of cell 2. The results are again very similar to \cite{wettermann_minimal_2020}, with both peaks and means shifted slightly to the right. The \(99.73\)th quartile is at \(1.713\) for bonds and \(2.418\) for contacts, showing that most bonds and contacts are enforced reasonably well.
-
-\begin{figure}[ht]
-\centering
-  \includegraphics[width=12cm]{potential_energy_cell2.png}
-  \caption{\textcolor{red}{CAPTION}}
-  \label{img:potential_energy_cell2}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-  \includegraphics[width=12cm]{distance_pdf_cell2.png}
-  \caption{\textcolor{red}{CAPTION} bond mean: \(\num{1.099}\) ; bonds \(99.73\%\) percentile: \(1.713\) ; contacts mean: \(\num{1.613}\) ; contact \(99.73\%\) percentile: \(2.418\)}
-  \label{img:distance_pdf_cell2}
-\end{figure}
-
-For the other cells the situation is generally similar, except for cell 1 and cell 5, which will be dicussed separately in \ref{sec:problems_with_the_simulation}. The standard deviations of potential energies are between \(0.3\%\) and \(1.8\%\) of the mean, showing the minimum energy configuration to be quite stable in these cells. Also neither bonds nor contacts are overly overstretched in any cells, including cell 1 and cell 5. A complete overview of potential energy percentage standard deviations and mean and \(99.73\)th percentile for bonds and contacts can be found in Table~\ref{tab:simulation_pe_dists}.
-
-% section simulation_results (end)
-
-\section{Problems with the simulation} % (fold)
-\label{sec:problems_with_the_simulation}
-
-% section problems_with_the_simulation (end)
 
 
-% chapter simulation (end)
+\include{tex/simulation}
+
+
+%_______________________________________________________________________________
+
+
 
 \chapter{Comparison of Cells} % (fold)
 \label{cha:comparison_of_cells}
+
+\section{Definition of SCC} % (fold)
+\label{sec:definition_of_scc}
+
+HiCRep is a mathematical tool introduced in \cite{yang_hicrep_2017} for the explicit goal of comparing Hi-C data sets. It takes as input the contact matrices of two Hi-C data sets and outputs a correlation coefficient, that is a number between \(-1\) and \(1\), with higher numbers signifying a stronger similarity between the data sets and vice versa. This is done in a two-step process: first both contact matrices are smoothed to counter binning-associated problems and then a stratuma djusted correlation coefficient (SCC) is calculated between these smoothed contact matrices. The exact procedure will be explained in the following section
+
+\subsection{Smoothing} % (fold)
+\label{subsec:smoothing}
+
+Both contact maps are first smoothed using a uniform filter of width \(2h+1\) for a chosen smoothing parameter \(h \geq 0\). This helps compensating a lack of coverage, that is the fact that not all actual contacts are contained in the contact matrices, something that is common for Hi-C data. Mathematically this filter is defined as
+
+\[
+  X_{ij} = \frac{ \sum_{k=i-h}^{i+h} \sum_{l=j-h}^{j+h} C_{kl} }{ 2h+1 }
+\]
+
+where \(C\) is the \(n \times n\) contact matrix and \(X\) is the \(n \times n\) smoothed matrix. \(C_{ij}\) is defined to be 0 for either \(i\) or \(j\) not in \(1 \dots n\).
+
+The uniform filter might seem like an unusual choice compared to other more sophisticated filters, but has the great advantage of having the representation \( X = L \cdot C \cdot R \), where \(X\) is the smoothed matrix, \(C\) is the contact matrix, and \(L\) and \(R\) are upper and lower trigangular matrices respectively. This comes in handy especially when using sparse representations of \(C\) and \(X\), which is very much recommended since contact matrices generally can be quite large and are largely empty.
+
+\(h\) is a parameter for the SCC algorithm and thus has to be chosen appropriately. The HiCRep package includes a function called \verb|htrain| (\verb|h_train| in the HiCRep.py python package) that tries to estimate an appropriate h-value heuristically. For our resolution of \(\SI{100}{kbp}\) an example value of \( h = 3 \) is given in the original HiCRep paper, which should be kept in mind as a refence later when trying to choose an h-value for our own data.
+
+% subsection smoothing (end)
+
+\subsection{SCC} % (fold)
+\label{subsec:scc}
+
+The stratum adjusted correlation coefficient aims to be a measure of correlation between two random variables \(X\) and \(Y\), stratified by a third variable into \(K\) strata \(X_1, \dots, X_K\) and \(Y_1, \dots, Y_K\) respectively. In each stratum we have the stratified random variables \((X_k, Y_k)\) with \(N_k\) observations \( (x_{k,1}, y_{k,1}), \dots, (x_{k,N_k}, y_{k,N_k}) \) each. The pearson correlation coefficient between \(X\) and \(Y\) for the k-th stratum is given by
+
+\[
+  \rho_k = \frac{ \mathrm{Cov}(X_k,Y_k) }{ \sqrt{ \mathrm{Var}(X_k) \mathrm{Var}(Y_k)} } = \frac{ \sum_{i=1}^{N_k} (x_{k,i} - \overbar{x}_k) (y_{k,i} - \overbar{y}_k) }{ \sqrt{ \sum_{i=1}^{N_k} x_{k,i} - \overbar{x}_k } \sqrt{ \sum_{i=1}^{N_k} y_{k,i} - \overbar{y}_k } }
+\]
+
+The SCC is the weighted average of the pearson correlation coefficients
+
+\[
+  \rho_s = \sum_{k=1}^{K} w_k \rho_k
+\]
+
+where the weights \(w_k\) are
+
+\[
+  w_k = \sqrt{ \mathrm{Var}\left( \frac{ \mathrm{Rank}(X_k) }{ N_k } \right) \mathrm{Var}\left( \frac{ \mathrm{Rank}(Y_k) }{ N_k } \right) }
+\]
+
+with \( \mathrm{Rank}(X_k) \) and \( \mathrm{Rank}(Y_k) \) being the ranked variables\footnote{\url{https://en.wikipedia.org/wiki/Ranking\#Ranking_in_statistics}}. For a thorough derivation of the SCC see the original HiCRep paper\cite{yang_hicrep_2017}, Section \enquote{Derivation of stratum-adjusted correlation coefficient (SCC)}.
+
+% section definition_of_scc (end)
+
+\section{SCC between cells} % (fold)
+\label{sec:scc_between_cells}
+
+The SCC for the Hi-C data of all cells can be seen in Table~\ref{tab:scc_hic}. It is immediately very clear that all SCC values except for those of a cell with itself are very low, especially compared to the values of \(0.7\) to \(1.0\) obtained in \cite{yang_hicrep_2017} for hESC (human embryonic stem cells) and IMR90 (human lung fibroblast cells) cell lines (see Figure~3A). This might very likely be related to the fact that each Hi-C data set captured only about \(5\%\) of all contacts, as detailed in Table~\ref{tab:contact_capture}, but regardless of the reasons, it sets the expectations for comparability between the cells quite low. The SCC for the simulated contact matrices can be seen in Table~\ref{tab:scc_sim} and, as expected, are similarly low.
+
+\begin{table}[ht]
+\centering
+  \sisetup{ table-alignment-mode=none }
+  \caption{\textcolor{red}{SCC between HiC contact matrices}}
+  \label{tab:scc_hic}
+  \begin{tabular}{S | S S S S S S S S}
+   & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
+  \midrule
+    {Cell 1} &  {-}  & 0.132 & 0.093 & 0.116 & 0.128 & 0.105 & 0.136 & 0.092 \\
+    {Cell 2} & 0.132 &  {-}  & 0.098 & 0.104 & 0.147 & 0.116 & 0.150 & 0.138 \\
+    {Cell 3} & 0.093 & 0.098 &  {-}  & 0.062 & 0.104 & 0.093 & 0.101 & 0.092 \\
+    {Cell 4} & 0.116 & 0.104 & 0.062 &  {-}  & 0.108 & 0.101 & 0.123 & 0.077 \\
+    {Cell 5} & 0.128 & 0.147 & 0.104 & 0.108 &  {-}  & 0.121 & 0.148 & 0.123 \\
+    {Cell 6} & 0.105 & 0.116 & 0.093 & 0.101 & 0.121 &  {-}  & 0.145 & 0.097 \\
+    {Cell 7} & 0.136 & 0.150 & 0.101 & 0.123 & 0.148 & 0.145 &  {-}  & 0.116 \\
+    {Cell 8} & 0.092 & 0.138 & 0.092 & 0.077 & 0.123 & 0.097 & 0.116 &  {-}  \\
+  \end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+  \sisetup{ table-alignment-mode=none }
+  \caption{\textcolor{red}{SCC between simulated contact matrices}}
+  \label{tab:scc_sim}
+  \begin{tabular}{S | S S S S S S S S}
+   & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
+  \midrule
+    {Cell 1} &  {-}  & 0.171 & 0.149 & 0.114 & 0.173 & 0.141 & 0.178 & 0.104 \\
+    {Cell 2} & 0.171 &  {-}  & 0.164 & 0.141 & 0.183 & 0.184 & 0.215 & 0.184 \\
+    {Cell 3} & 0.149 & 0.164 &  {-}  & 0.109 & 0.161 & 0.124 & 0.145 & 0.122 \\
+    {Cell 4} & 0.114 & 0.141 & 0.109 &  {-}  & 0.135 & 0.105 & 0.140 & 0.098 \\
+    {Cell 5} & 0.173 & 0.183 & 0.161 & 0.135 &  {-}  & 0.148 & 0.194 & 0.143 \\
+    {Cell 6} & 0.141 & 0.184 & 0.124 & 0.105 & 0.148 &  {-}  & 0.191 & 0.116 \\
+    {Cell 7} & 0.178 & 0.215 & 0.145 & 0.140 & 0.194 & 0.191 &  {-}  & 0.157 \\
+    {Cell 8} & 0.104 & 0.184 & 0.122 & 0.098 & 0.143 & 0.116 & 0.157 &  {-}  \\
+  \end{tabular}
+\end{table}
+
+% section scc_between_cells (end)
 
 % chapter comparison_of_cells (end)
 
@@ -336,6 +378,8 @@ Arbeiten an der Aufgabenstellung.
 
 % chapter conclusion (end)
 
+\printbibliography
+
 %_______________________________________________________________________________
 \appendix
 
@@ -355,7 +399,7 @@ vorhanden sind.
 
 \begin{table}[H]
 \centering
-  \caption{\textcolor{red}{MAKE CAPTION}}
+  \caption{Number of beads in each chromosome in the simulation. Each bead represents \(\SI{100}{kbp}\)}
   \label{tab:chrom_lengths}
   \begin{tabular}{c c c c c c c c c c c}
    \toprule
@@ -372,10 +416,11 @@ vorhanden sind.
 \centering
   \caption{\textcolor{red}{MAKE CAPTION}}
   \label{tab:simulation_pe_dists}
+  \sisetup{ table-alignment-mode=none }
   \begin{tabular}{S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S}
   \toprule
-    {Cell} & {PE \% deviation} & \multicolumn{2}{c}{bonds} & \multicolumn{2}{c}{contacts} \\
-     & & {mean} & {99.73th prct} & {mean} & {99.73th prct} \\
+     & & \multicolumn{2}{c}{bonds} & \multicolumn{2}{c}{contacts} \\
+    {Cell} & \parbox{3cm}{pot energy \\ \% deviation} & {mean} & \parbox{3cm}{99.73th \\ percentile} & {mean} & \parbox{3cm}{99.73th \\ percentile} \\
   \midrule
     1 & 8.51\% & 1.13 & 1.98 & 1.62 & 2.72 \\
     2 & 0.27\% & 1.10 & 1.71 & 1.61 & 2.42 \\
@@ -389,10 +434,37 @@ vorhanden sind.
   \end{tabular}
 \end{table}
 
+\begin{table}[ht]
+\centering
+  \caption{caption}
+  \label{tab:contact_capture}
+  \sisetup{ table-alignment-mode=none }
+  \begin{tabular}{S S S S}
+  \toprule
+    {Cell} & \parbox{3cm}{\centering contacts specified} & \parbox{3cm}{\centering contacts after simulation} & \parbox{3cm}{\centering \% of contacts specified} \\
+  \midrule
+    1 & 48962 & 932831 & 5.2\% \\
+    2 & 32243 & 558981 & 5.8\% \\
+    3 & 19112 & 602439 & 3.2\% \\
+    4 & 35514 & 685314 & 5.2\% \\
+    5 & 31180 & 592569 & 5.3\% \\
+    6 & 32862 & 358721 & 4.8\% \\
+    7 & 21126 & 358721 & 5.9\% \\
+    8 & 17581 & 320656 & 5.5\% \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
 % chapter tables_and_figures (end)
 
-\chapter{Used software} % (fold)
+\include{tex/renderings}
+
+% chapter renderings_of_simuated_cells (end)
+
+\chapter{Used Software} % (fold)
 \label{cha:used_software}
+
+Figures were created using matplotlib\cite{j_d_hunter_matplotlib_2007} and seaborn\cite{waskom_seaborn_2021}.
 
 \begin{table}[H]
 \centering
@@ -472,8 +544,6 @@ Familie, Lehrer, Berater und Kollegen.
 % enthaltenen Anweisungen als Stilvorlage verwendet. Andere 
 % Möglichkeiten für die Gestaltung eines Literaturverzeichnisses 
 % findet man im Internet: \url{http://janeden.net/bibliographien-mit-latex}.
-
-\printbibliography
 
 % \renewcommand{\bibname}{Literaturverzeichnis} 
 % \bibliographystyle{h-physrev3}

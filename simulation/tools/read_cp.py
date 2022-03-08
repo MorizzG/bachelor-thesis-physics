@@ -54,10 +54,12 @@ def make_contact_pairs(df_contact_pairs):
     # subtract the minimin position so our beads start at 0
     # which chromosome a bead belongs to will be later taken care of
     df_contact_pairs["ind_A"] = df_contact_pairs.apply(
-        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000 + lengths_cumsum[row["chr_A"] - 1], axis=1,
+        lambda row: (row["pos_A"] - chr_min_pos[row["chr_A"]]) // 100000 + lengths_cumsum[row["chr_A"] - 1],
+        axis=1,
     )
     df_contact_pairs["ind_B"] = df_contact_pairs.apply(
-        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000 + lengths_cumsum[row["chr_B"] - 1], axis=1,
+        lambda row: (row["pos_B"] - chr_min_pos[row["chr_B"]]) // 100000 + lengths_cumsum[row["chr_B"] - 1],
+        axis=1,
     )
 
     # df_contact_pairs["ind_A"] = df_contact_pairs.apply(

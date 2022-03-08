@@ -98,7 +98,7 @@ eta_p_ref[(0.3, 2.0)] = (0.0387704, 0.000167702)
 
 # number of spheres
 n = 5
-N = n ** 3
+N = n**3
 d_sphere = 1.0
 V_sphere = math.pi / 6.0 * math.pow(d_sphere, 3.0)
 
@@ -186,7 +186,8 @@ class implicit_test(unittest.TestCase):
 
         # check against reference value within reference error + measurement error
         self.assertLessEqual(
-            math.fabs(eta_p_avg - eta_p_ref[(phi_c, eta_p_r)][0]), ci * (eta_p_ref[(phi_c, eta_p_r)][1] + eta_p_err),
+            math.fabs(eta_p_avg - eta_p_ref[(phi_c, eta_p_r)][0]),
+            ci * (eta_p_ref[(phi_c, eta_p_r)][1] + eta_p_err),
         )
 
     def tearDown(self):

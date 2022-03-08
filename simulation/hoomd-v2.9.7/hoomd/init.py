@@ -32,7 +32,7 @@ def is_initialized():
 
 
 def create_lattice(unitcell, n):
-    r""" Create a lattice.
+    r"""Create a lattice.
 
     Args:
         unitcell (:py:class:`hoomd.lattice.unitcell`): The unit cell of the lattice.
@@ -211,7 +211,7 @@ def read_getar(filename, modes={"any": "any"}):
 
 
 def read_snapshot(snapshot):
-    r""" Initializes the system from a snapshot.
+    r"""Initializes the system from a snapshot.
 
     Args:
         snapshot (:py:mod:`hoomd.data` snapshot): The snapshot to initialize the system.
@@ -257,7 +257,7 @@ def read_snapshot(snapshot):
 
 
 def read_gsd(filename, restart=None, frame=0, time_step=None):
-    r""" Read initial system state from an GSD file.
+    r"""Read initial system state from an GSD file.
 
     Args:
         filename (str): File to read.

@@ -14,7 +14,7 @@ import numpy as np
 
 # unit tests for slit pore bounce back geometry
 class integrate_slit_pore_tests(unittest.TestCase):
-    """ Unit tests for slit pore integrator.
+    """Unit tests for slit pore integrator.
 
     Most of the physics is already tested in hoomd.mpcd, so
     these unit tests are focused on the python API.

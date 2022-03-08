@@ -11,7 +11,7 @@ from hoomd.deprecated import _deprecated
 
 
 class xml(hoomd.analyze._analyzer):
-    r""" Writes simulation snapshots in the HOOMD XML format.
+    r"""Writes simulation snapshots in the HOOMD XML format.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles to dump
@@ -123,7 +123,7 @@ class xml(hoomd.analyze._analyzer):
         inertia=None,
         vizsigma=None,
     ):
-        r""" Change xml write parameters.
+        r"""Change xml write parameters.
 
         Args:
             all (bool): (if True) Enables the output of all optional parameters below
@@ -238,7 +238,7 @@ class xml(hoomd.analyze._analyzer):
             self.cpp_analyzer.setVizSigma(vizsigma)
 
     def write(self, filename, time_step=None):
-        r""" Write a file at the current time step.
+        r"""Write a file at the current time step.
 
         Args:
             filename (str): File name to write to
@@ -265,7 +265,7 @@ class xml(hoomd.analyze._analyzer):
         self.cpp_analyzer.writeFile(filename, time_step)
 
     def write_restart(self):
-        r""" Write a restart file at the current time step.
+        r"""Write a restart file at the current time step.
 
         This only works when dump.xml() is in **restart** mode. write_restart() writes out a restart file at the current
         time step. Put it at the end of a script to ensure that the system state is written out before exiting.
@@ -279,7 +279,7 @@ class xml(hoomd.analyze._analyzer):
 
 
 class pos(hoomd.analyze._analyzer):
-    r""" Writes simulation snapshots in the POS format
+    r"""Writes simulation snapshots in the POS format
 
     Args:
         filename (str): File name to write
@@ -335,7 +335,7 @@ class pos(hoomd.analyze._analyzer):
         self.metadata_fields = ["filename", "period", "unwrap_rigid"]
 
     def set_def(self, typ, shape):
-        r""" Set a pos def string for a given type
+        r"""Set a pos def string for a given type
 
         Args:
             typ (str): Type name to set shape def
