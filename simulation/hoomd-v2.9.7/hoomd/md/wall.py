@@ -368,11 +368,7 @@ class sphere(object):
         return "Radius=%s\tOrigin=%s\tInside=%s" % (str(self.r), str(self.origin), str(self.inside))
 
     def __repr__(self):
-        return "{'r': %s, 'origin': %s, 'inside': %s}" % (
-            str(self.r),
-            str(self.origin),
-            str(self.inside),
-        )
+        return "{'r': %s, 'origin': %s, 'inside': %s}" % (str(self.r), str(self.origin), str(self.inside),)
 
 
 class cylinder(object):
@@ -473,18 +469,10 @@ class plane(object):
         self._normal = _hoomd.make_scalar3(*normal)
 
     def __str__(self):
-        return "Origin=%s\tNormal=%s\tInside=%s" % (
-            str(self.origin),
-            str(self.normal),
-            str(self.inside),
-        )
+        return "Origin=%s\tNormal=%s\tInside=%s" % (str(self.origin), str(self.normal), str(self.inside),)
 
     def __repr__(self):
-        return "{'origin':%s, 'normal': %s, 'inside': %s}" % (
-            str(self.origin),
-            str(self.normal),
-            str(self.inside),
-        )
+        return "{'origin':%s, 'normal': %s, 'inside': %s}" % (str(self.origin), str(self.normal), str(self.inside),)
 
 
 #           *** Potentials ***
@@ -968,9 +956,7 @@ class morse(wallpotential):
         r0 = coeff["r0"]
 
         return _md.make_wall_morse_params(
-            _hoomd.make_scalar4(D0, alpha, r0, 0.0),
-            coeff["r_cut"] * coeff["r_cut"],
-            coeff["r_extrap"],
+            _hoomd.make_scalar4(D0, alpha, r0, 0.0), coeff["r_cut"] * coeff["r_cut"], coeff["r_extrap"],
         )
 
 
@@ -1088,7 +1074,5 @@ class mie(wallpotential):
         mie3 = n
         mie4 = m
         return _md.make_wall_mie_params(
-            _hoomd.make_scalar4(mie1, mie2, mie3, mie4),
-            coeff["r_cut"] * coeff["r_cut"],
-            coeff["r_extrap"],
+            _hoomd.make_scalar4(mie1, mie2, mie3, mie4), coeff["r_cut"] * coeff["r_cut"], coeff["r_extrap"],
         )

@@ -39,14 +39,7 @@ class faceted_ellipsoid(unittest.TestCase):
 
         mc = hpmc.integrate.faceted_ellipsoid(seed=123, d=0, a=0)
         mc.shape_param.set(
-            "A",
-            a=a,
-            b=b,
-            c=c,
-            offsets=offsets,
-            vertices=vertices,
-            normals=normals,
-            origin=(0, 0, 0),
+            "A", a=a, b=b, c=c, offsets=offsets, vertices=vertices, normals=normals, origin=(0, 0, 0),
         )
 
         run(1)

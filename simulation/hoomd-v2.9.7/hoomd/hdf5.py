@@ -283,9 +283,7 @@ class log(hoomd.analyze._analyzer):
                 raise RuntimeError("Error write quantities with log_hdf5.")
 
             data_set.resize(old_size + 1, axis=0)
-            data_set[
-                old_size,
-            ] = new_array
+            data_set[old_size,] = new_array
 
     # \internal
     # \brief Writes the logged matrix quantities to file
@@ -338,9 +336,7 @@ class log(hoomd.analyze._analyzer):
                 old_size = data_set.shape[0]
 
                 data_set.resize(old_size + 1, axis=0)
-                data_set[
-                    old_size,
-                ] = new_matrix
+                data_set[old_size,] = new_matrix
 
     # \internal
     # \brief prepare and check the hdf5 file for non-matrix quantity dump

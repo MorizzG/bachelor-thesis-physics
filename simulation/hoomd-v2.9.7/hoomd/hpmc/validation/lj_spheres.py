@@ -41,11 +41,11 @@ class nvt_lj_sphere_energy(unittest.TestCase):
         eps = 1.0 / Tstar
 
         # Particle volume
-        V_p = math.pi / 6.0 * diameter**3.0
+        V_p = math.pi / 6.0 * diameter ** 3.0
 
         # lattice constant (sc)
         d_eff = (V_p * 6 / math.pi) ** (1.0 / 3.0)
-        a = (d_eff**3.0 / rho_star) ** (1.0 / 3.0)
+        a = (d_eff ** 3.0 / rho_star) ** (1.0 / 3.0)
 
         system = init.create_lattice(unitcell=lattice.sc(a=a), n=n)
 
@@ -91,10 +91,7 @@ class nvt_lj_sphere_energy(unittest.TestCase):
         jit.patch.user(mc, r_cut=rcut, code=lennard_jones)
 
         log = analyze.log(
-            filename=None,
-            quantities=["hpmc_overlap_count", "hpmc_patch_energy"],
-            period=100,
-            overwrite=True,
+            filename=None, quantities=["hpmc_overlap_count", "hpmc_patch_energy"], period=100, overwrite=True,
         )
 
         energy_val = []
@@ -142,7 +139,7 @@ class nvt_lj_sphere_energy(unittest.TestCase):
         ci = 2.576
 
         # compare if 0 is within the confidence interval around the difference of the means
-        sigma_diff = (sigma_U**2 + sigma_Uref**2) ** (1 / 2.0)
+        sigma_diff = (sigma_U ** 2 + sigma_Uref ** 2) ** (1 / 2.0)
         self.assertLessEqual(math.fabs(mean_U - mean_Uref), ci * sigma_diff)
 
     def test_low_density_normal(self):

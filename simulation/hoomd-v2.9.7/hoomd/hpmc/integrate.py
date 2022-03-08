@@ -442,8 +442,7 @@ class mode_hpmc(_integrator):
             if isinstance(d, dict):
                 for t, t_d in d.items():
                     self.cpp_integrator.setD(
-                        t_d,
-                        hoomd.context.current.system_definition.getParticleData().getTypeByName(t),
+                        t_d, hoomd.context.current.system_definition.getParticleData().getTypeByName(t),
                     )
             else:
                 for i in range(hoomd.context.current.system_definition.getParticleData().getNTypes()):
@@ -453,8 +452,7 @@ class mode_hpmc(_integrator):
             if isinstance(a, dict):
                 for t, t_a in a.items():
                     self.cpp_integrator.setA(
-                        t_a,
-                        hoomd.context.current.system_definition.getParticleData().getTypeByName(t),
+                        t_a, hoomd.context.current.system_definition.getParticleData().getTypeByName(t),
                     )
             else:
                 for i in range(hoomd.context.current.system_definition.getParticleData().getNTypes()):
@@ -2387,14 +2385,7 @@ class convex_spheropolyhedron_union(mode_hpmc):
     """
 
     def __init__(
-        self,
-        seed,
-        d=0.1,
-        a=0.1,
-        move_ratio=0.5,
-        nselect=4,
-        implicit=False,
-        depletant_mode="circumsphere",
+        self, seed, d=0.1, a=0.1, move_ratio=0.5, nselect=4, implicit=False, depletant_mode="circumsphere",
     ):
         hoomd.util.print_status_line()
 
@@ -2538,14 +2529,7 @@ class convex_polyhedron_union(convex_spheropolyhedron_union):
     """
 
     def __init__(
-        self,
-        seed,
-        d=0.1,
-        a=0.1,
-        move_ratio=0.5,
-        nselect=4,
-        implicit=False,
-        depletant_mode="circumsphere",
+        self, seed, d=0.1, a=0.1, move_ratio=0.5, nselect=4, implicit=False, depletant_mode="circumsphere",
     ):
         hoomd.util.print_status_line()
 
@@ -2608,14 +2592,7 @@ class faceted_ellipsoid_union(mode_hpmc):
     """
 
     def __init__(
-        self,
-        seed,
-        d=0.1,
-        a=0.1,
-        move_ratio=0.5,
-        nselect=4,
-        implicit=False,
-        depletant_mode="circumsphere",
+        self, seed, d=0.1, a=0.1, move_ratio=0.5, nselect=4, implicit=False, depletant_mode="circumsphere",
     ):
         hoomd.util.print_status_line()
 

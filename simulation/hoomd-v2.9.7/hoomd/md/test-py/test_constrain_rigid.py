@@ -25,27 +25,13 @@ class test_constrain_rigid(unittest.TestCase):
         rigid = md.constrain.rigid()
         # try passing inconsistent numbers of arguments
         self.assertRaises(
-            RuntimeError,
-            rigid.set_param,
-            "A",
-            types=["A_const"] * 3,
-            positions=[(1, 2, 3), (4, 5, 6)],
+            RuntimeError, rigid.set_param, "A", types=["A_const"] * 3, positions=[(1, 2, 3), (4, 5, 6)],
         )
         self.assertRaises(
-            RuntimeError,
-            rigid.set_param,
-            "A",
-            types=["A_const"] * 2,
-            positions=[(1, 2, 3), (4, 5, 6)],
-            charges=[0],
+            RuntimeError, rigid.set_param, "A", types=["A_const"] * 2, positions=[(1, 2, 3), (4, 5, 6)], charges=[0],
         )
         self.assertRaises(
-            RuntimeError,
-            rigid.set_param,
-            "A",
-            types=["A_const"] * 2,
-            positions=[(1, 2, 3), (4, 5, 6)],
-            diameters=[0],
+            RuntimeError, rigid.set_param, "A", types=["A_const"] * 2, positions=[(1, 2, 3), (4, 5, 6)], diameters=[0],
         )
 
     def test_energy_conservation(self):

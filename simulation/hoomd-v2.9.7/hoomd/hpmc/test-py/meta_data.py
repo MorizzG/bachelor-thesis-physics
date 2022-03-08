@@ -36,8 +36,7 @@ class convex_polygon_test(unittest.TestCase):
         self.assertIn("hoomd.hpmc.integrate.convex_polygon", meta_data)
         self.assertNotEqual(meta_data["hoomd.hpmc.integrate.convex_polygon"], None)
         self.assertEqual(
-            meta_data["hoomd.hpmc.integrate.convex_polygon"]["shape_param"]["A"]["vertices"],
-            vertices,
+            meta_data["hoomd.hpmc.integrate.convex_polygon"]["shape_param"]["A"]["vertices"], vertices,
         )
 
 
@@ -57,8 +56,7 @@ class simple_polygon_test(unittest.TestCase):
         meta_data = meta.dump_metadata()
         self.assertIn("hoomd.hpmc.integrate.simple_polygon", meta_data)
         self.assertEqual(
-            meta_data["hoomd.hpmc.integrate.simple_polygon"]["shape_param"]["A"]["vertices"],
-            vertices,
+            meta_data["hoomd.hpmc.integrate.simple_polygon"]["shape_param"]["A"]["vertices"], vertices,
         )
 
 
@@ -88,8 +86,7 @@ class convex_polyhedron_test(unittest.TestCase):
         meta_data = meta.dump_metadata()
         self.assertIn("hoomd.hpmc.integrate.convex_polyhedron", meta_data)
         self.assertEqual(
-            meta_data["hoomd.hpmc.integrate.convex_polyhedron"]["shape_param"]["A"]["vertices"],
-            vertices,
+            meta_data["hoomd.hpmc.integrate.convex_polyhedron"]["shape_param"]["A"]["vertices"], vertices,
         )
 
 
@@ -179,8 +176,7 @@ class convex_spheropolygon_test(unittest.TestCase):
         meta_data = meta.dump_metadata()
         self.assertIn("hoomd.hpmc.integrate.convex_spheropolygon", meta_data)
         self.assertEqual(
-            meta_data["hoomd.hpmc.integrate.convex_spheropolygon"]["shape_param"]["A"]["vertices"],
-            vertices,
+            meta_data["hoomd.hpmc.integrate.convex_spheropolygon"]["shape_param"]["A"]["vertices"], vertices,
         )
 
 
@@ -227,18 +223,7 @@ class faceted_sphere_test(unittest.TestCase):
 
     def test_metadata_dump(self):
         shape_param = dict(
-            normals=[
-                [-1, 0, 0],
-                [1, 0, 0],
-                [
-                    0,
-                    1,
-                    0,
-                ],
-                [0, -1, 0],
-                [0, 0, 1],
-                [0, 0, -1],
-            ],
+            normals=[[-1, 0, 0], [1, 0, 0], [0, 1, 0,], [0, -1, 0], [0, 0, 1], [0, 0, -1],],
             offsets=[-1] * 6,
             vertices=[
                 [-1, -1, -1],
@@ -259,8 +244,7 @@ class faceted_sphere_test(unittest.TestCase):
         self.assertIn("hoomd.hpmc.integrate.faceted_sphere", meta_data)
         for key in shape_param:
             self.assertEqual(
-                meta_data["hoomd.hpmc.integrate.faceted_sphere"]["shape_param"]["A"][key],
-                shape_param[key],
+                meta_data["hoomd.hpmc.integrate.faceted_sphere"]["shape_param"]["A"][key], shape_param[key],
             )
 
 
@@ -290,8 +274,7 @@ class convex_spheropolyhedron_test(unittest.TestCase):
         meta_data = meta.dump_metadata()
         self.assertIn("hoomd.hpmc.integrate.convex_spheropolyhedron", meta_data)
         self.assertEqual(
-            meta_data["hoomd.hpmc.integrate.convex_spheropolyhedron"]["shape_param"]["A"]["vertices"],
-            vertices,
+            meta_data["hoomd.hpmc.integrate.convex_spheropolyhedron"]["shape_param"]["A"]["vertices"], vertices,
         )
 
 
@@ -313,8 +296,7 @@ class ellipsoid_test(unittest.TestCase):
         self.assertIn("hoomd.hpmc.integrate.ellipsoid", meta_data)
         for key in shape_param:
             self.assertAlmostEqual(
-                meta_data["hoomd.hpmc.integrate.ellipsoid"]["shape_param"]["A"][key],
-                shape_param[key],
+                meta_data["hoomd.hpmc.integrate.ellipsoid"]["shape_param"]["A"][key], shape_param[key],
             )  # using almost equal now because storing the data in C++ gives us finite precision.
 
 
@@ -346,8 +328,7 @@ class sphinx_test(unittest.TestCase):
             for j, c in enumerate(center):
                 self.assertAlmostEqual(meta_data["hoomd.hpmc.integrate.sphinx"]["shape_param"]["A"]["centers"][i][j], c)
         self.assertEqual(
-            meta_data["hoomd.hpmc.integrate.sphinx"]["shape_param"]["A"]["colors"],
-            shape_param["colors"],
+            meta_data["hoomd.hpmc.integrate.sphinx"]["shape_param"]["A"]["colors"], shape_param["colors"],
         )
 
 

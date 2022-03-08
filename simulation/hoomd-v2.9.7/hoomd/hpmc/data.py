@@ -247,13 +247,7 @@ class polyhedron_params(_hpmc.polyhedron_param_proxy, _param):
     def __str__(self):
         # should we put this in the c++ side?
         string = "polyhedron(vertices = {}, faces = {}, overlap = {}, colors= {}, sweep_radius = {}, capacity = {}, origin = {})".format(
-            self.vertices,
-            self.faces,
-            self.overlap,
-            self.colors,
-            self.sweep_radius,
-            self.capacity,
-            self.hull_only,
+            self.vertices, self.faces, self.overlap, self.colors, self.sweep_radius, self.capacity, self.hull_only,
         )
         return string
 

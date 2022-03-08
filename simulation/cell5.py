@@ -1,9 +1,9 @@
 import gsd.hoomd
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import tools.rmsd as rmsd
 from tools.mg_plot import new_fig, set_styling
-import pandas as pd
 
 # %% Potential Energies
 

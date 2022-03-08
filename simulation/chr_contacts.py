@@ -27,12 +27,7 @@ import scipy.sparse
 parser = argparse.ArgumentParser(description="Calculate chromosome contactivity")
 
 arg_group = parser.add_argument(
-    "n_cell",
-    action="store",
-    nargs="?",
-    type=int,
-    default=1,
-    help="Which cell to calculate",
+    "n_cell", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",
 )
 
 args = parser.parse_args()
@@ -97,12 +92,7 @@ def chr_contact_ratios(contact_mat):
     chr_num_contacts = np.array(
         [
             [
-                np.count_nonzero(
-                    contact_mat[
-                        chr_starts[n] : chr_starts[n + 1],
-                        chr_starts[m] : chr_starts[m + 1],
-                    ]
-                )
+                np.count_nonzero(contact_mat[chr_starts[n] : chr_starts[n + 1], chr_starts[m] : chr_starts[m + 1],])
                 for n in range(20)
             ]
             for m in range(20)
@@ -123,7 +113,7 @@ def chr_contact_ratios(contact_mat):
 
 
 # contact_mat = calc_contacts(1)
-for n_cell in range(1,9):
+for n_cell in range(1, 9):
     print(f"Cell {n_cell}")
 
     print()

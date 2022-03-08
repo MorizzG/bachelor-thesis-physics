@@ -34,12 +34,7 @@ NUM_THREADS = 4
 parser = argparse.ArgumentParser(description="Calculate chromosome contactivity")
 
 arg_group = parser.add_argument(
-    "n_cell",
-    action="store",
-    nargs="?",
-    type=int,
-    default=1,
-    help="Which cell to calculate",
+    "n_cell", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",
 )
 
 args = parser.parse_args()

@@ -27,9 +27,7 @@ def print_includes():
 def main():
     parser = argparse.ArgumentParser(prog="python -m pybind11")
     parser.add_argument(
-        "--includes",
-        action="store_true",
-        help="Include flags for both pybind11 and Python headers.",
+        "--includes", action="store_true", help="Include flags for both pybind11 and Python headers.",
     )
     args = parser.parse_args()
     if not sys.argv[1:]:

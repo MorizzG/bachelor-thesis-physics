@@ -19,7 +19,7 @@ class test_log_energy_upon_run_command(unittest.TestCase):
             position=[[0, 0, 0]],
             type_name=["R"],
             mass=[1.0],
-            moment_inertia=[[0, 1 / 12 * 1.0 * 8**2, 1 / 12 * 1.0 * 8**2]],
+            moment_inertia=[[0, 1 / 12 * 1.0 * 8 ** 2, 1 / 12 * 1.0 * 8 ** 2]],
             orientation=[[1, 0, 0, 0]],
         )
         system = hoomd.init.create_lattice(unitcell=uc, n=[8, 18, 18])
@@ -28,16 +28,7 @@ class test_log_energy_upon_run_command(unittest.TestCase):
         rigid.set_param(
             "R",
             types=["A"] * 8,
-            positions=[
-                (-4, 0, 0),
-                (-3, 0, 0),
-                (-2, 0, 0),
-                (-1, 0, 0),
-                (1, 0, 0),
-                (2, 0, 0),
-                (3, 0, 0),
-                (4, 0, 0),
-            ],
+            positions=[(-4, 0, 0), (-3, 0, 0), (-2, 0, 0), (-1, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), (4, 0, 0),],
         )
 
         rigid.create_bodies()
@@ -50,12 +41,7 @@ class test_log_energy_upon_run_command(unittest.TestCase):
         integrator = hoomd.md.integrate.langevin(group=rigid_gr, kT=1.0, seed=42)
         log = hoomd.analyze.log(
             filename=None,
-            quantities=[
-                "potential_energy",
-                "translational_kinetic_energy",
-                "rotational_kinetic_energy",
-                "pressure",
-            ],
+            quantities=["potential_energy", "translational_kinetic_energy", "rotational_kinetic_energy", "pressure",],
             period=1,
             overwrite=True,
         )

@@ -76,8 +76,7 @@ def test_dim_check_fail(arr):
 
 
 @pytest.mark.parametrize(
-    "args, ret",
-    [([], [1, 2, 3, 4, 5, 6]), ([1], [4, 5, 6]), ([0, 1], [2, 3, 4, 5, 6]), ([1, 2], [6])],
+    "args, ret", [([], [1, 2, 3, 4, 5, 6]), ([1], [4, 5, 6]), ([0, 1], [2, 3, 4, 5, 6]), ([1, 2], [6])],
 )
 def test_data(arr, args, ret):
     from sys import byteorder

@@ -26,7 +26,7 @@ class mpcd_srd_validation(unittest.TestCase):
         self.solute.restore_snapshot(snap)
 
         # srd
-        self.solvent = mpcd.init.make_random(N=int(self.density * L**3), kT=1.0, seed=42)
+        self.solvent = mpcd.init.make_random(N=int(self.density * L ** 3), kT=1.0, seed=42)
         mpcd.integrator(dt=0.1)
         self.srd = mpcd.collide.srd(seed=791, period=1, angle=130.0, kT=1.0)
         mpcd.stream.bulk(period=1)

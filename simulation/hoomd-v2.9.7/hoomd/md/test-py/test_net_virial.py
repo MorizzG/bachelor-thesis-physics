@@ -58,7 +58,7 @@ class compute_net_virial_tests(unittest.TestCase):
         # access only the DPD virial
         dpd_virial = self.dpd.get_net_virial(group.all())
 
-        volume = self.L**3
+        volume = self.L ** 3
         for i in range(6):
             log_pressure = log.query(qr[i])
             numpy.testing.assert_allclose(log_pressure, dpd_virial[i] / volume)

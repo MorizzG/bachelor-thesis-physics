@@ -1175,10 +1175,7 @@ class particle_data(hoomd.meta._metadata):
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Particle Data for %d particles of %d type(s)" % (
-            self.pdata.getNGlobal(),
-            self.pdata.getNTypes(),
-        )
+        result = "Particle Data for %d particles of %d type(s)" % (self.pdata.getNGlobal(), self.pdata.getNTypes(),)
         return result
 
     ## \internal
@@ -1656,10 +1653,7 @@ class bond_data(hoomd.meta._metadata):
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Bond Data for %d bonds of %d typeid(s)" % (
-            self.bdata.getNGlobal(),
-            self.bdata.getNTypes(),
-        )
+        result = "Bond Data for %d bonds of %d typeid(s)" % (self.bdata.getNGlobal(), self.bdata.getNTypes(),)
         return result
 
     ## \internal
@@ -2001,10 +1995,7 @@ class angle_data(hoomd.meta._metadata):
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Angle Data for %d angles of %d typeid(s)" % (
-            self.adata.getNGlobal(),
-            self.adata.getNTypes(),
-        )
+        result = "Angle Data for %d angles of %d typeid(s)" % (self.adata.getNGlobal(), self.adata.getNTypes(),)
         return result
 
     ## \internal
@@ -2192,10 +2183,7 @@ class dihedral_data(hoomd.meta._metadata):
     ## \internal
     # \brief Get an informal string representing the object
     def __str__(self):
-        result = "Dihedral Data for %d angles of %d typeid(s)" % (
-            self.ddata.getNGlobal(),
-            self.ddata.getNTypes(),
-        )
+        result = "Dihedral Data for %d angles of %d typeid(s)" % (self.ddata.getNGlobal(), self.ddata.getNTypes(),)
         return result
 
     ## \internal

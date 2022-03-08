@@ -54,7 +54,7 @@ def smooth(signal: "sp.coo_matrix", h: int) -> "sp.coo_matrix":
     sm, sn = signal.shape
 
     km = 2 * h + 1
-    kernel = np.ones((km, km)) / (km**2)
+    kernel = np.ones((km, km)) / (km ** 2)
     sm, sn = signal.shape
 
     # Sanity checks
@@ -151,10 +151,7 @@ def subsample_contacts(M: "sp.coo_matrix", n_contacts: float) -> "sp.coo_matrix"
     sampled_rows = M.row[nnz_mask]
     sampled_cols = M.col[nnz_mask]
 
-    return sp.coo_matrix(
-        (sampled_counts, (sampled_rows, sampled_cols)),
-        shape=(M.shape[0], M.shape[1]),
-    )
+    return sp.coo_matrix((sampled_counts, (sampled_rows, sampled_cols)), shape=(M.shape[0], M.shape[1]),)
 
 
 def diag_trim(mat: Union["sp.dia_matrix", "np.ndarray"], n: int) -> Union["sp.dia_matrix", "np.ndarray"]:
@@ -207,6 +204,6 @@ def set_mat_diag(mat: "np.ndarray", diag: int = 0, val: int = 0) -> float:
     """
     m = mat.shape[0]
     start = diag
-    end = m**2 - diag * m
+    end = m ** 2 - diag * m
     step = m + 1
     mat.flat[start:end:step] = val

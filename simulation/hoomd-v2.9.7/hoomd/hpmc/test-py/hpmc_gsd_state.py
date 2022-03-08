@@ -36,50 +36,24 @@ class hpmc_gsd_state(unittest.TestCase):
         r = 0.1234
         rup = 0.3
         v3d = 0.33 * np.array(
-            [
-                (1, 1, 1),
-                (1, -1, 1),
-                (-1, -1, 1),
-                (-1, 1, 1),
-                (1, 1, -1),
-                (1, -1, -1),
-                (-1, -1, -1),
-                (-1, 1, -1),
-            ]
+            [(1, 1, 1), (1, -1, 1), (-1, -1, 1), (-1, 1, 1), (1, 1, -1), (1, -1, -1), (-1, -1, -1), (-1, 1, -1),]
         )
         v3dup = v3d + 0.1 * np.array(
-            [
-                (-1, 1, -1),
-                (1, 1, 1),
-                (1, -1, -1),
-                (-1, 1, -1),
-                (-1, -1, -1),
-                (1, 1, 1),
-                (-1, 1, -1),
-                (-1, 1, 1),
-            ]
+            [(-1, 1, -1), (1, 1, 1), (1, -1, -1), (-1, 1, -1), (-1, -1, -1), (1, 1, 1), (-1, 1, -1), (-1, 1, 1),]
         )
         self.a = 0.5
         self.d = 0.5
         self.params = dict(
-            sphere=dict(
-                first=dict(diameter=1.5, orientable=False),
-                second=dict(diameter=3.0, orientable=True),
-            ),
-            ellipsoid=dict(
-                first=dict(a=0.5, b=0.54, c=0.35),
-                second=dict(a=0.98 * 0.5, b=1.05 * 0.54, c=1.1 * 0.35),
-            ),
+            sphere=dict(first=dict(diameter=1.5, orientable=False), second=dict(diameter=3.0, orientable=True),),
+            ellipsoid=dict(first=dict(a=0.5, b=0.54, c=0.35), second=dict(a=0.98 * 0.5, b=1.05 * 0.54, c=1.1 * 0.35),),
             convex_polygon=dict(first=dict(vertices=v2d), second=dict(vertices=v2dup)),
             convex_spheropolygon=dict(
-                first=dict(vertices=v2d, sweep_radius=r),
-                second=dict(vertices=v2dup, sweep_radius=rup),
+                first=dict(vertices=v2d, sweep_radius=r), second=dict(vertices=v2dup, sweep_radius=rup),
             ),
             simple_polygon=dict(first=dict(vertices=v2d), second=dict(vertices=v2dup)),
             convex_polyhedron=dict(first=dict(vertices=v3d), second=dict(vertices=v3dup)),
             convex_spheropolyhedron=dict(
-                first=dict(vertices=v3d, sweep_radius=r),
-                second=dict(vertices=v3dup, sweep_radius=rup),
+                first=dict(vertices=v3d, sweep_radius=r), second=dict(vertices=v3dup, sweep_radius=rup),
             ),
         )
 

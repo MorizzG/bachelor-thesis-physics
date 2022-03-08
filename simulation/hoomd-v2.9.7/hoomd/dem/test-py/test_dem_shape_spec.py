@@ -29,7 +29,7 @@ class dem_shape_spec_base(unittest.TestCase):
         elif dim == 3:
             system = hoomd.init.create_lattice(unitcell=hoomd.lattice.sc(a=5.50), n=5)
         snapshot = system.take_snapshot(all=True)
-        bindex = np.random.choice(range(5**dim), int(0.5 * 5**dim), replace=False)
+        bindex = np.random.choice(range(5 ** dim), int(0.5 * 5 ** dim), replace=False)
         if comm.get_rank() == 0:
             snapshot.particles.types = ["A", "B"]
             snapshot.particles.typeid[bindex] = 1
@@ -111,8 +111,7 @@ class dem_shape_spec_base(unittest.TestCase):
         tetra_verts = [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]]
         tetra_faces = [[0, 1, 2], [3, 0, 2], [3, 2, 1], [3, 1, 0]]
         shape_params = dict(
-            A=dict(vertices=cube_verts, faces=cube_faces),
-            B=dict(vertices=tetra_verts, faces=tetra_faces),
+            A=dict(vertices=cube_verts, faces=cube_faces), B=dict(vertices=tetra_verts, faces=tetra_faces),
         )
         expected_shapespec = [
             dict(type="ConvexPolyhedron", rounding_radius=0.5, vertices=cube_verts),
@@ -231,8 +230,7 @@ class dem_shape_spec_base(unittest.TestCase):
         tetra_verts = [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]]
         tetra_faces = [[0, 1, 2], [3, 0, 2], [3, 2, 1], [3, 1, 0]]
         shape_params = dict(
-            A=dict(vertices=cube_verts, faces=cube_faces),
-            B=dict(vertices=tetra_verts, faces=tetra_faces),
+            A=dict(vertices=cube_verts, faces=cube_faces), B=dict(vertices=tetra_verts, faces=tetra_faces),
         )
         expected_shapespec = [
             dict(type="ConvexPolyhedron", rounding_radius=0.5, vertices=cube_verts),

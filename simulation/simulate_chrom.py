@@ -68,10 +68,7 @@ def main():
     # arg_group.add_argument("--all", action="store_true", help="Simulate all cells")
 
     parser.add_argument(
-        "n_cell",
-        action="store",
-        type=int,
-        help="Cell to simulate",  # , nargs="*"
+        "n_cell", action="store", type=int, help="Cell to simulate",  # , nargs="*"
     )
 
     parser.add_argument("n_chrom", action="store", type=int, help="Chromosome to simulate")

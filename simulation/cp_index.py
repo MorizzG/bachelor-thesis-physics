@@ -57,10 +57,7 @@ def min_chr_ind(df_cps, n_chr):
 
     return np.min(
         [
-            (
-                np.min(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]),
-                np.min(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),
-            )
+            (np.min(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]), np.min(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),)
             for df_cp in df_cps
         ]
     )
@@ -87,10 +84,7 @@ def max_chr_ind(df_cps, n_chr):
 
     return np.max(
         [
-            (
-                np.max(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]),
-                np.max(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),
-            )
+            (np.max(df_cp[df_cp["chr_A"] == n_chr]["ind_A"]), np.max(df_cp[df_cp["chr_B"] == n_chr]["ind_B"]),)
             for df_cp in df_cps
         ]
     )
@@ -123,10 +117,7 @@ chr_mins = pd.Series([min_chr_ind(df_cps, n_chr) for n_chr in range(1, 21)], ind
 
 chr_maxs = pd.Series([max_chr_ind(df_cps, n_chr) for n_chr in range(1, 21)], index=range(1, 21))
 
-chr_lens = pd.Series(
-    [chr_maxs[n_chr] - chr_mins[n_chr] + 1 for n_chr in range(1, 21)],
-    index=range(1, 21),
-)
+chr_lens = pd.Series([chr_maxs[n_chr] - chr_mins[n_chr] + 1 for n_chr in range(1, 21)], index=range(1, 21),)
 
 
 chr_lens.to_pickle("data/chromosome_lengths.pkl")

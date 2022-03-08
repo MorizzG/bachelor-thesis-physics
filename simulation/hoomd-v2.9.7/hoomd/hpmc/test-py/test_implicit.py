@@ -66,10 +66,7 @@ class implicit_test_cube(unittest.TestCase):
         nsample = 10000
         self.free_volume = hpmc.compute.free_volume(mc=self.mc, seed=987, nsample=nsample, test_type="B")
         self.log = analyze.log(
-            filename=self.tmp_file,
-            quantities=["volume", "hpmc_free_volume"],
-            overwrite=True,
-            period=100,
+            filename=self.tmp_file, quantities=["volume", "hpmc_free_volume"], overwrite=True, period=100,
         )
 
         if self.long:
@@ -162,10 +159,7 @@ class implicit_test_sphere_new(unittest.TestCase):
         nsample = 10000
         self.free_volume = hpmc.compute.free_volume(mc=self.mc, seed=987, nsample=nsample, test_type="B")
         self.log = analyze.log(
-            filename=self.tmp_file,
-            quantities=["volume", "hpmc_free_volume"],
-            overwrite=True,
-            period=100,
+            filename=self.tmp_file, quantities=["volume", "hpmc_free_volume"], overwrite=True, period=100,
         )
 
     def test_implicit(self):

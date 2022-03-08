@@ -2154,15 +2154,7 @@ class tersoff(pair):
         ang_consts = _hoomd.make_scalar3(c2, d2, m)
 
         return _md.make_tersoff_params(
-            cutoff_d,
-            tersoff_coeffs,
-            exp_consts,
-            dimer_r,
-            n,
-            gamman,
-            lambda3_cube,
-            ang_consts,
-            alpha,
+            cutoff_d, tersoff_coeffs, exp_consts, dimer_r, n, gamman, lambda3_cube, ang_consts, alpha,
         )
 
 

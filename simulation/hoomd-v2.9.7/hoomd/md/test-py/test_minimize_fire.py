@@ -21,15 +21,7 @@ class minimize_fire_tests(unittest.TestCase):
     def test(self):
         all = group.all()
         md.integrate.mode_minimize_fire(
-            dt=0.005,
-            Nmin=5,
-            finc=1.1,
-            fdec=0.5,
-            alpha_start=0.1,
-            falpha=0.99,
-            ftol=1e-1,
-            Etol=1e-5,
-            min_steps=10,
+            dt=0.005, Nmin=5, finc=1.1, fdec=0.5, alpha_start=0.1, falpha=0.99, ftol=1e-1, Etol=1e-5, min_steps=10,
         )
         md.integrate.nve(all)
         run(100)
@@ -38,15 +30,7 @@ class minimize_fire_tests(unittest.TestCase):
     def test_box_relax(self):
         all = group.all()
         md.integrate.mode_minimize_fire(
-            dt=0.005,
-            Nmin=5,
-            finc=1.1,
-            fdec=0.5,
-            alpha_start=0.1,
-            falpha=0.99,
-            ftol=1e-1,
-            Etol=1e-5,
-            min_steps=10,
+            dt=0.005, Nmin=5, finc=1.1, fdec=0.5, alpha_start=0.1, falpha=0.99, ftol=1e-1, Etol=1e-5, min_steps=10,
         )
         md.integrate.nph(group=all, gamma=1, P=0.0, tauP=1.0)
         run(100)

@@ -124,10 +124,7 @@ def _parse_command_line(arg_string=None):
         help="(MPI only) Disable two-level (node-local) decomposition",
     )
     parser.add_option(
-        "--single-mpi",
-        dest="single_mpi",
-        action="store_true",
-        help="Allow single-threaded HOOMD builds in MPI jobs",
+        "--single-mpi", dest="single_mpi", action="store_true", help="Allow single-threaded HOOMD builds in MPI jobs",
     )
     parser.add_option("--user", dest="user", help="User options")
     parser.add_option("--nthreads", dest="nthreads", help="Number of TBB threads")

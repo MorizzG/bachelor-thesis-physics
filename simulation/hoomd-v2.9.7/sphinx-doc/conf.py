@@ -244,13 +244,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (
-        master_doc,
-        "HOOMD-blue.tex",
-        "HOOMD-blue Documentation",
-        "The Regents of the University of Michigan",
-        "manual",
-    ),
+    (master_doc, "HOOMD-blue.tex", "HOOMD-blue Documentation", "The Regents of the University of Michigan", "manual",),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

@@ -83,7 +83,7 @@ def spheroArea(vertices, radius=1.0, factor=1.0):
             polygonSkeleton.append((x + dr2[1] * radius, y - dr2[0] * radius))
 
     # Contribution from rounded corners
-    sphereContribution = (sum([theta % np.pi for theta in dthetas])) / 2.0 * radius**2
+    sphereContribution = (sum([theta % np.pi for theta in dthetas])) / 2.0 * radius ** 2
 
     return (area(polygonSkeleton) + sphereContribution - adjustment) * factor
 
@@ -289,7 +289,7 @@ def convexHull(vertices, tol=1e-6):
 
         # plane_{a, b}: basis vectors in the plane
         plane_a = r[0] - rcom
-        plane_a /= np.sqrt(np.sum(plane_a**2))
+        plane_a /= np.sqrt(np.sum(plane_a ** 2))
         plane_b = np.cross(norm, plane_a)
 
         dr = r - rcom[np.newaxis, :]

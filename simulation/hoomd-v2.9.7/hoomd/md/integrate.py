@@ -1617,19 +1617,11 @@ class berendsen(_integration_method):
         # initialize the reflected c++ class
         if not hoomd.context.exec_conf.isCUDAEnabled():
             self.cpp_method = _md.TwoStepBerendsen(
-                hoomd.context.current.system_definition,
-                group.cpp_group,
-                thermo.cpp_compute,
-                tau,
-                kT.cpp_variant,
+                hoomd.context.current.system_definition, group.cpp_group, thermo.cpp_compute, tau, kT.cpp_variant,
             )
         else:
             self.cpp_method = _md.TwoStepBerendsenGPU(
-                hoomd.context.current.system_definition,
-                group.cpp_group,
-                thermo.cpp_compute,
-                tau,
-                kT.cpp_variant,
+                hoomd.context.current.system_definition, group.cpp_group, thermo.cpp_compute, tau, kT.cpp_variant,
             )
 
         # store metadata

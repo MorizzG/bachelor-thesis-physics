@@ -87,11 +87,7 @@ class dcd(hoomd.analyze._analyzer):
             hoomd.util.unquiet_status()
 
         self.cpp_analyzer = _hoomd.DCDDumpWriter(
-            hoomd.context.current.system_definition,
-            filename,
-            int(reported_period),
-            group.cpp_group,
-            overwrite,
+            hoomd.context.current.system_definition, filename, int(reported_period), group.cpp_group, overwrite,
         )
         self.cpp_analyzer.setUnwrapFull(unwrap_full)
         self.cpp_analyzer.setUnwrapRigid(unwrap_rigid)
@@ -222,14 +218,7 @@ class getar(hoomd.analyze._analyzer):
     }
 
     substitutions = {
-        "all": [
-            "particle_all",
-            "angle_all",
-            "bond_all",
-            "dihedral_all",
-            "improper_all",
-            "global_all",
-        ],
+        "all": ["particle_all", "angle_all", "bond_all", "dihedral_all", "improper_all", "global_all",],
         "particle_all": [
             "angular_momentum",
             "body",

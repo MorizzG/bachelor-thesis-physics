@@ -436,14 +436,7 @@ class user_union(user):
     """
 
     def set_params(
-        self,
-        type,
-        positions,
-        typeids,
-        orientations=None,
-        charges=None,
-        diameters=None,
-        leaf_capacity=4,
+        self, type, positions, typeids, orientations=None, charges=None, diameters=None, leaf_capacity=4,
     ):
         if orientations is None:
             orientations = [[1, 0, 0, 0]] * len(positions)

@@ -192,8 +192,7 @@ def all():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # cache it and then return it in the wrapper class
@@ -274,8 +273,7 @@ def cuboid(name, xmin=None, xmax=None, ymin=None, ymax=None, zmin=None, zmax=Non
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -307,13 +305,11 @@ def rigid_center():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
     if cpp_group.getNumMembersGlobal() == 0:
         hoomd.context.msg.notice(
-            2,
-            "It is OK if there are zero particles in this group. The group will be updated after run().\n",
+            2, "It is OK if there are zero particles in this group. The group will be updated after run().\n",
         )
 
     # return it in the wrapper class
@@ -345,8 +341,7 @@ def nonrigid():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -378,8 +373,7 @@ def rigid():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -411,8 +405,7 @@ def nonfloppy():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -444,8 +437,7 @@ def floppy():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -477,8 +469,7 @@ def nonbody():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -510,8 +501,7 @@ def body():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -562,8 +552,7 @@ def tags(tag_min, tag_max=None, name=None, update=False):
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -603,8 +592,7 @@ def tag_list(name, tags):
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -665,8 +653,7 @@ def type(type, name=None, update=False):
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -741,8 +728,7 @@ def difference(name, a, b):
     new_cpp_group = _hoomd.ParticleGroup.groupDifference(a.cpp_group, b.cpp_group)
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
     )
     return group(name, new_cpp_group)
 
@@ -773,8 +759,7 @@ def intersection(name, a, b):
     new_cpp_group = _hoomd.ParticleGroup.groupIntersection(a.cpp_group, b.cpp_group)
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
     )
     return group(name, new_cpp_group)
 
@@ -804,7 +789,6 @@ def union(name, a, b):
     new_cpp_group = _hoomd.ParticleGroup.groupUnion(a.cpp_group, b.cpp_group)
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2,
-        'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
+        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
     )
     return group(name, new_cpp_group)

@@ -77,11 +77,7 @@ class charge_pppm_bond_exclusions_test(unittest.TestCase):
 
         # rcut should be larger than distance of pair, so we have a split into short range and long range energy
         c.set_params(Nx=128, Ny=128, Nz=128, order=7, rcut=3)
-        log = analyze.log(
-            quantities=["potential_energy", "pair_ewald_energy", "pppm_energy"],
-            period=1,
-            filename=None,
-        )
+        log = analyze.log(quantities=["potential_energy", "pair_ewald_energy", "pppm_energy"], period=1, filename=None,)
         md.integrate.mode_standard(dt=0.0)
         md.integrate.nve(group.all())
         # trick to allow larger decompositions
@@ -339,11 +335,7 @@ class charge_pppm_rigid_body_test(unittest.TestCase):
         c = md.charge.pppm(all, nlist=nl)
         kappa = 0.1
         c.set_params(Nx=128, Ny=128, Nz=128, order=7, rcut=1.5, alpha=kappa)
-        log = analyze.log(
-            quantities=["potential_energy", "pppm_energy", "pair_ewald_energy"],
-            period=1,
-            filename=None,
-        )
+        log = analyze.log(quantities=["potential_energy", "pppm_energy", "pair_ewald_energy"], period=1, filename=None,)
         md.integrate.mode_standard(dt=0.0)
         md.integrate.nve(group.rigid_center())
         # trick to allow larger decompositions

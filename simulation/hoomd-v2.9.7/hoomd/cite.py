@@ -262,13 +262,7 @@ class article(_citation):
         if self.author is not None:
             out += self.format_authors(True)
             out += ". "
-        out += '"%s", %s %s (%s) %s' % (
-            self.title,
-            self.journal,
-            str(self.volume),
-            str(self.year),
-            str(self.pages),
-        )
+        out += '"%s", %s %s (%s) %s' % (self.title, self.journal, str(self.volume), str(self.year), str(self.pages),)
         return out
 
 

@@ -30,7 +30,7 @@ class constrain_distance_tests(unittest.TestCase):
 
         self.system.constraints.add(0, 1, 1.5)
         self.system.constraints.add(0, 2, 1.5)
-        self.system.constraints.add(1, 2, math.sqrt(1.5**2.0 + 1.5**2.0))
+        self.system.constraints.add(1, 2, math.sqrt(1.5 ** 2.0 + 1.5 ** 2.0))
 
         self.nl = md.nlist.cell()
 

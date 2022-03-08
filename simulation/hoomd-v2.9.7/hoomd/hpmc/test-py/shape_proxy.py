@@ -161,11 +161,7 @@ class shape_proxy_sanity_checks(unittest.TestCase):
         norms = [
             (-1, 0, 0),
             (1, 0, 0),
-            (
-                0,
-                1,
-                0,
-            ),
+            (0, 1, 0,),
             (0, -1, 0),
             (0, 0, 1),
             (0, 0, -1),

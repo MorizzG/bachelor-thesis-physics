@@ -31,8 +31,7 @@ class update_box_resize_tests(unittest.TestCase):
     # test the setting of more args
     def test_moreargs(self):
         update.box_resize(
-            Lx=variant.linear_interp([(0, 20), (1e6, 50)]),
-            Ly=variant.linear_interp([(0, 40), (1e6, 80)]),
+            Lx=variant.linear_interp([(0, 20), (1e6, 50)]), Ly=variant.linear_interp([(0, 40), (1e6, 80)]),
         )
         run(100)
 

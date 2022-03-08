@@ -373,12 +373,7 @@ class slit(_streaming_method):
             else:
                 fill_class = _mpcd.SlitGeometryFillerGPU
             self._filler = fill_class(
-                hoomd.context.current.mpcd.data,
-                density,
-                type_id,
-                T.cpp_variant,
-                seed,
-                self._cpp.geometry,
+                hoomd.context.current.mpcd.data, density, type_id, T.cpp_variant, seed, self._cpp.geometry,
             )
         else:
             self._filler.setDensity(density)
@@ -530,12 +525,7 @@ class slit_pore(_streaming_method):
             else:
                 fill_class = _mpcd.SlitPoreGeometryFillerGPU
             self._filler = fill_class(
-                hoomd.context.current.mpcd.data,
-                density,
-                type_id,
-                T.cpp_variant,
-                seed,
-                self._cpp.geometry,
+                hoomd.context.current.mpcd.data, density, type_id, T.cpp_variant, seed, self._cpp.geometry,
             )
         else:
             self._filler.setDensity(density)
