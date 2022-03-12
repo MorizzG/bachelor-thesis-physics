@@ -33,7 +33,7 @@ from hoomd.md import _md, force
 
 
 class coeff:
-    r""" Defines dihedral coefficients.
+    r"""Defines dihedral coefficients.
 
     The coefficients for all dihedral force are specified using this class. Coefficients are
     specified per dihedral type.
@@ -83,7 +83,7 @@ class coeff:
         self.default_coeff[name] = value
 
     def set(self, type, **coeffs):
-        r""" Sets parameters for dihedral types.
+        r"""Sets parameters for dihedral types.
 
         Args:
             type (str): Type of dihedral, or list of types
@@ -211,7 +211,7 @@ class coeff:
 
 
 class harmonic(force._force):
-    r""" Harmonic dihedral potential.
+    r"""Harmonic dihedral potential.
 
     :py:class:`harmonic` specifies a harmonic dihedral potential energy between every defined dihedral
     quadruplet of particles in the simulation:
@@ -303,7 +303,7 @@ def _table_eval(theta, V, T, width):
 
 
 class table(force._force):
-    r""" Tabulated dihedral potential.
+    r"""Tabulated dihedral potential.
 
     Args:
         width (int): Number of points to use to interpolate V and T (see documentation above)
@@ -411,7 +411,7 @@ class table(force._force):
             self.update_dihedral_table(i, func, coeff)
 
     def set_from_file(self, dihedralname, filename):
-        r"""  Set a dihedral pair interaction from a file.
+        r"""Set a dihedral pair interaction from a file.
 
         Args:
             dihedralname (str): Name of dihedral
@@ -499,7 +499,7 @@ class table(force._force):
 
 
 class opls(force._force):
-    r""" OPLS dihedral force
+    r"""OPLS dihedral force
 
     :py:class:`opls` specifies an OPLS-style dihedral potential energy between every defined dihedral.
 

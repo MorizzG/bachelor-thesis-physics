@@ -13,7 +13,7 @@ from hoomd.md import _md, force
 
 
 class cgcmm(force._force):
-    r""" CGCMM angle potential.
+    r"""CGCMM angle potential.
 
     The command angle.cgcmm defines a regular harmonic potential energy between every defined triplet
     of particles in the simulation, but in addition in adds the repulsive part of a CGCMM pair potential
@@ -87,7 +87,7 @@ class cgcmm(force._force):
         self.angle_types_set = []
 
     def set_coeff(self, angle_type, k, t0, exponents, epsilon, sigma):
-        r""" Sets the CG-CMM angle coefficients for a particular angle type.
+        r"""Sets the CG-CMM angle coefficients for a particular angle type.
 
         Args:
             angle_type (str): Angle type to set coefficients for

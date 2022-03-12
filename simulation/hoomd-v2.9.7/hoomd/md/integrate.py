@@ -49,7 +49,7 @@ from hoomd.md import _md
 
 
 class mode_standard(_integrator):
-    r""" Enables a variety of standard integration methods.
+    r"""Enables a variety of standard integration methods.
 
     Args:
         dt (float): Each time step of the simulation :py:func:`hoomd.run()` will advance the real time of the system forward by *dt* (in time units).
@@ -117,7 +117,7 @@ class mode_standard(_integrator):
     }
 
     def set_params(self, dt=None, aniso=None):
-        r""" Changes parameters of an existing integration mode.
+        r"""Changes parameters of an existing integration mode.
 
         Args:
             dt (float): New time step delta (if set) (in time units).
@@ -147,7 +147,7 @@ class mode_standard(_integrator):
             self.cpp_integrator.setAnisotropicMode(anisoMode)
 
     def reset_methods(self):
-        r""" (Re-)initialize the integrator variables in all integration methods
+        r"""(Re-)initialize the integrator variables in all integration methods
 
         .. versionadded:: 2.2
 
@@ -165,7 +165,7 @@ class mode_standard(_integrator):
 
 
 class nvt(_integration_method):
-    r""" NVT Integration via the Nosé-Hoover thermostat.
+    r"""NVT Integration via the Nosé-Hoover thermostat.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles on which to apply this method.
@@ -256,7 +256,7 @@ class nvt(_integration_method):
         self.cpp_method.validateGroup()
 
     def set_params(self, kT=None, tau=None):
-        r""" Changes parameters of an existing integrator.
+        r"""Changes parameters of an existing integrator.
 
         Args:
             kT (float): New temperature (if set) (in energy units)
@@ -283,7 +283,7 @@ class nvt(_integration_method):
             self.tau = tau
 
     def randomize_velocities(self, seed):
-        r""" Assign random velocities and angular momenta to particles in the
+        r"""Assign random velocities and angular momenta to particles in the
         group, sampling from the Maxwell-Boltzmann distribution. This method
         considers the dimensionality of the system and particle anisotropy, and
         removes drift (the center of mass velocity).
@@ -312,7 +312,7 @@ class nvt(_integration_method):
 
 
 class npt(_integration_method):
-    r""" NPT Integration via MTK barostat-thermostat.
+    r"""NPT Integration via MTK barostat-thermostat.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles on which to apply this method.
@@ -608,7 +608,7 @@ class npt(_integration_method):
         self.nph = nph
 
     def set_params(self, kT=None, tau=None, S=None, P=None, tauP=None, rescale_all=None, gamma=None):
-        r""" Changes parameters of an existing integrator.
+        r"""Changes parameters of an existing integrator.
 
         Args:
             kT (:py:mod:`hoomd.variant` or :py:obj:`float`): New temperature (if set) (in energy units)
@@ -696,7 +696,7 @@ class npt(_integration_method):
         return data
 
     def randomize_velocities(self, seed):
-        r""" Assign random velocities and angular momenta to particles in the
+        r"""Assign random velocities and angular momenta to particles in the
         group, sampling from the Maxwell-Boltzmann distribution. This method
         considers the dimensionality of the system and particle anisotropy, and
         removes drift (the center of mass velocity).
@@ -725,7 +725,7 @@ class npt(_integration_method):
 
 
 class nph(npt):
-    r""" NPH Integration via MTK barostat-thermostat..
+    r"""NPH Integration via MTK barostat-thermostat..
 
     Args:
         params: keyword arguments passed to :py:class:`npt`.
@@ -766,7 +766,7 @@ class nph(npt):
         hoomd.util.unquiet_status()
 
     def randomize_velocities(self, kT, seed):
-        r""" Assign random velocities and angular momenta to particles in the
+        r"""Assign random velocities and angular momenta to particles in the
         group, sampling from the Maxwell-Boltzmann distribution. This method
         considers the dimensionality of the system and particle anisotropy, and
         removes drift (the center of mass velocity).
@@ -794,7 +794,7 @@ class nph(npt):
 
 
 class nve(_integration_method):
-    r""" NVE Integration via Velocity-Verlet
+    r"""NVE Integration via Velocity-Verlet
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles on which to apply this method.
@@ -863,7 +863,7 @@ class nve(_integration_method):
         self.metadata_fields = ["group", "limit"]
 
     def set_params(self, limit=None, zero_force=None):
-        r""" Changes parameters of an existing integrator.
+        r"""Changes parameters of an existing integrator.
 
         Args:
             limit (bool): (if set) New limit value to set. Removes the limit if limit is False
@@ -889,7 +889,7 @@ class nve(_integration_method):
             self.cpp_method.setZeroForce(zero_force)
 
     def randomize_velocities(self, kT, seed):
-        r""" Assign random velocities and angular momenta to particles in the
+        r"""Assign random velocities and angular momenta to particles in the
         group, sampling from the Maxwell-Boltzmann distribution. This method
         considers the dimensionality of the system and particle anisotropy, and
         removes drift (the center of mass velocity).
@@ -914,7 +914,7 @@ class nve(_integration_method):
 
 
 class langevin(_integration_method):
-    r""" Langevin dynamics.
+    r"""Langevin dynamics.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles to apply this method to.
@@ -1041,7 +1041,7 @@ class langevin(_integration_method):
         self.metadata_fields = ["group", "kT", "seed", "dscale", "noiseless_t", "noiseless_r"]
 
     def set_params(self, kT=None, tally=None):
-        r""" Change langevin integrator parameters.
+        r"""Change langevin integrator parameters.
 
         Args:
             kT (:py:mod:`hoomd.variant` or :py:obj:`float`): New temperature (if set) (in energy units).
@@ -1069,7 +1069,7 @@ class langevin(_integration_method):
             self.cpp_method.setTally(tally)
 
     def set_gamma(self, a, gamma):
-        r""" Set gamma for a particle type.
+        r"""Set gamma for a particle type.
 
         Args:
             a (str): Particle type name
@@ -1102,7 +1102,7 @@ class langevin(_integration_method):
                 self.cpp_method.setGamma(i, gamma)
 
     def set_gamma_r(self, a, gamma_r):
-        r""" Set gamma_r for a particle type.
+        r"""Set gamma_r for a particle type.
 
         Args:
             a (str):  Particle type name
@@ -1142,7 +1142,7 @@ class langevin(_integration_method):
 
 
 class brownian(_integration_method):
-    r""" Brownian dynamics.
+    r"""Brownian dynamics.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles to apply this method to.
@@ -1265,7 +1265,7 @@ class brownian(_integration_method):
         self.metadata_fields = ["group", "kT", "seed", "dscale", "noiseless_t", "noiseless_r"]
 
     def set_params(self, kT=None):
-        r""" Change langevin integrator parameters.
+        r"""Change langevin integrator parameters.
 
         Args:
             kT (:py:mod:`hoomd.variant` or :py:obj:`float`): New temperature (if set) (in energy units).
@@ -1286,7 +1286,7 @@ class brownian(_integration_method):
             self.kT = kT
 
     def set_gamma(self, a, gamma):
-        r""" Set gamma for a particle type.
+        r"""Set gamma for a particle type.
 
         Args:
             a (str): Particle type name
@@ -1319,7 +1319,7 @@ class brownian(_integration_method):
                 self.cpp_method.setGamma(i, gamma)
 
     def set_gamma_r(self, a, gamma_r):
-        r""" Set gamma_r for a particle type.
+        r"""Set gamma_r for a particle type.
 
         Args:
             a (str):  Particle type name
@@ -1359,7 +1359,7 @@ class brownian(_integration_method):
 
 
 class mode_minimize_fire(_integrator):
-    r""" Energy Minimizer (FIRE).
+    r"""Energy Minimizer (FIRE).
 
     Args:
         group (:py:mod:`hoomd.group`): Particle group to apply minimization to.
@@ -1530,14 +1530,13 @@ class mode_minimize_fire(_integrator):
     }
 
     def get_energy(self):
-        r""" Returns the energy after the last iteration of the minimizer
-        """
+        r"""Returns the energy after the last iteration of the minimizer"""
         hoomd.util.print_status_line()
         self.check_initialization()
         return self.cpp_integrator.getEnergy()
 
     def set_params(self, aniso=None):
-        r""" Changes parameters of an existing integration mode.
+        r"""Changes parameters of an existing integration mode.
 
         Args:
             aniso (bool): Anisotropic integration mode (bool), default None (autodetect).
@@ -1560,7 +1559,7 @@ class mode_minimize_fire(_integrator):
             self.cpp_integrator.setAnisotropicMode(anisoMode)
 
     def has_converged(self):
-        r""" Test if the energy minimizer has converged.
+        r"""Test if the energy minimizer has converged.
 
         Returns:
             True when the minimizer has converged. Otherwise, return False.
@@ -1569,14 +1568,13 @@ class mode_minimize_fire(_integrator):
         return self.cpp_integrator.hasConverged()
 
     def reset(self):
-        r""" Reset the minimizer to its initial state.
-        """
+        r"""Reset the minimizer to its initial state."""
         self.check_initialization()
         return self.cpp_integrator.reset()
 
 
 class berendsen(_integration_method):
-    r""" Applies the Berendsen thermostat.
+    r"""Applies the Berendsen thermostat.
 
     Args:
         group (:py:mod:`hoomd.group`): Group to which the Berendsen thermostat will be applied.
@@ -1619,11 +1617,11 @@ class berendsen(_integration_method):
         # initialize the reflected c++ class
         if not hoomd.context.exec_conf.isCUDAEnabled():
             self.cpp_method = _md.TwoStepBerendsen(
-                hoomd.context.current.system_definition, group.cpp_group, thermo.cpp_compute, tau, kT.cpp_variant
+                hoomd.context.current.system_definition, group.cpp_group, thermo.cpp_compute, tau, kT.cpp_variant,
             )
         else:
             self.cpp_method = _md.TwoStepBerendsenGPU(
-                hoomd.context.current.system_definition, group.cpp_group, thermo.cpp_compute, tau, kT.cpp_variant
+                hoomd.context.current.system_definition, group.cpp_group, thermo.cpp_compute, tau, kT.cpp_variant,
             )
 
         # store metadata
@@ -1632,7 +1630,7 @@ class berendsen(_integration_method):
         self.metadata_fields = ["kT", "tau"]
 
     def randomize_velocities(self, seed):
-        r""" Assign random velocities and angular momenta to particles in the
+        r"""Assign random velocities and angular momenta to particles in the
         group, sampling from the Maxwell-Boltzmann distribution. This method
         considers the dimensionality of the system and particle anisotropy, and
         removes drift (the center of mass velocity).

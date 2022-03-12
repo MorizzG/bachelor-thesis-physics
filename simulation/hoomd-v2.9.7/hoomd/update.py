@@ -104,7 +104,7 @@ class _updater(hoomd.meta._metadata):
             raise RuntimeError()
 
     def disable(self):
-        r""" Disables the updater.
+        r"""Disables the updater.
 
         Examples::
 
@@ -129,7 +129,7 @@ class _updater(hoomd.meta._metadata):
         self.enabled = False
 
     def enable(self):
-        r""" Enables the updater.
+        r"""Enables the updater.
 
         Examples::
 
@@ -152,7 +152,7 @@ class _updater(hoomd.meta._metadata):
         self.enabled = True
 
     def set_period(self, period):
-        r""" Changes the updater period.
+        r"""Changes the updater period.
 
         Args:
             period (int): New period to set.
@@ -204,8 +204,7 @@ class _updater(hoomd.meta._metadata):
             raise NotImplementedError("GSD Schema is not implemented for {}".format(self.__class__.__name__))
 
     def restore_state(self):
-        """ Restore the state information from the file used to initialize the simulations
-        """
+        """Restore the state information from the file used to initialize the simulations"""
         hoomd.util.print_status_line()
         if isinstance(hoomd.context.current.state_reader, _hoomd.GSDReader) and hasattr(
             self.cpp_updater, "restoreStateGSD"
@@ -217,14 +216,14 @@ class _updater(hoomd.meta._metadata):
             else:
                 hoomd.context.msg.error(
                     "Restoring state from {reader_name} is not currently supported for {name}\n".format(
-                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__
+                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__,
                     )
                 )
             raise RuntimeError("Can not restore state information!")
 
 
 class sort(_updater):
-    r""" Sorts particles in memory to improve cache coherency.
+    r"""Sorts particles in memory to improve cache coherency.
 
     Warning:
         Do not specify :py:class:`hoomd.update.sort` explicitly in your script. HOOMD creates
@@ -278,7 +277,7 @@ class sort(_updater):
         self.setupUpdater(default_period)
 
     def set_params(self, grid=None):
-        r""" Change sorter parameters.
+        r"""Change sorter parameters.
 
         Args:
             grid (int): New grid dimension (if set)
@@ -295,7 +294,7 @@ class sort(_updater):
 
 
 class box_resize(_updater):
-    r""" Rescale the system box size.
+    r"""Rescale the system box size.
 
     Args:
         L (:py:mod:`hoomd.variant`): (if set) box length in the x,y, and z directions as a function of time (in distance units)
@@ -345,7 +344,7 @@ class box_resize(_updater):
     """
 
     def __init__(
-        self, Lx=None, Ly=None, Lz=None, xy=None, xz=None, yz=None, period=1, L=None, phase=0, scale_particles=True
+        self, Lx=None, Ly=None, Lz=None, xy=None, xz=None, yz=None, period=1, L=None, phase=0, scale_particles=True,
     ):
         hoomd.util.print_status_line()
 
@@ -416,7 +415,7 @@ class box_resize(_updater):
 
 
 class balance(_updater):
-    r""" Adjusts the boundaries of a domain decomposition on a regular 3D grid.
+    r"""Adjusts the boundaries of a domain decomposition on a regular 3D grid.
 
     Args:
         x (bool): If True, balance in x dimension.
@@ -503,7 +502,7 @@ class balance(_updater):
         hoomd.util.unquiet_status()
 
     def set_params(self, x=None, y=None, z=None, tolerance=None, maxiter=None):
-        r""" Change load balancing parameters.
+        r"""Change load balancing parameters.
 
         Args:
             x (bool): If True, balance in x dimension.

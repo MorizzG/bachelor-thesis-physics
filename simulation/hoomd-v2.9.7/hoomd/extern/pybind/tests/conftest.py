@@ -182,8 +182,8 @@ def suppress(exception):
 
 
 def gc_collect():
-    """ Run the garbage collector twice (needed when running
-    reference counting tests with PyPy) """
+    """Run the garbage collector twice (needed when running
+    reference counting tests with PyPy)"""
     gc.collect()
     gc.collect()
 

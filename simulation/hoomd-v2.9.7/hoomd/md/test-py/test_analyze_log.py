@@ -45,7 +45,7 @@ class analyze_log_tests(unittest.TestCase):
         hoomd.run(100)
         ana.set_params(quantities=["test2", "test3"], delimiter=",")
         hoomd.run(100)
-        ana.set_params(quantities=[u"test4", u"test5"], delimiter=",")
+        ana.set_params(quantities=["test4", "test5"], delimiter=",")
         hoomd.run(100)
 
     # test variable period
@@ -64,7 +64,7 @@ class analyze_log_tests(unittest.TestCase):
     def test_callback(self):
         ana = hoomd.analyze.log(quantities=["test1", "test2", "test3"], period=10, filename=self.tmp_file)
         ana.register_callback(
-            "phi_p", lambda timestep: len(self.system.particles) / self.system.box.get_volume() * math.pi / 4.0
+            "phi_p", lambda timestep: len(self.system.particles) / self.system.box.get_volume() * math.pi / 4.0,
         )
 
     def tearDown(self):
@@ -222,7 +222,7 @@ class analyze_log_hdf5_tests(unittest.TestCase):
 
         with hoomd.hdf5.File(self.tmp_file, "a") as h5file:
             ana = hoomd.hdf5.log(
-                h5file, quantities=["test1", "test2", "test3"], matrix_quantities=["mtest1", "mtest2"], period=10
+                h5file, quantities=["test1", "test2", "test3"], matrix_quantities=["mtest1", "mtest2"], period=10,
             )
             ana.register_callback("mtest1", callback, matrix=True)
             ana.register_callback("mtest2", callback, matrix=True)
@@ -254,7 +254,7 @@ class analyze_log_hdf5_tests(unittest.TestCase):
 
         with hoomd.hdf5.File(self.tmp_file, "a") as h5file:
             ana = hoomd.hdf5.log(
-                h5file, quantities=["test1", "test2", "test3"], matrix_quantities=["mtest1", "mtest2"], period=10
+                h5file, quantities=["test1", "test2", "test3"], matrix_quantities=["mtest1", "mtest2"], period=10,
             )
             ana.register_callback("mtest1", callback, matrix=True)
             ana.register_callback("mtest2", callback, matrix=True)

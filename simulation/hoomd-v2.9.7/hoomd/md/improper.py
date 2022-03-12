@@ -23,7 +23,7 @@ from hoomd.md import _md, force
 
 
 class coeff:
-    r""" Define improper coefficients.
+    r"""Define improper coefficients.
 
     The coefficients for all improper force are specified using this class. Coefficients are
     specified per improper type.
@@ -59,7 +59,7 @@ class coeff:
         self.default_coeff[name] = value
 
     def set(self, type, **coeffs):
-        r""" Sets parameters for one improper type.
+        r"""Sets parameters for one improper type.
 
         Args:
             type (str): Type of improper (or list of types).
@@ -187,7 +187,7 @@ class coeff:
 
 
 class harmonic(force._force):
-    r""" Harmonic improper potential.
+    r"""Harmonic improper potential.
 
     The command improper.harmonic specifies a harmonic improper potential energy between every quadruplet of particles
     in the simulation.

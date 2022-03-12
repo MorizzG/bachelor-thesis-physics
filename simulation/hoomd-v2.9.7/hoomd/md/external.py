@@ -19,7 +19,7 @@ from hoomd.md import _md, force
 
 
 class coeff:
-    r""" Defines external potential coefficients.
+    r"""Defines external potential coefficients.
 
     The coefficients for all external forces are specified using this class. Coefficients are specified per particle
     type.
@@ -60,7 +60,7 @@ class coeff:
         self.default_coeff[name] = value
 
     def set(self, type, **coeffs):
-        r""" Sets parameters for particle types.
+        r"""Sets parameters for particle types.
 
         Args:
             type (str): Type of particle (or list of types)
@@ -261,7 +261,7 @@ class _external_force(force._force):
 
 
 class periodic(_external_force):
-    r""" One-dimension periodic potential.
+    r"""One-dimension periodic potential.
 
     :py:class:`periodic` specifies that an external force should be
     added to every particle in the simulation to induce a periodic modulation
@@ -315,7 +315,7 @@ class periodic(_external_force):
 
 
 class e_field(_external_force):
-    r""" Electric field.
+    r"""Electric field.
 
     :py:class:`e_field` specifies that an external force should be
     added to every particle in the simulation that results from an electric field.

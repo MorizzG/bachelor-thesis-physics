@@ -11,7 +11,7 @@ from . import _hpmc, integrate
 
 
 class sdf(_analyzer):
-    r""" Compute the scale distribution function.
+    r"""Compute the scale distribution function.
 
     Args:
         mc (:py:mod:`hoomd.hpmc.integrate`): MC integrator.
@@ -101,7 +101,7 @@ class sdf(_analyzer):
             raise runtime_error("Error initializing analyze.sdf")
 
         self.cpp_analyzer = cls(
-            hoomd.context.current.system_definition, mc.cpp_integrator, xmax, dx, navg, filename, overwrite
+            hoomd.context.current.system_definition, mc.cpp_integrator, xmax, dx, navg, filename, overwrite,
         )
 
         self.setupAnalyzer(period, phase)

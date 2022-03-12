@@ -14,7 +14,7 @@ from . import _hpmc, compute, integrate
 
 
 class boxmc(_updater):
-    r""" Apply box updates to sample isobaric and related ensembles.
+    r"""Apply box updates to sample isobaric and related ensembles.
 
     Args:
 
@@ -102,7 +102,7 @@ class boxmc(_updater):
         ]
 
     def set_betap(self, betaP):
-        r""" Update the pressure set point for Metropolis Monte Carlo volume updates.
+        r"""Update the pressure set point for Metropolis Monte Carlo volume updates.
 
         Args:
             betaP (float) or (:py:mod:`hoomd.variant`): :math:`\frac{p}{k_{\mathrm{B}}T}`. (units of inverse area in 2D or
@@ -113,7 +113,7 @@ class boxmc(_updater):
         self.cpp_updater.setP(self.betaP.cpp_variant)
 
     def volume(self, delta=None, weight=None):
-        r""" Enable/disable isobaric volume move and set parameters.
+        r"""Enable/disable isobaric volume move and set parameters.
 
         Args:
             delta (float): maximum change of the box area (2D) or volume (3D).
@@ -147,7 +147,7 @@ class boxmc(_updater):
         return {"delta": self.volume_delta, "weight": self.volume_weight}
 
     def ln_volume(self, delta=None, weight=None):
-        r""" Enable/disable isobaric volume move and set parameters.
+        r"""Enable/disable isobaric volume move and set parameters.
 
         Args:
             delta (float): maximum change of **ln(V)** (where V is box area (2D) or volume (3D)).
@@ -181,7 +181,7 @@ class boxmc(_updater):
         return {"delta": self.ln_volume_delta, "weight": self.ln_volume_weight}
 
     def length(self, delta=None, weight=None):
-        r""" Enable/disable isobaric box dimension move and set parameters.
+        r"""Enable/disable isobaric box dimension move and set parameters.
 
         Args:
             delta (:py:class:`float` or :py:class:`tuple`): maximum change of the box thickness for each pair of parallel planes
@@ -224,7 +224,7 @@ class boxmc(_updater):
         return {"delta": self.length_delta, "weight": self.length_weight}
 
     def shear(self, delta=None, weight=None, reduce=None):
-        r""" Enable/disable box shear moves and set parameters.
+        r"""Enable/disable box shear moves and set parameters.
 
         Args:
             delta (tuple): maximum change of the box tilt factor xy, xz, yz.
@@ -267,12 +267,12 @@ class boxmc(_updater):
                 self.shear_delta = [float(d) for d in delta]
 
         self.cpp_updater.shear(
-            self.shear_delta[0], self.shear_delta[1], self.shear_delta[2], self.shear_reduce, self.shear_weight
+            self.shear_delta[0], self.shear_delta[1], self.shear_delta[2], self.shear_reduce, self.shear_weight,
         )
         return {"delta": self.shear_delta, "weight": self.shear_weight, "reduce": self.shear_reduce}
 
     def aspect(self, delta=None, weight=None):
-        r""" Enable/disable aspect ratio move and set parameters.
+        r"""Enable/disable aspect ratio move and set parameters.
 
         Args:
             delta (float): maximum relative change of aspect ratio
@@ -307,7 +307,7 @@ class boxmc(_updater):
         return {"delta": self.aspect_delta, "weight": self.aspect_weight}
 
     def get_volume_acceptance(self):
-        r""" Get the average acceptance ratio for volume changing moves.
+        r"""Get the average acceptance ratio for volume changing moves.
 
         Returns:
             The average volume change acceptance for the last run
@@ -325,7 +325,7 @@ class boxmc(_updater):
         return counters.getVolumeAcceptance()
 
     def get_ln_volume_acceptance(self):
-        r""" Get the average acceptance ratio for log(V) changing moves.
+        r"""Get the average acceptance ratio for log(V) changing moves.
 
         Returns:
             The average volume change acceptance for the last run
@@ -343,7 +343,7 @@ class boxmc(_updater):
         return counters.getLogVolumeAcceptance()
 
     def get_shear_acceptance(self):
-        r"""  Get the average acceptance ratio for shear changing moves.
+        r"""Get the average acceptance ratio for shear changing moves.
 
         Returns:
            The average shear change acceptance for the last run
@@ -363,7 +363,7 @@ class boxmc(_updater):
         return counters.getShearAcceptance()
 
     def get_aspect_acceptance(self):
-        r"""  Get the average acceptance ratio for aspect changing moves.
+        r"""Get the average acceptance ratio for aspect changing moves.
 
         Returns:
             The average aspect change acceptance for the last run
@@ -383,7 +383,7 @@ class boxmc(_updater):
         return counters.getAspectAcceptance()
 
     def enable(self):
-        r""" Enables the updater.
+        r"""Enables the updater.
 
         Example::
 
@@ -401,7 +401,7 @@ class boxmc(_updater):
 
 
 class wall(_updater):
-    r""" Apply wall updates with a user-provided python callback.
+    r"""Apply wall updates with a user-provided python callback.
 
     Args:
         mc (:py:mod:`hoomd.hpmc.integrate`): MC integrator.
@@ -460,12 +460,12 @@ class wall(_updater):
             raise RuntimeError("Error initializing update.wall")
 
         self.cpp_updater = cls(
-            hoomd.context.current.system_definition, mc.cpp_integrator, walls.cpp_compute, py_updater, move_ratio, seed
+            hoomd.context.current.system_definition, mc.cpp_integrator, walls.cpp_compute, py_updater, move_ratio, seed,
         )
         self.setupUpdater(period)
 
     def get_accepted_count(self, mode=0):
-        r""" Get the number of accepted wall update moves.
+        r"""Get the number of accepted wall update moves.
 
         Args:
             mode (int): specify the type of count to return. If mode!=0, return absolute quantities. If mode=0, return quantities relative to the start of the run.
@@ -489,7 +489,7 @@ class wall(_updater):
         return self.cpp_updater.getAcceptedCount(mode)
 
     def get_total_count(self, mode=0):
-        r""" Get the number of attempted wall update moves.
+        r"""Get the number of attempted wall update moves.
 
         Args:
             mode (int): specify the type of count to return. If mode!=0, return absolute quantities. If mode=0, return quantities relative to the start of the run.
@@ -515,7 +515,7 @@ class wall(_updater):
 
 
 class muvt(_updater):
-    r""" Insert and remove particles in the muVT ensemble.
+    r"""Insert and remove particles in the muVT ensemble.
 
     Args:
         mc (:py:mod:`hoomd.hpmc.integrate`): MC integrator.
@@ -685,7 +685,7 @@ class muvt(_updater):
         self.cpp_updater.setTransferTypes(cpp_transfer_types)
 
     def set_fugacity(self, type, fugacity):
-        r""" Change muVT fugacities.
+        r"""Change muVT fugacities.
 
         Args:
             type (str): Particle type to set parameters for
@@ -721,7 +721,7 @@ class muvt(_updater):
         self.cpp_updater.setFugacity(type_id, fugacity_variant.cpp_variant)
 
     def set_params(self, dV=None, move_ratio=None, transfer_ratio=None):
-        r""" Set muVT parameters.
+        r"""Set muVT parameters.
 
         Args:
             dV (float): (if set) Set volume rescaling factor (dimensionless)
@@ -753,7 +753,7 @@ class muvt(_updater):
 
 
 class remove_drift(_updater):
-    r""" Remove the center of mass drift from a system restrained on a lattice.
+    r"""Remove the center of mass drift from a system restrained on a lattice.
 
     Args:
         mc (:py:mod:`hoomd.hpmc.integrate`): MC integrator.
@@ -841,7 +841,7 @@ class remove_drift(_updater):
 
 
 class clusters(_updater):
-    r""" Equilibrate the system according to the geometric cluster algorithm (GCA).
+    r"""Equilibrate the system according to the geometric cluster algorithm (GCA).
 
     The GCA as described in Liu and Lujten (2004), http://doi.org/10.1103/PhysRevLett.92.035504 is used for hard shape,
     patch interactions and depletants.
@@ -945,8 +945,10 @@ class clusters(_updater):
         # register the clusters updater
         self.setupUpdater(period)
 
-    def set_params(self, move_ratio=None, flip_probability=None, swap_move_ratio=None, delta_mu=None, swap_types=None):
-        r""" Set options for the clusters moves.
+    def set_params(
+        self, move_ratio=None, flip_probability=None, swap_move_ratio=None, delta_mu=None, swap_types=None,
+    ):
+        r"""Set options for the clusters moves.
 
         Args:
             move_ratio (float): Set the ratio between pivot and reflection moves (default 0.5)
@@ -989,7 +991,7 @@ class clusters(_updater):
             self.cpp_updater.setSwapTypePair(type_A, type_B)
 
     def get_pivot_acceptance(self):
-        r""" Get the average acceptance ratio for pivot moves
+        r"""Get the average acceptance ratio for pivot moves
 
         Returns:
             The average acceptance rate for pivot moves during the last run
@@ -998,7 +1000,7 @@ class clusters(_updater):
         return counters.getPivotAcceptance()
 
     def get_reflection_acceptance(self):
-        r""" Get the average acceptance ratio for reflection moves
+        r"""Get the average acceptance ratio for reflection moves
 
         Returns:
             The average acceptance rate for reflection moves during the last run
@@ -1007,7 +1009,7 @@ class clusters(_updater):
         return counters.getReflectionAcceptance()
 
     def get_swap_acceptance(self):
-        r""" Get the average acceptance ratio for swap moves
+        r"""Get the average acceptance ratio for swap moves
 
         Returns:
             The average acceptance rate for type swap moves during the last run

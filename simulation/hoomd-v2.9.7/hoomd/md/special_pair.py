@@ -23,7 +23,7 @@ from hoomd.md import _md, bond, force
 
 
 class coeff:
-    r""" Define special_pair coefficients.
+    r"""Define special_pair coefficients.
 
     The coefficients for all special pair potentials are specified using this class. Coefficients are
     specified per pair type.
@@ -74,7 +74,7 @@ class coeff:
         self.default_coeff[name] = value
 
     def set(self, type, **coeffs):
-        r""" Sets parameters for special_pair types.
+        r"""Sets parameters for special_pair types.
 
         Args:
             type (str): Type of special_pair (or a list of type names)

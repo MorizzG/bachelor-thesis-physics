@@ -119,7 +119,7 @@ else:
 
 
 class integrator(hoomd.integrate._integrator):
-    """ MPCD integrator
+    """MPCD integrator
 
     Args:
         dt (float): Each time step of the simulation :py:func:`hoomd.run()` will
@@ -188,7 +188,7 @@ class integrator(hoomd.integrate._integrator):
     }
 
     def set_params(self, dt=None, aniso=None):
-        """ Changes parameters of an existing integration mode.
+        """Changes parameters of an existing integration mode.
 
         Args:
             dt (float): New time step delta (if set) (in time units).

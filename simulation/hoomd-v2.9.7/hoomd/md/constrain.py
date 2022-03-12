@@ -90,7 +90,7 @@ class _constraint_force(hoomd.meta._metadata):
             raise RuntimeError()
 
     def disable(self):
-        r""" Disable the force.
+        r"""Disable the force.
 
         Example::
 
@@ -117,7 +117,7 @@ class _constraint_force(hoomd.meta._metadata):
         hoomd.context.current.constraint_forces.remove(self)
 
     def enable(self):
-        r""" Enable the force.
+        r"""Enable the force.
 
         Example::
 
@@ -160,7 +160,7 @@ _constraint_force.cur_id = 0
 
 
 class sphere(_constraint_force):
-    r""" Constrain particles to the surface of a sphere.
+    r"""Constrain particles to the surface of a sphere.
 
     Args:
         group (:py:mod:`hoomd.group`): Group on which to apply the constraint.
@@ -200,7 +200,7 @@ class sphere(_constraint_force):
 
 
 class distance(_constraint_force):
-    r""" Constrain pairwise particle distances.
+    r"""Constrain pairwise particle distances.
 
     :py:class:`distance` specifies that forces will be applied to all particles pairs for
     which constraints have been defined.
@@ -243,7 +243,7 @@ class distance(_constraint_force):
         hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
     def set_params(self, rel_tol=None):
-        r""" Set parameters for constraint computation.
+        r"""Set parameters for constraint computation.
 
         Args:
             rel_tol (float): The relative tolerance with which constraint violations are detected (**optional**).
@@ -258,7 +258,7 @@ class distance(_constraint_force):
 
 
 class rigid(_constraint_force):
-    r""" Constrain particles in rigid bodies.
+    r"""Constrain particles in rigid bodies.
 
     .. rubric:: Overview
 
@@ -375,7 +375,7 @@ class rigid(_constraint_force):
         hoomd.context.current.system.addCompute(self.cpp_force, self.force_name)
 
     def set_param(self, type_name, types, positions, orientations=None, charges=None, diameters=None):
-        r""" Set constituent particle types and coordinates for a rigid body.
+        r"""Set constituent particle types and coordinates for a rigid body.
 
         Args:
             type_name (str): The type of the central particle
@@ -466,7 +466,7 @@ class rigid(_constraint_force):
         self.cpp_force.setParam(type_id, type_vec, pos_vec, orientation_vec, charge_vec, diameter_vec)
 
     def create_bodies(self, create=True):
-        r""" Create copies of rigid bodies.
+        r"""Create copies of rigid bodies.
 
         Args:
             create (bool): When True, create rigid bodies, otherwise validate existing ones.
@@ -474,8 +474,7 @@ class rigid(_constraint_force):
         self.cpp_force.validateRigidBodies(create)
 
     def validate_bodies(self):
-        r""" Validate that bodies are well defined and prepare for the simulation run.
-        """
+        r"""Validate that bodies are well defined and prepare for the simulation run."""
         self.cpp_force.validateRigidBodies(False)
 
     ## \internal
@@ -486,7 +485,7 @@ class rigid(_constraint_force):
 
 
 class oneD(_constraint_force):
-    r""" Constrain particles to move along a specific direction only
+    r"""Constrain particles to move along a specific direction only
 
     Args:
         group (:py:mod:`hoomd.group`): Group on which to apply the constraint.

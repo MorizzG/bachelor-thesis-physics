@@ -66,7 +66,7 @@ class _compute:
             raise RuntimeError()
 
     def disable(self):
-        r""" Disables the compute.
+        r"""Disables the compute.
 
         Examples::
 
@@ -90,7 +90,7 @@ class _compute:
         self.enabled = False
 
     def enable(self):
-        r""" Enables the compute.
+        r"""Enables the compute.
 
         Examples::
 
@@ -121,8 +121,7 @@ class _compute:
             raise NotImplementedError("GSD Schema is not implemented for {}".format(self.__class__.__name__))
 
     def restore_state(self):
-        """ Restore the state information from the file used to initialize the simulations
-        """
+        """Restore the state information from the file used to initialize the simulations"""
         hoomd.util.print_status_line()
         if isinstance(hoomd.context.current.state_reader, _hoomd.GSDReader) and hasattr(
             self.cpp_compute, "restoreStateGSD"
@@ -134,7 +133,7 @@ class _compute:
             else:
                 hoomd.context.msg.error(
                     "Restoring state from {reader_name} is not currently supported for {name}\n".format(
-                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__
+                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__,
                     )
                 )
             raise RuntimeError("Can not restore state information!")
@@ -145,7 +144,7 @@ _compute.cur_id = 0
 
 
 class thermo(_compute):
-    r""" Compute thermodynamic properties of a group of particles.
+    r"""Compute thermodynamic properties of a group of particles.
 
     Args:
         group (:py:mod:`hoomd.group`): Group to compute thermodynamic properties for.
@@ -241,7 +240,7 @@ class thermo(_compute):
         hoomd.context.current.thermos.append(self)
 
     def disable(self):
-        r""" Disables the thermo.
+        r"""Disables the thermo.
 
         Examples::
 
@@ -261,7 +260,7 @@ class thermo(_compute):
         hoomd.context.current.thermos.remove(self)
 
     def enable(self):
-        r""" Enables the thermo compute.
+        r"""Enables the thermo compute.
 
         Examples::
 

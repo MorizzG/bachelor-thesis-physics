@@ -42,7 +42,7 @@ from . import _mpcd
 
 
 class _bounce_back(hoomd.integrate._integration_method):
-    """ NVE integration with bounce-back rules.
+    """NVE integration with bounce-back rules.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles on which to apply this method.
@@ -70,7 +70,7 @@ class _bounce_back(hoomd.integrate._integration_method):
         self.metadata_fields = ["group", "boundary"]
 
     def _process_boundary(self, bc):
-        """ Process boundary condition string into enum
+        """Process boundary condition string into enum
 
         Args:
             bc (str): Boundary condition, either "no_slip" or "slip"
@@ -94,7 +94,7 @@ class _bounce_back(hoomd.integrate._integration_method):
 
 
 class slit(_bounce_back):
-    """ NVE integration with bounce-back rules in a slit channel.
+    """NVE integration with bounce-back rules in a slit channel.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles on which to apply this method.
@@ -142,7 +142,7 @@ class slit(_bounce_back):
         self.cpp_method.validateGroup()
 
     def set_params(self, H=None, V=None, boundary=None):
-        """ Set parameters for the slit geometry.
+        """Set parameters for the slit geometry.
 
         Args:
             H (float): channel half-width
@@ -173,7 +173,7 @@ class slit(_bounce_back):
 
 
 class slit_pore(_bounce_back):
-    """ NVE integration with bounce-back rules in a slit pore channel.
+    """NVE integration with bounce-back rules in a slit pore channel.
 
     Args:
         group (:py:mod:`hoomd.group`): Group of particles on which to apply this method.
@@ -220,7 +220,7 @@ class slit_pore(_bounce_back):
         self.cpp_method.validateGroup()
 
     def set_params(self, H=None, L=None, boundary=None):
-        """ Set parameters for the slit pore geometry.
+        """Set parameters for the slit pore geometry.
 
         Args:
             H (float): channel half-width.

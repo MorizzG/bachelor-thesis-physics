@@ -187,8 +187,7 @@ class _integrator(hoomd.meta._metadata):
             raise NotImplementedError("GSD Schema is not implemented for {}".format(self.__class__.__name__))
 
     def restore_state(self):
-        """ Restore the state information from the file used to initialize the simulations
-        """
+        """Restore the state information from the file used to initialize the simulations"""
         hoomd.util.print_status_line()
         if isinstance(hoomd.context.current.state_reader, _hoomd.GSDReader) and hasattr(
             self.cpp_integrator, "restoreStateGSD"
@@ -200,7 +199,7 @@ class _integrator(hoomd.meta._metadata):
             else:
                 hoomd.context.msg.error(
                     "Restoring state from {reader_name} is not currently supported for {name}\n".format(
-                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__
+                        reader_name=hoomd.context.current.state_reader.__name__, name=self.__class__.__name__,
                     )
                 )
             raise RuntimeError("Can not restore state information!")
@@ -251,7 +250,7 @@ class _integration_method(hoomd.meta._metadata):
             raise RuntimeError()
 
     def disable(self):
-        r""" Disables the integration method.
+        r"""Disables the integration method.
 
         Examples::
 
@@ -274,7 +273,7 @@ class _integration_method(hoomd.meta._metadata):
         hoomd.context.current.integration_methods.remove(self)
 
     def enable(self):
-        r""" Enables the integration method.
+        r"""Enables the integration method.
 
         Examples::
 

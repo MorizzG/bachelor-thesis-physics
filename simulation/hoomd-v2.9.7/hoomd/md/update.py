@@ -18,7 +18,7 @@ from hoomd.update import _updater
 
 
 class rescale_temp(_updater):
-    r""" Rescales particle velocities.
+    r"""Rescales particle velocities.
 
     Args:
         kT (:py:mod:`hoomd.variant` or :py:obj:`float`): Temperature set point (in energy units)
@@ -70,7 +70,7 @@ class rescale_temp(_updater):
         self.metadata_fields = ["kT", "period"]
 
     def set_params(self, kT=None):
-        r""" Change rescale_temp parameters.
+        r"""Change rescale_temp parameters.
 
         Args:
             kT (:py:mod:`hoomd.variant` or :py:obj:`float`): New temperature set point (in energy units)
@@ -90,7 +90,7 @@ class rescale_temp(_updater):
 
 
 class zero_momentum(_updater):
-    r""" Zeroes system momentum.
+    r"""Zeroes system momentum.
 
     Args:
         period (int): Momentum will be zeroed every *period* time steps
@@ -122,7 +122,7 @@ class zero_momentum(_updater):
 
 
 class enforce2d(_updater):
-    r""" Enforces 2D simulation.
+    r"""Enforces 2D simulation.
 
     Every time step, particle velocities and accelerations are modified so that their z components are 0: forcing
     2D simulations when other calculations may cause particles to drift out of the plane. Using enforce2d is only
@@ -150,7 +150,7 @@ class enforce2d(_updater):
 
 
 class constraint_ellipsoid(_updater):
-    r""" Constrain particles to the surface of a ellipsoid.
+    r"""Constrain particles to the surface of a ellipsoid.
 
     Args:
         group (:py:mod:`hoomd.group`): Group for which the update will be set
@@ -226,7 +226,7 @@ class constraint_ellipsoid(_updater):
 
 
 class mueller_plathe_flow(_updater):
-    r""" Updater class for a shear flow according
+    r"""Updater class for a shear flow according
     to an algorithm published by Mueller Plathe.:
 
      "Florian Mueller-Plathe. Reversing the perturbation in nonequilibrium molecular dynamics:
@@ -320,26 +320,26 @@ class mueller_plathe_flow(_updater):
         self.setupUpdater(period)
 
     def get_n_slabs(self):
-        r""" Get the number of slabs."""
+        r"""Get the number of slabs."""
         return self.cpp_updater.getNSlabs()
 
     def get_min_slab(self):
-        r""" Get the slab id of min velocity search."""
+        r"""Get the slab id of min velocity search."""
         return self.cpp_updater.getMinSlab()
 
     def get_max_slab(self):
-        r""" Get the slab id of max velocity search."""
+        r"""Get the slab id of max velocity search."""
         return self.cpp_updater.getMaxSlab()
 
     def get_flow_epsilon(self):
-        r""" Get the tolerance between target flow and actual achieved flow."""
+        r"""Get the tolerance between target flow and actual achieved flow."""
         return self.cpp_updater.getFlowEpsilon()
 
     def set_flow_epsilon(self, epsilon):
-        r""" Set the tolerance between target flow and actual achieved flow.
+        r"""Set the tolerance between target flow and actual achieved flow.
 
-           Args:
-           epsilon (float): New tolerance for the deviation of actual and achieved flow.
+        Args:
+        epsilon (float): New tolerance for the deviation of actual and achieved flow.
 
         """
         hoomd.util.print_status_line()

@@ -15,7 +15,7 @@ from hoomd import _hoomd
 
 
 def get_num_ranks():
-    """ Get the number of ranks in this partition.
+    """Get the number of ranks in this partition.
 
     Returns:
         The number of MPI ranks in this partition.
@@ -32,7 +32,7 @@ def get_num_ranks():
 
 
 def get_rank():
-    """ Get the current rank.
+    """Get the current rank.
 
     Returns:
         Index of the current rank in this partition.
@@ -50,7 +50,7 @@ def get_rank():
 
 
 def get_partition():
-    """ Get the current partition index.
+    """Get the current partition index.
 
     Returns:
         Index of the current partition.
@@ -67,7 +67,7 @@ def get_partition():
 
 
 def barrier_all():
-    """ Perform a MPI barrier synchronization across the whole MPI run.
+    """Perform a MPI barrier synchronization across the whole MPI run.
 
     Note:
         Does nothing in in non-MPI builds.
@@ -77,7 +77,7 @@ def barrier_all():
 
 
 def barrier():
-    """ Perform a MPI barrier synchronization across all ranks in the partition.
+    """Perform a MPI barrier synchronization across all ranks in the partition.
 
     Note:
         Does nothing in in non-MPI builds.
@@ -89,7 +89,7 @@ def barrier():
 
 
 class decomposition(object):
-    """ Set the domain decomposition.
+    """Set the domain decomposition.
 
     Args:
         x (list): First nx-1 fractional domain widths (if *nx* is None)
@@ -271,7 +271,7 @@ class decomposition(object):
         # if the box is uniform in all directions, just use these values
         if self.uniform_x and self.uniform_y and self.uniform_z:
             self.cpp_dd = _hoomd.DomainDecomposition(
-                hoomd.context.exec_conf, box.getL(), self.nx, self.ny, self.nz, not hoomd.context.options.onelevel
+                hoomd.context.exec_conf, box.getL(), self.nx, self.ny, self.nz, not hoomd.context.options.onelevel,
             )
             return self.cpp_dd
 

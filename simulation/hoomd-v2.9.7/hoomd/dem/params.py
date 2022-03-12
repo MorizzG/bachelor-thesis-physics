@@ -19,7 +19,7 @@ class SWCA(_dem.SWCAPotential):
 
 
 class NoFriction(_dem.NoFriction):
-    """"Parameter" wrapper for force fields with no friction
+    """ "Parameter" wrapper for force fields with no friction
     (i.e. real physical potentials)"""
 
     def __init__(self):

@@ -20,7 +20,7 @@ from hoomd.md import _md, force
 
 
 class coeff:
-    r""" Define angle coefficients.
+    r"""Define angle coefficients.
 
     The coefficients for all angle force are specified using this class. Coefficients are
     specified per angle type.
@@ -71,7 +71,7 @@ class coeff:
         self.default_coeff[name] = value
 
     def set(self, type, **coeffs):
-        r""" Sets parameters for angle types.
+        r"""Sets parameters for angle types.
 
         Args:
             type (str): Type of angle (or a list of type names)
@@ -196,7 +196,7 @@ class coeff:
 
 
 class harmonic(force._force):
-    r""" Harmonic angle potential.
+    r"""Harmonic angle potential.
 
     The command angle.harmonic specifies a harmonic potential energy between every triplet of particles
     with an angle specified between them.
@@ -282,7 +282,7 @@ class harmonic(force._force):
 
 
 class cosinesq(force._force):
-    r""" Cosine squared angle potential.
+    r"""Cosine squared angle potential.
 
     The command angle.cosinesq specifies a cosine squared potential energy
     between every triplet of particles with an angle specified between them.
@@ -498,7 +498,7 @@ class table(force._force):
             self.update_angle_table(i, func, coeff)
 
     def set_from_file(self, anglename, filename):
-        r""" Set a angle pair interaction from a file.
+        r"""Set a angle pair interaction from a file.
 
         Args:
             anglename (str): Name of angle

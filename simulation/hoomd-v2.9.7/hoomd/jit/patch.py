@@ -13,7 +13,7 @@ from hoomd.jit import _jit
 
 
 class user(object):
-    r''' Define an arbitrary patch energy.
+    r'''Define an arbitrary patch energy.
 
     Args:
         r_cut (float): Particle center to center distance cutoff beyond which all pair interactions are assumed 0.
@@ -435,7 +435,9 @@ class user_union(user):
         leaf_capacity: The number of particles in a leaf of the internal tree data structure
     """
 
-    def set_params(self, type, positions, typeids, orientations=None, charges=None, diameters=None, leaf_capacity=4):
+    def set_params(
+        self, type, positions, typeids, orientations=None, charges=None, diameters=None, leaf_capacity=4,
+    ):
         if orientations is None:
             orientations = [[1, 0, 0, 0]] * len(positions)
 

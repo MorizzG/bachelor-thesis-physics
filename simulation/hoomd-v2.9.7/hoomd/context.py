@@ -45,7 +45,7 @@ _prev_args = None
 
 
 class SimulationContext(object):
-    r""" Simulation context
+    r"""Simulation context
 
     Store all of the context related to a single simulation, including the system state, forces, updaters, integration
     methods, and all other commands specified on this simulation. All such commands in hoomd apply to the currently
@@ -155,14 +155,13 @@ class SimulationContext(object):
         self.state_reader = None
 
     def set_current(self):
-        r""" Force this to be the current context
-        """
+        r"""Force this to be the current context"""
         global current
 
         current = self
 
     def on_gpu(self):
-        r""" Test whether this job is running on a GPU.
+        r"""Test whether this job is running on a GPU.
 
         Returns:
             True if this invocation of HOOMD-blue is executing on a GPU. False if it is on the CPU.
@@ -184,7 +183,7 @@ class SimulationContext(object):
 
 
 def initialize(args=None, memory_traceback=False, mpi_comm=None):
-    r""" Initialize the execution context
+    r"""Initialize the execution context
 
     Args:
         args (str): Arguments to parse. When *None*, parse the arguments passed on the command line.

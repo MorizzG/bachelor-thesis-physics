@@ -36,7 +36,7 @@ class diskEOS_test(unittest.TestCase):
             period=100,
         )
         self.log.register_callback(
-            "phi_p", lambda timestep: len(self.system.particles) / self.system.box.get_volume() * math.pi / 4.0
+            "phi_p", lambda timestep: len(self.system.particles) / self.system.box.get_volume() * math.pi / 4.0,
         )
 
         # warm up

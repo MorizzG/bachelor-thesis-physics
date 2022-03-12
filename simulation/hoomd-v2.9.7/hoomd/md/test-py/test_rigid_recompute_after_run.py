@@ -28,7 +28,7 @@ class test_log_energy_upon_run_command(unittest.TestCase):
         rigid.set_param(
             "R",
             types=["A"] * 8,
-            positions=[(-4, 0, 0), (-3, 0, 0), (-2, 0, 0), (-1, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), (4, 0, 0)],
+            positions=[(-4, 0, 0), (-3, 0, 0), (-2, 0, 0), (-1, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), (4, 0, 0),],
         )
 
         rigid.create_bodies()
@@ -41,7 +41,7 @@ class test_log_energy_upon_run_command(unittest.TestCase):
         integrator = hoomd.md.integrate.langevin(group=rigid_gr, kT=1.0, seed=42)
         log = hoomd.analyze.log(
             filename=None,
-            quantities=["potential_energy", "translational_kinetic_energy", "rotational_kinetic_energy", "pressure"],
+            quantities=["potential_energy", "translational_kinetic_energy", "rotational_kinetic_energy", "pressure",],
             period=1,
             overwrite=True,
         )

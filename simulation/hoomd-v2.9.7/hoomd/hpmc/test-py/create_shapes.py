@@ -387,7 +387,7 @@ class faceted_sphere_test(unittest.TestCase):
         self.mc = hpmc.integrate.faceted_sphere(seed=10)
         self.mc.shape_param.set(
             "A",
-            normals=[(-1, 0, 0), (1, 0, 0), (0, 1, 0,), (0, -1, 0), (0, 0, 1), (0, 0, -1)],
+            normals=[(-1, 0, 0), (1, 0, 0), (0, 1, 0,), (0, -1, 0), (0, 0, 1), (0, 0, -1),],
             offsets=[-1] * 6,
             vertices=[
                 (-1, -1, -1),

@@ -11,7 +11,7 @@ from hoomd.hpmc import _hpmc
 
 
 class param_dict(dict):
-    r""" Manage shape parameters.
+    r"""Manage shape parameters.
 
     The parameters for all hpmc integrator shapes (:py:mod:`hoomd.hpmc.integrate`) are specified using this class.
     Parameters are specified per particle type. Every HPMC integrator has a member shape_param that can read and
@@ -49,7 +49,7 @@ class param_dict(dict):
         return super(param_dict, self).__getitem__(key)
 
     def set(self, types, **params):
-        """ Sets parameters for particle type(s).
+        """Sets parameters for particle type(s).
 
         Args:
             type (str): Particle type (string) or list of types
@@ -231,14 +231,23 @@ class polyhedron_params(_hpmc.polyhedron_param_proxy, _param):
     def __init__(self, mc, index):
         _hpmc.polyhedron_param_proxy.__init__(self, mc.cpp_integrator, index)
         _param.__init__(self, mc, index)
-        self._keys += ["vertices", "faces", "overlap", "colors", "sweep_radius", "capacity", "origin", "hull_only"]
+        self._keys += [
+            "vertices",
+            "faces",
+            "overlap",
+            "colors",
+            "sweep_radius",
+            "capacity",
+            "origin",
+            "hull_only",
+        ]
         self.make_fn = _hpmc.make_poly3d_data
         self.__dict__.update(dict(colors=None))
 
     def __str__(self):
         # should we put this in the c++ side?
         string = "polyhedron(vertices = {}, faces = {}, overlap = {}, colors= {}, sweep_radius = {}, capacity = {}, origin = {})".format(
-            self.vertices, self.faces, self.overlap, self.colors, self.sweep_radius, self.capacity, self.hull_only
+            self.vertices, self.faces, self.overlap, self.colors, self.sweep_radius, self.capacity, self.hull_only,
         )
         return string
 

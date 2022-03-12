@@ -16,7 +16,7 @@ from . import _mpcd
 
 
 class sort(hoomd.meta._metadata):
-    r""" Sorts MPCD particles in memory to improve cache coherency.
+    r"""Sorts MPCD particles in memory to improve cache coherency.
 
     Args:
         system (:py:class:`hoomd.mpcd.data.system`): MPCD system to create sorter for
@@ -79,7 +79,7 @@ class sort(hoomd.meta._metadata):
         self.enabled = True
 
     def set_period(self, period):
-        """ Change the sorting period.
+        """Change the sorting period.
 
         Args:
             period (int): New period to set.
@@ -100,7 +100,7 @@ class sort(hoomd.meta._metadata):
         self._cpp.setPeriod(hoomd.context.current.system.getCurrentTimeStep(), self.period)
 
     def tune(self, start, stop, step, tsteps, quiet=False):
-        """ Tune the sorting period.
+        """Tune the sorting period.
 
         Args:
             start (int): Start of tuning interval to scan (inclusive).

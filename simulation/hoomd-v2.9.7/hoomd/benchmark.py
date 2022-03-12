@@ -12,7 +12,7 @@ import hoomd
 
 
 def series(warmup=100000, repeat=20, steps=10000, limit_hours=None):
-    r""" Perform a series of benchmark runs.
+    r"""Perform a series of benchmark runs.
 
     Args:
         warmup (int): Number of time steps to :py:meth:`hoomd.run()` to warm up the benchmark

@@ -13,7 +13,7 @@ from hoomd.hpmc import _hpmc, integrate
 
 
 class free_volume(_compute):
-    r""" Compute the free volume available to a test particle by stochastic integration.
+    r"""Compute the free volume available to a test particle by stochastic integration.
 
     Args:
         mc (:py:mod:`hoomd.hpmc.integrate`): MC integrator.

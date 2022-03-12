@@ -43,7 +43,14 @@ class compute_net_virial_tests(unittest.TestCase):
     # Unit test: Validate virial and pressure computation
     def test_virial_pressure(self):
         # log the pressure quantities
-        qr = ["pressure_xx", "pressure_xy", "pressure_xz", "pressure_yy", "pressure_yz", "pressure_zz"]
+        qr = [
+            "pressure_xx",
+            "pressure_xy",
+            "pressure_xz",
+            "pressure_yy",
+            "pressure_yz",
+            "pressure_zz",
+        ]
         log = analyze.log(None, qr, period=1)
 
         run(1)

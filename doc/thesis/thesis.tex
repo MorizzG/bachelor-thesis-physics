@@ -2,7 +2,7 @@
 %class
 %_______________________________________________________________________________
 %\documentclass[a4paper,11pt,onecolumn,final,german,openbib]{scrbook}
-\documentclass[a4paper,11pt,oneside,final,english,toc=bib]{scrbook}
+\documentclass[a4paper,11pt,oneside,final,english,toc=bib,draft]{scrbook}
 
 % fonts
 
@@ -10,6 +10,10 @@
 \setmainfont{Libre Baskerville} % Libre Baskerville - Palatino Linotype - Constantia
 \setsansfont{Helvetica} % Arial
 \setmonofont{Consolas} % Hack
+
+\usepackage[OT1]{eulervm}
+% \usepackage{mathdesign}
+
 %_______________________________________________________________________________
 % page borders
 %_______________________________________________________________________________
@@ -29,21 +33,22 @@
 \usepackage{csquotes}
 
 \usepackage{mathtools}
-\usepackage{amssymb}
-% \usepackage{physics}
-% \usepackage[separate-uncertainty=true,per-mode=power]{siunitx} % ,per-mode=fraction 
+\usepackage{amssymb,amsfonts}
+\usepackage{physics}
+\usepackage[separate-uncertainty=true,per-mode=power,group-separator={,}]{siunitx} % ,per-mode=fraction 
 % \usepackage[version=4]{mhchem}
 % \usepackage{dsfont}
 % \usepackage{slashed}
 
 \usepackage{graphicx}
-\usepackage{subfigure}
-% \usepackage{float}
+\usepackage{xcolor}
+% \usepackage{subfigure}
+\usepackage{float}
 \usepackage{caption}
-% \usepackage{subcaption}
+\usepackage{subcaption}
+\usepackage{enumitem}
 
 % \usepackage{url}
-\usepackage{hyperref}
 % \usepackage{enumerate}
 
 \usepackage{booktabs}
@@ -51,24 +56,31 @@
 
 % \usepackage{appendix}
 
+\usepackage{todonotes}
+
 \usepackage[style=ieee]{biblatex} % ,sorting=none style=h-physrev3 defernumbers=true
-\bibliography{Physik_thesis_Bachelorarbeit}
+\bibliography{thesis}
 
 
 \graphicspath{ {./images/} }
 
+\usepackage[draft=false]{hyperref}
 \hypersetup{
   colorlinks=true,
   linkcolor=blue,
-  citecolor=green
+  citecolor=teal
 }
 
-\captionsetup[figure]{labelfont=bf,format=hang,labelsep=period,margin=1cm}
-\captionsetup[table]{labelfont=bf,format=hang,labelsep=period,margin=1cm} % ,labelsep=newline
+\captionsetup[figure]{labelfont=bf,format=plain,labelsep=newline} % ,labelsep=period ,margin=1cm
+\captionsetup[table]{labelfont=bf,format=hang,labelsep=space} % ,labelsep=period ,margin=1cm ,labelsep=newline
 
 \renewcommand{\arraystretch}{1.2}
 
+\newcommand{\figwidth}{12cm}
+
 \parindent10mm
+
+% \makesavenoteenv{table}
 
 \usepackage{mgscience}
 
@@ -123,7 +135,7 @@
 \begin{titlepage}
   \vspace*{6mm}
   \begin{center}
-     {\afont Title of the Bachelor Thesis}
+     {\afont Comparison of 3-dimensional chromatin structures based on single cell Hi-C data}
      \\[3.5cm]
      {\large von}
      \\[3.5cm]
@@ -155,13 +167,13 @@ Zitate kenntlich gemacht habe.
 Mainz, den \today
 \vfill
 \noindent 
-Johanna Musterfrau\\
+Moritz Gmeiner\\
 KOMET\\
 Institut für Physik\\
 Staudingerweg 7\\
 Johannes Gutenberg-Universität
 D-55099 Mainz\\
-{ \texttt{Johanna.Musterfrau@uni-mainz.de} }
+{ \texttt{mgmeiner@students.uni-mainz.de} }
 
 %_______________________________________________________________________________
 % \renewcommand\contentsname{Inhaltsverzeichnis}
@@ -176,7 +188,8 @@ D-55099 Mainz\\
 
 %_______________________________________________________________________________
 % \include{...}
-\chapter{Introduction}
+\chapter{Introduction} % (fold)
+\label{cha:introduction}
 
 {\em Dieses Dokument richtet sich an Studierende am Fachbereich 08 im 
 Studiengang Bachelor of Science (Physik). Sie finden hier Beispiele 
@@ -185,62 +198,174 @@ Strukturierung des Inhalts. Selbstverständlich sollen Sie diese
 Gliederung nach den Gegebenheiten Ihrer Bachelorarbeit anpassen. 
 Besprechen Sie rechtzeitig mit Ihrem Betreuer, ob Ihr Entwurf sinnvoll 
 ist. Holen Sie sich auch Anregungen zur Gestaltung von Abschlussarbeiten 
-aus der Literatur (siehe z.\ B.\ \verb|\cite{EbelBliefert}|).
+aus der Literatur (siehe z.\ B.\ \verb|\cite{EbelBliefert}|).}
+
 \medskip
 
-Sofern Sie sich dazu entscheiden, Ihr Dokument in \LaTeX\ zu erstellen, 
-können Sie diese Datei als Vorlage verwenden. Fast die gesamte 
-Literatur in der Physik verwendet \LaTeX, vor allem wegen der 
-ausgezeichneten Möglichkeiten für das Formelschreiben.
-}
-\bigskip
-
-In der Einleitung Ihrer Bachelorarbeit sollte das Thema der Arbeit 
+\textcolor{orange}{In der Einleitung Ihrer Bachelorarbeit sollte das Thema der Arbeit 
 möglichst allgemeinverständlich eingeführt werden. Gehen Sie 
 dabei auch auf das weitere Umfeld der Arbeit ein und erläutern Sie, 
 warum Aufgabenstellung und Herangehensweise interessant sind. Auch 
 die weitere Gliederung kann angesprochen werden, um dem Leser einen 
-ersten überblick über den nachfolgenden Text zu geben.
+ersten überblick über den nachfolgenden Text zu geben.}
+
+\bigskip
+
+The goal of this thesis is to explore the chromatin structure of DNA in the nucleus further, based mainly on previous the research in \cite{wettermann_minimal_2020}.
+
+DNA is in the nucleus. Structure of DNA is important. DNA structure is lost during mitosis and has to reestablished later. Structure is important for transcription and differentiation.
+
+\bigskip
+
+\section{Mathematical Tools} % (fold)
+\label{sec:mathematical_tools}
+
+\subsection{RMSD} % (fold)
+\label{sec:rmsd}
+
+The root-mean-square deviation (RMSD) is a mathematical tools for comparing how similar two ordered sets of 3-dimensional points of equal length are and is given for the two sets \( \set{x_i} \) and \( \set{y_i} \) by the formula
+
+\[
+  \text{RMSD} = \sqrt{ \frac{n} \sum_i \norm{x_i - y_i}^2 }
+\]
+
+
+
+% section rmsd (end)
+
+% section mathematical_tools (end)
+
+
 
 %_______________________________________________________________________________
-\chapter{Main Part}
+% \chapter{Main Part}
 
-Die typische Gliederung einer Bachelorarbeit könnte so aussehen, 
-wie im folgenden dargestellt. 
-\medskip
+% Die typische Gliederung einer Bachelorarbeit könnte so aussehen, 
+% wie im folgenden dargestellt. 
+% \medskip
 
-Verwenden Sie aussagekräftige Kapitelüberschriften, also zum 
-Beispiel {\em Aufbau eines Teilchenbeschleunigers} statt 
-{\em Versuchsaufbau}.
+% Verwenden Sie aussagekräftige Kapitelüberschriften, also zum 
+% Beispiel {\em Aufbau eines Teilchenbeschleunigers} statt 
+% {\em Versuchsaufbau}.
+
+
+% chapter introduction (end)
+
+%_______________________________________________________________________________
+
+
+\include{tex/simulation}
 
 
 %_______________________________________________________________________________
-\section{Theoretical Foundations}
 
-Beschreiben Sie bei einer experimentellen Arbeit die wesentlichen 
-theoretischen Grundlagen und in jedem Fall den Stand der Forschung.
 
-\section{Setup}
 
-Wenn Sie an einem experimentellen Thema arbeiten, beschreiben Sie 
-den Versuchsaufbau, auch wenn Sie an einem bereits vorhandenen 
-Versuch arbeiten, soweit dies für Ihre spezielle Fragestellung 
-relevant ist. 
+\chapter{Comparison of Cells} % (fold)
+\label{cha:comparison_of_cells}
 
-\section{Method}
+\section{Definition of SCC} % (fold)
+\label{sec:definition_of_scc}
 
-Entsprechend kann es bei einer theoretischen Arbeit sinnvoll sein,
-die Lösungsmethoden in einem eigenen Kapitel zu beschreiben.
+HiCRep is a mathematical tool introduced in \cite{yang_hicrep_2017} for the explicit goal of comparing Hi-C data sets. It takes as input the contact matrices of two Hi-C data sets and outputs a correlation coefficient, that is a number between \(-1\) and \(1\), with higher numbers signifying a stronger similarity between the data sets and vice versa. This is done in a two-step process: first both contact matrices are smoothed to counter binning-associated problems and then a stratuma djusted correlation coefficient (SCC) is calculated between these smoothed contact matrices. The exact procedure will be explained in the following section
 
-\section{Results}
+\subsection{Smoothing} % (fold)
+\label{subsec:smoothing}
 
-Hauptteil Ihrer Arbeit ist das Kapitel (oder die Kapitel) mit den 
-Ergebnissen. Bei einer theoretischen Arbeit kann damit auch 
-die Herleitung von Formeln oder die Beschreibung eines Computerprogramms 
-gemeint sein.
+Both contact maps are first smoothed using a uniform filter of width \(2h+1\) for a chosen smoothing parameter \(h \geq 0\). This helps compensating a lack of coverage, that is the fact that not all actual contacts are contained in the contact matrices, something that is common for Hi-C data. Mathematically this filter is defined as
+
+\[
+  X_{ij} = \frac{ \sum_{k=i-h}^{i+h} \sum_{l=j-h}^{j+h} C_{kl} }{ 2h+1 }
+\]
+
+where \(C\) is the \(n \times n\) contact matrix and \(X\) is the \(n \times n\) smoothed matrix. \(C_{ij}\) is defined to be 0 for either \(i\) or \(j\) not in \(1 \dots n\).
+
+The uniform filter might seem like an unusual choice compared to other more sophisticated filters, but has the great advantage of having the representation \( X = L \cdot C \cdot R \), where \(X\) is the smoothed matrix, \(C\) is the contact matrix, and \(L\) and \(R\) are upper and lower trigangular matrices respectively. This comes in handy especially when using sparse representations of \(C\) and \(X\), which is very much recommended since contact matrices generally can be quite large and are largely empty.
+
+\(h\) is a parameter for the SCC algorithm and thus has to be chosen appropriately. The HiCRep package includes a function called \verb|htrain| (\verb|h_train| in the HiCRep.py python package) that tries to estimate an appropriate h-value heuristically. For our resolution of \(\SI{100}{kbp}\) an example value of \( h = 3 \) is given in the original HiCRep paper, which should be kept in mind as a refence later when trying to choose an h-value for our own data.
+
+% subsection smoothing (end)
+
+\subsection{SCC} % (fold)
+\label{subsec:scc}
+
+The stratum adjusted correlation coefficient aims to be a measure of correlation between two random variables \(X\) and \(Y\), stratified by a third variable into \(K\) strata \(X_1, \dots, X_K\) and \(Y_1, \dots, Y_K\) respectively. In each stratum we have the stratified random variables \((X_k, Y_k)\) with \(N_k\) observations \( (x_{k,1}, y_{k,1}), \dots, (x_{k,N_k}, y_{k,N_k}) \) each. The pearson correlation coefficient between \(X\) and \(Y\) for the k-th stratum is given by
+
+\[
+  \rho_k = \frac{ \mathrm{Cov}(X_k,Y_k) }{ \sqrt{ \mathrm{Var}(X_k) \mathrm{Var}(Y_k)} } = \frac{ \sum_{i=1}^{N_k} (x_{k,i} - \overbar{x}_k) (y_{k,i} - \overbar{y}_k) }{ \sqrt{ \sum_{i=1}^{N_k} x_{k,i} - \overbar{x}_k } \sqrt{ \sum_{i=1}^{N_k} y_{k,i} - \overbar{y}_k } }
+\]
+
+The SCC is the weighted average of the pearson correlation coefficients
+
+\[
+  \rho_s = \sum_{k=1}^{K} w_k \rho_k
+\]
+
+where the weights \(w_k\) are
+
+\[
+  w_k = \sqrt{ \mathrm{Var}\left( \frac{ \mathrm{Rank}(X_k) }{ N_k } \right) \mathrm{Var}\left( \frac{ \mathrm{Rank}(Y_k) }{ N_k } \right) }
+\]
+
+with \( \mathrm{Rank}(X_k) \) and \( \mathrm{Rank}(Y_k) \) being the ranked variables\footnote{\url{https://en.wikipedia.org/wiki/Ranking\#Ranking_in_statistics}}. For a thorough derivation of the SCC see the original HiCRep paper\cite{yang_hicrep_2017}, Section \enquote{Derivation of stratum-adjusted correlation coefficient (SCC)}.
+
+% section definition_of_scc (end)
+
+\section{SCC between cells} % (fold)
+\label{sec:scc_between_cells}
+
+The SCC for the Hi-C data of all cells can be seen in Table~\ref{tab:scc_hic}. It is immediately very clear that all SCC values except for those of a cell with itself are very low, especially compared to the values of \(0.7\) to \(1.0\) obtained in \cite{yang_hicrep_2017} for hESC (human embryonic stem cells) and IMR90 (human lung fibroblast cells) cell lines (see Figure~3A). This might very likely be related to the fact that each Hi-C data set captured only about \(5\%\) of all contacts, as detailed in Table~\ref{tab:contact_capture}, but regardless of the reasons, it sets the expectations for comparability between the cells quite low. The SCC for the simulated contact matrices can be seen in Table~\ref{tab:scc_sim} and, as expected, are similarly low.
+
+\begin{table}[ht]
+\centering
+  \sisetup{ table-alignment-mode=none }
+  \caption{\textcolor{red}{SCC between HiC contact matrices}}
+  \label{tab:scc_hic}
+  \begin{tabular}{S | S S S S S S S S}
+   & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
+  \midrule
+    {Cell 1} &  {-}  & 0.132 & 0.093 & 0.116 & 0.128 & 0.105 & 0.136 & 0.092 \\
+    {Cell 2} & 0.132 &  {-}  & 0.098 & 0.104 & 0.147 & 0.116 & 0.150 & 0.138 \\
+    {Cell 3} & 0.093 & 0.098 &  {-}  & 0.062 & 0.104 & 0.093 & 0.101 & 0.092 \\
+    {Cell 4} & 0.116 & 0.104 & 0.062 &  {-}  & 0.108 & 0.101 & 0.123 & 0.077 \\
+    {Cell 5} & 0.128 & 0.147 & 0.104 & 0.108 &  {-}  & 0.121 & 0.148 & 0.123 \\
+    {Cell 6} & 0.105 & 0.116 & 0.093 & 0.101 & 0.121 &  {-}  & 0.145 & 0.097 \\
+    {Cell 7} & 0.136 & 0.150 & 0.101 & 0.123 & 0.148 & 0.145 &  {-}  & 0.116 \\
+    {Cell 8} & 0.092 & 0.138 & 0.092 & 0.077 & 0.123 & 0.097 & 0.116 &  {-}  \\
+  \end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+  \sisetup{ table-alignment-mode=none }
+  \caption{\textcolor{red}{SCC between simulated contact matrices}}
+  \label{tab:scc_sim}
+  \begin{tabular}{S | S S S S S S S S}
+   & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
+  \midrule
+    {Cell 1} &  {-}  & 0.171 & 0.149 & 0.114 & 0.173 & 0.141 & 0.178 & 0.104 \\
+    {Cell 2} & 0.171 &  {-}  & 0.164 & 0.141 & 0.183 & 0.184 & 0.215 & 0.184 \\
+    {Cell 3} & 0.149 & 0.164 &  {-}  & 0.109 & 0.161 & 0.124 & 0.145 & 0.122 \\
+    {Cell 4} & 0.114 & 0.141 & 0.109 &  {-}  & 0.135 & 0.105 & 0.140 & 0.098 \\
+    {Cell 5} & 0.173 & 0.183 & 0.161 & 0.135 &  {-}  & 0.148 & 0.194 & 0.143 \\
+    {Cell 6} & 0.141 & 0.184 & 0.124 & 0.105 & 0.148 &  {-}  & 0.191 & 0.116 \\
+    {Cell 7} & 0.178 & 0.215 & 0.145 & 0.140 & 0.194 & 0.191 &  {-}  & 0.157 \\
+    {Cell 8} & 0.104 & 0.184 & 0.122 & 0.098 & 0.143 & 0.116 & 0.157 &  {-}  \\
+  \end{tabular}
+\end{table}
+
+% section scc_between_cells (end)
+
+% chapter comparison_of_cells (end)
+
+\chapter{Individual Chromosomes} % (fold)
+\label{cha:individual_chromosomes}
+
+% chapter individual_chromosomes (end)
 
 %_______________________________________________________________________________
-\chapter{Conclusion}
+\chapter{Conclusion} % (fold)
+\label{cha:conclusion}
 
 In der Zusammenfassung sollten Sie in knapper Form die Aufgabenstellung 
 und die wichtigsten Ergebnisse rekapitulieren. Es ist für die 
@@ -251,36 +376,130 @@ Bachelorarbeit nicht möglich waren und nutzen Sie dies als
 überleitung zu einem Ausblick auf mögliche weitergehende 
 Arbeiten an der Aufgabenstellung.
 
+% chapter conclusion (end)
+
+\printbibliography
+
 %_______________________________________________________________________________
 \appendix
 
 % \chapter{Appendix}
+\chapter{Tables and Figures} % (fold)
+\label{cha:tables_and_figures}
 
-\chapter{Tables and Figures}
-
-In der Regel sind die in Tabellen und Abbildungen enthalten Informationen 
+\textcolor{orange}{In der Regel sind die in Tabellen und Abbildungen enthalten Informationen 
 so wichtig, dass sie im Hauptteil der Arbeit erscheinen sollten. Unter 
 Umständen sind aber ergänzende Tabellen und Abbildungen gut in einem 
 Anhang aufgehoben. Wie im Hauptteil sollten Sie auch hier darauf achten, 
-dass die in Tabellen und Figuren (siehe Abb.\ \ref{Abb:1}) dargestellte 
-Information im Text angesprochen wird und selbsterklärende Legenden 
+dass die in Tabellen und Figuren (siehe Abb.\ ref{Abb:1}) dargestellte 
+Information im Text angesprochen wird und selbsterklärende Legenden}
 vorhanden sind.
+
 \medskip
 
-% \begin{figure}[h]
-% \begin{center}
-% \includegraphics[scale=0.8]{BA-Abbildung1.pdf}
-% \end{center}
-% \caption{\label{Abb:1}
-% Feynmandiagramm für eine typische Einschleifen-Korrektur zur 
-% Produktion von sieben Jets in der $e^+e^-$-Vernichtung (entnommen 
-% aus \cite{thepnews}, mit Zustimmung der Autoren).
-% } 
-% \end{figure}
+\begin{table}[H]
+\centering
+  \caption{Number of beads in each chromosome in the simulation. Each bead represents \(\SI{100}{kbp}\)}
+  \label{tab:chrom_lengths}
+  \begin{tabular}{c c c c c c c c c c c}
+   \toprule
+    Chrom & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+    Length & 1924 & 1791 & 1570 & 1534 & 1488 & 1466 & 1424 & 1263 & 1215 & 1275 \\
+  \midrule
+    Chrom & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & X \\
+    Length & 1189 & 1171 & 1174 & 1218 & 1010 & 952 & 919 & 876 & 584 & 1671 \\
+  \bottomrule
+  \end{tabular}
+\end{table}
 
+\begin{table}[ht]
+\centering
+  \caption{\textcolor{red}{MAKE CAPTION}}
+  \label{tab:simulation_pe_dists}
+  \sisetup{ table-alignment-mode=none }
+  \begin{tabular}{S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S}
+  \toprule
+     & & \multicolumn{2}{c}{bonds} & \multicolumn{2}{c}{contacts} \\
+    {Cell} & \parbox{3cm}{pot energy \\ \% deviation} & {mean} & \parbox{3cm}{99.73th \\ percentile} & {mean} & \parbox{3cm}{99.73th \\ percentile} \\
+  \midrule
+    1 & 8.51\% & 1.13 & 1.98 & 1.62 & 2.72 \\
+    2 & 0.27\% & 1.10 & 1.71 & 1.61 & 2.42 \\
+    3 & 0.67\% & 1.14 & 1.88 & 1.68 & 2.52 \\
+    4 & 1.83\% & 1.14 & 2.08 & 1.61 & 2.46 \\
+    5 & 8.63\% & 1.11 & 1.81 & 1.62 & 2.55 \\
+    6 & 0.94\% & 1.16 & 2.07 & 1.61 & 2.38 \\
+    7 & 0.29\% & 1.10 & 1.58 & 1.59 & 2.09 \\
+    8 & 0.28\% & 1.08 & 1.56 & 1.60 & 2.25 \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+  \caption{caption}
+  \label{tab:contact_capture}
+  \sisetup{ table-alignment-mode=none }
+  \begin{tabular}{S S S S}
+  \toprule
+    {Cell} & \parbox{3cm}{\centering contacts specified} & \parbox{3cm}{\centering contacts after simulation} & \parbox{3cm}{\centering \% of contacts specified} \\
+  \midrule
+    1 & 48962 & 932831 & 5.2\% \\
+    2 & 32243 & 558981 & 5.8\% \\
+    3 & 19112 & 602439 & 3.2\% \\
+    4 & 35514 & 685314 & 5.2\% \\
+    5 & 31180 & 592569 & 5.3\% \\
+    6 & 32862 & 358721 & 4.8\% \\
+    7 & 21126 & 358721 & 5.9\% \\
+    8 & 17581 & 320656 & 5.5\% \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
+% chapter tables_and_figures (end)
+
+\include{tex/renderings}
+
+% chapter renderings_of_simuated_cells (end)
+
+\chapter{Used Software} % (fold)
+\label{cha:used_software}
+
+Figures were created using matplotlib\cite{j_d_hunter_matplotlib_2007} and seaborn\cite{waskom_seaborn_2021}.
+
+\begin{table}[H]
+\centering
+\label{tab:used_software}
+\caption{Software used for simulation and data analysis. Two systems were used, the top one a Manjaro Linux (based on Arch Linux) system and the bottom one a Microsoft Windows system with Anaconda}
+  \begin{tabular}{c @{\phantom{abc}} c @{\phantom{abc}} c}
+  \toprule
+    Package & Version & Package Source \\
+  \midrule
+    HOOMD-blue & 1.9.7 & built from source \\
+    numpy &  & arch repo \\
+    scipy &  & arch repo \\
+    pandas &  & arch repo \\
+    matplotlib &  & arch repo \\
+    gsd & & \\
+    vmd & & \\
+  \midrule
+    numpy & 1.20.3 & anaconda \\
+    scipy & 1.7.1 & anaconda \\
+    pandas & 1.3.4 & anaconda \\
+    matplotlib & 3.4.3 & anaconda \\
+    gsd & 2.5.1 & pip \\
+    hicreppy & 771cf72 & github \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
+\todo{packages and versions for linux system}
+
+
+% chapter used_software (end)
 
 %_______________________________________________________________________________
-\chapter{Weiterführende Details zur Arbeit}
+\chapter{Weiterführende Details zur Arbeit} % (fold)
+\label{cha:weiterführende_details_zur_arbeit}
 
 Manch wichtiger Teil Ihrer tatsächlichen Arbeit ist zu technisch 
 und würde den Hauptteil des Textes unübersichtlich machen, 
@@ -289,32 +508,42 @@ experimentellen Arbeit oder um den für eine numerische Auswertung
 verwendeten Algorithmus geht. Dennoch ist es sinnvoll, entsprechende 
 Beschreibungen in einem Anhang Ihrer Bachelorarbeit aufzunehmen. 
 Insbesondere für zukünftige Arbeiten, die an Ihre Bachelorarbeit 
-anschlie{\ss}en, sind dies manchmal hilfreiche Informationen.
+anschließen, sind dies manchmal hilfreiche Informationen.
+
+% chapter weiterführende_details_zur_arbeit (end)
 
 %_______________________________________________________________________________
-\chapter{References}
+\chapter{Thanking} % (fold)
+\label{cha:thanking}
 
-Machen Sie genaue Angaben, so dass die verwendeten Literaturstellen 
-eindeutig identifiziert und aufgefunden werden können.
-Bei Lehrbüchern \cite{Weinberg:1995mt} ist es sinnvoll, 
-den Titel anzugeben, eventuell auch die Ausgabe. Bei Artikeln in 
-Fachzeitschriften \cite{Moch:2001zr} ist es üblich, nur die 
-gebräuchlichen Abkürzungen für den Titel der Zeitschrift, Band, 
-Erscheinungsjahr und Seite anzugeben. Unter Umständen kann es auch 
-sinnvoll sein, im Internet aufgefundene Informationsquellen anzugeben, 
-zum Beispiel für Software \cite{LoopTools} oder zu den Details von 
-Ergebnissen gro{\ss}er experimenteller Kollaborationen. Es ist 
-selbstverständlich, dass Sie auch Bachelor- \cite{BA:Freund}, 
-Diplom- oder Doktorarbeiten angeben, wenn Sie diese in Ihrer eigenen 
-Arbeit verwendet haben.
-\medskip
+... an wen auch immer. Denken Sie an Ihre Freundinnen und Freunde, 
+Familie, Lehrer, Berater und Kollegen.
 
-Im folgenden Beispiel werden die in der Datei \texttt{h-physrev3.bst} 
-enthaltenen Anweisungen als Stilvorlage verwendet. Andere 
-Möglichkeiten für die Gestaltung eines Literaturverzeichnisses 
-findet man im Internet: \url{http://janeden.net/bibliographien-mit-latex}.
+% chapter thanking (end)
 
-\printbibliography
+%_______________________________________________________________________________
+% \chapter{References} % (fold)
+% \label{cha:references}
+
+% Machen Sie genaue Angaben, so dass die verwendeten Literaturstellen 
+% eindeutig identifiziert und aufgefunden werden können.
+% Bei Lehrbüchern cite{Weinberg:1995mt} ist es sinnvoll, 
+% den Titel anzugeben, eventuell auch die Ausgabe. Bei Artikeln in 
+% Fachzeitschriften cite{Moch:2001zr} ist es üblich, nur die 
+% gebräuchlichen Abkürzungen für den Titel der Zeitschrift, Band, 
+% Erscheinungsjahr und Seite anzugeben. Unter Umständen kann es auch 
+% sinnvoll sein, im Internet aufgefundene Informationsquellen anzugeben, 
+% zum Beispiel für Software cite{LoopTools} oder zu den Details von 
+% Ergebnissen großer experimenteller Kollaborationen. Es ist 
+% selbstverständlich, dass Sie auch Bachelor- cite{BA:Freund}, 
+% Diplom- oder Doktorarbeiten angeben, wenn Sie diese in Ihrer eigenen 
+% Arbeit verwendet haben.
+% \medskip
+
+% Im folgenden Beispiel werden die in der Datei \texttt{h-physrev3.bst} 
+% enthaltenen Anweisungen als Stilvorlage verwendet. Andere 
+% Möglichkeiten für die Gestaltung eines Literaturverzeichnisses 
+% findet man im Internet: \url{http://janeden.net/bibliographien-mit-latex}.
 
 % \renewcommand{\bibname}{Literaturverzeichnis} 
 % \bibliographystyle{h-physrev3}
@@ -357,11 +586,7 @@ findet man im Internet: \url{http://janeden.net/bibliographien-mit-latex}.
 
 % \end{thebibliography}
 
-%_______________________________________________________________________________
-\chapter{Thanking}
-
-... an wen auch immer. Denken Sie an Ihre Freundinnen und Freunde, 
-Familie, Lehrer, Berater und Kollegen.
+% chapter references (end)
 
 
 \end{document}

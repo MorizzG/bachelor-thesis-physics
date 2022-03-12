@@ -58,7 +58,7 @@ class _metadata_from_dict:
 
 
 def dump_metadata(filename=None, user=None, indent=4):
-    r""" Writes simulation metadata into a file.
+    r"""Writes simulation metadata into a file.
 
     Args:
         filename (str): The name of the file to write JSON metadata to (optional)

@@ -105,7 +105,7 @@ class npt_rigid_validation(unittest.TestCase):
         i, P_err = block.get_error_estimate()
 
         context.msg.notice(
-            1, "rho_star={:.3f} P_star = {:.5f}+-{:.5f}\n".format(rho_star, P_avg * d_eff ** 3.0, P_err * d_eff ** 3.0)
+            1, "rho_star={:.3f} P_star = {:.5f}+-{:.5f}\n".format(rho_star, P_avg * d_eff ** 3.0, P_err * d_eff ** 3.0),
         )
 
         # max error 0.5 %
@@ -116,7 +116,7 @@ class npt_rigid_validation(unittest.TestCase):
 
         # compare if error is within confidence interval
         self.assertLessEqual(
-            math.fabs(P_avg * d_eff ** 3.0 - P_star_ref), ci * (P_star_ref * P_star_rel_err + P_err * d_eff ** 3.0)
+            math.fabs(P_avg * d_eff ** 3.0 - P_star_ref), ci * (P_star_ref * P_star_rel_err + P_err * d_eff ** 3.0),
         )
 
     def tearDown(self):

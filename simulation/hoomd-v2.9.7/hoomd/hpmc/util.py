@@ -387,7 +387,7 @@ class compress:
             "hpmc_boxmc_shear_acceptance",
         ]
         self.mclog = hoomd.analyze.log(
-            filename=self.log_file, quantities=log_values, period=self.tuner_period, header_prefix="#", overwrite=True
+            filename=self.log_file, quantities=log_values, period=self.tuner_period, header_prefix="#", overwrite=True,
         )
         self.mclog.disable()  # will be enabled and disabled by call to run()
 
@@ -640,7 +640,7 @@ class snapshot:
 
 
 class tune(object):
-    r""" Tune mc parameters.
+    r"""Tune mc parameters.
 
     ``hoomd.hpmc.util.tune`` provides a general tool to observe Monte Carlo move
     acceptance rates and adjust the move sizes when called by a user script. By
@@ -806,8 +806,7 @@ class tune(object):
         hoomd.util.unquiet_status()
 
     def update(self):
-        r""" Calculate and set tunable parameters using statistics from the run just completed.
-        """
+        r"""Calculate and set tunable parameters using statistics from the run just completed."""
         hoomd.util.quiet_status()
 
         # Note: we are not doing any checking on the quality of our retrieved statistics
@@ -844,7 +843,7 @@ class tune(object):
 
 
 class tune_npt(tune):
-    r""" Tune the HPMC :py:class:`hoomd.hpmc.update.boxmc` using :py:class:`.tune`.
+    r"""Tune the HPMC :py:class:`hoomd.hpmc.update.boxmc` using :py:class:`.tune`.
 
     This is a thin wrapper to ``tune`` that simply defines an alternative
     ``tunable_map`` dictionary. In this case, the ``obj`` argument must be an instance of

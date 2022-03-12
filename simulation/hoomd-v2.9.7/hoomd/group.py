@@ -15,7 +15,7 @@ from hoomd import _hoomd
 
 
 class group(hoomd.meta._metadata):
-    r""" Defines a group of particles
+    r"""Defines a group of particles
 
     group should not be created directly in user code. The following methods can be used to create particle
     groups.
@@ -115,7 +115,7 @@ class group(hoomd.meta._metadata):
         self.metadata_fields = ["name"]
 
     def force_update(self):
-        r""" Force an update of the group.
+        r"""Force an update of the group.
 
         Re-evaluate all particles against the original group selection criterion and build a new
         member list based on the current state of the system. For example, call :py:meth:`hoomd.group.group.force_update()`
@@ -156,7 +156,7 @@ class group(hoomd.meta._metadata):
 
 
 def all():
-    r""" Groups all particles.
+    r"""Groups all particles.
 
     Creates a particle group from all particles in the simulation.
 
@@ -192,7 +192,7 @@ def all():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # cache it and then return it in the wrapper class
@@ -201,7 +201,7 @@ def all():
 
 
 def cuboid(name, xmin=None, xmax=None, ymin=None, ymax=None, zmin=None, zmax=None):
-    r""" Groups particles in a cuboid.
+    r"""Groups particles in a cuboid.
 
     Args:
         name (str): User-assigned name for this group
@@ -273,7 +273,7 @@ def cuboid(name, xmin=None, xmax=None, ymin=None, ymax=None, zmin=None, zmax=Non
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -281,7 +281,7 @@ def cuboid(name, xmin=None, xmax=None, ymin=None, ymax=None, zmin=None, zmax=Non
 
 
 def rigid_center():
-    r""" Groups particles that are center particles of rigid bodies.
+    r"""Groups particles that are center particles of rigid bodies.
 
     Creates a particle group from particles. All particles that are central particles of rigid bodies be added to the group.
     The group is always named 'rigid_center'.
@@ -305,11 +305,11 @@ def rigid_center():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
     if cpp_group.getNumMembersGlobal() == 0:
         hoomd.context.msg.notice(
-            2, "It is OK if there are zero particles in this group. The group will be updated after run().\n"
+            2, "It is OK if there are zero particles in this group. The group will be updated after run().\n",
         )
 
     # return it in the wrapper class
@@ -317,7 +317,7 @@ def rigid_center():
 
 
 def nonrigid():
-    r""" Groups particles that do not belong to rigid bodies.
+    r"""Groups particles that do not belong to rigid bodies.
 
     Creates a particle group from particles. All particles that **do not** belong to a rigid body will be added to
     the group. The group is always named 'nonrigid'.
@@ -341,7 +341,7 @@ def nonrigid():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -349,7 +349,7 @@ def nonrigid():
 
 
 def rigid():
-    r""" Groups particles that belong to rigid bodies.
+    r"""Groups particles that belong to rigid bodies.
 
     Creates a particle group from particles. All particles that belong to a rigid body will be added to the group.
     The group is always named 'rigid'.
@@ -373,7 +373,7 @@ def rigid():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -381,7 +381,7 @@ def rigid():
 
 
 def nonfloppy():
-    r""" Groups particles that do not belong to any floppy body.
+    r"""Groups particles that do not belong to any floppy body.
 
     Creates a particle group from particles. All particles that **do not** belong to a floppy body will be added to
     the group. The group is always named 'nonfloppy'.
@@ -405,7 +405,7 @@ def nonfloppy():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -413,7 +413,7 @@ def nonfloppy():
 
 
 def floppy():
-    r""" Groups particles that belong to any floppy body.
+    r"""Groups particles that belong to any floppy body.
 
     Creates a particle group from particles. All particles that belong to a floppy will be added to the group.
     The group is always named 'floppy'.
@@ -437,7 +437,7 @@ def floppy():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -445,7 +445,7 @@ def floppy():
 
 
 def nonbody():
-    r""" Groups particles that do not belong to any body.
+    r"""Groups particles that do not belong to any body.
 
     Creates a particle group from particles. All particles that **do not** belong to a body will be added to
     the group. The group is always named 'nonbody'.
@@ -469,7 +469,7 @@ def nonbody():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -477,7 +477,7 @@ def nonbody():
 
 
 def body():
-    r""" Groups particles that belong to any bodies.
+    r"""Groups particles that belong to any bodies.
 
     Creates a particle group from particles. All particles that belong to a body will be added to the group.
     The group is always named 'body'.
@@ -501,7 +501,7 @@ def body():
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -509,7 +509,7 @@ def body():
 
 
 def tags(tag_min, tag_max=None, name=None, update=False):
-    r""" Groups particles by tag.
+    r"""Groups particles by tag.
 
     Args:
         tag_min (int): First tag in the range to include (inclusive)
@@ -552,7 +552,7 @@ def tags(tag_min, tag_max=None, name=None, update=False):
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -560,7 +560,7 @@ def tags(tag_min, tag_max=None, name=None, update=False):
 
 
 def tag_list(name, tags):
-    r""" Groups particles by tag list.
+    r"""Groups particles by tag list.
 
     Args:
         tags (list): List of particle tags to include in the group
@@ -592,7 +592,7 @@ def tag_list(name, tags):
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -600,7 +600,7 @@ def tag_list(name, tags):
 
 
 def type(type, name=None, update=False):
-    r""" Groups particles by type.
+    r"""Groups particles by type.
 
     Args:
         type (str): Name of the particle type to add to the group.
@@ -653,7 +653,7 @@ def type(type, name=None, update=False):
 
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(cpp_group.getNumMembersGlobal()) + " particles\n",
     )
 
     # return it in the wrapper class
@@ -661,7 +661,7 @@ def type(type, name=None, update=False):
 
 
 def charged(name="charged"):
-    r""" Groups particles that are charged.
+    r"""Groups particles that are charged.
 
     Args:
         name (str): User-assigned name for this group.
@@ -701,7 +701,7 @@ def charged(name="charged"):
 
 
 def difference(name, a, b):
-    r""" Create a new group from the set difference or complement of two existing groups.
+    r"""Create a new group from the set difference or complement of two existing groups.
 
     Args:
         name (str): User-assigned name for this group.
@@ -728,13 +728,13 @@ def difference(name, a, b):
     new_cpp_group = _hoomd.ParticleGroup.groupDifference(a.cpp_group, b.cpp_group)
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
     )
     return group(name, new_cpp_group)
 
 
 def intersection(name, a, b):
-    r""" Create a new group from the set intersection of two existing groups.
+    r"""Create a new group from the set intersection of two existing groups.
 
     Args:
         name (str): User-assigned name for this group.
@@ -759,13 +759,13 @@ def intersection(name, a, b):
     new_cpp_group = _hoomd.ParticleGroup.groupIntersection(a.cpp_group, b.cpp_group)
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
     )
     return group(name, new_cpp_group)
 
 
 def union(name, a, b):
-    r""" Create a new group from the set union of two existing groups.
+    r"""Create a new group from the set union of two existing groups.
 
     Args:
         name (str): User-assigned name for this group.
@@ -789,6 +789,6 @@ def union(name, a, b):
     new_cpp_group = _hoomd.ParticleGroup.groupUnion(a.cpp_group, b.cpp_group)
     # notify the user of the created group
     hoomd.context.msg.notice(
-        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n"
+        2, 'Group "' + name + '" created containing ' + str(new_cpp_group.getNumMembersGlobal()) + " particles\n",
     )
     return group(name, new_cpp_group)

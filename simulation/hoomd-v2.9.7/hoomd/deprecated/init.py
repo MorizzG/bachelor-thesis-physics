@@ -13,7 +13,7 @@ from hoomd.deprecated import _deprecated
 
 
 def read_xml(filename, restart=None, time_step=None, wrap_coordinates=False):
-    r""" ## Reads initial system state from an XML file
+    r"""## Reads initial system state from an XML file
 
     Args:
         filename (str): File to read
@@ -88,7 +88,7 @@ def read_xml(filename, restart=None, time_step=None, wrap_coordinates=False):
 
 
 def create_random(N, phi_p=None, name="A", min_dist=0.7, box=None, seed=1, dimensions=3):
-    r""" Generates N randomly positioned particles of the same type.
+    r"""Generates N randomly positioned particles of the same type.
 
     Args:
         N (int): Number of particles to create.
@@ -161,7 +161,7 @@ def create_random(N, phi_p=None, name="A", min_dist=0.7, box=None, seed=1, dimen
     generator.addGenerator(
         int(N),
         _deprecated.PolymerParticleGenerator(
-            hoomd.context.exec_conf, 1.0, type_vector, bond_ab, bond_ab, bond_type, 100, box.dimensions
+            hoomd.context.exec_conf, 1.0, type_vector, bond_ab, bond_ab, bond_type, 100, box.dimensions,
         ),
     )
 
@@ -190,7 +190,7 @@ def create_random(N, phi_p=None, name="A", min_dist=0.7, box=None, seed=1, dimen
 
 
 def create_random_polymers(box, polymers, separation, seed=1):
-    r""" Generates any number of randomly positioned polymers of configurable types.
+    r"""Generates any number of randomly positioned polymers of configurable types.
 
     Args:
         box (:py:class:`hoomd.data.boxdim`): Simulation box dimensions
@@ -385,7 +385,7 @@ def create_random_polymers(box, polymers, separation, seed=1):
         generator.addGenerator(
             int(poly["count"]),
             _deprecated.PolymerParticleGenerator(
-                hoomd.context.exec_conf, poly["bond_len"], type_vector, bond_a, bond_b, bond_name, 100, box.dimensions
+                hoomd.context.exec_conf, poly["bond_len"], type_vector, bond_a, bond_b, bond_name, 100, box.dimensions,
             ),
         )
 

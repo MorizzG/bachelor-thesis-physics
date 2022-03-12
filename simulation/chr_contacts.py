@@ -27,24 +27,26 @@ import scipy.sparse
 parser = argparse.ArgumentParser(description="Calculate chromosome contactivity")
 
 arg_group = parser.add_argument(
-    "cell_n", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",
+    "n_cell", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",
 )
 
 args = parser.parse_args()
 
-cell_n = args.cell_n
+n_cell = args.n_cell
+
+n_cell = 1
 
 
 # %% Load dist and bond data
 
 
-def calc_contacts(cell_n):
+def calc_contacts(n_cell):
     """
     Calculate the contact ratios between chromosomes for a cell.
 
     Parameters
     ----------
-    cell_n : int
+    n_cell : int
         Cell number
 
     Returns
@@ -53,12 +55,12 @@ def calc_contacts(cell_n):
         Array of chromosome contact rations
 
     """
-    print(f"Starting cell {cell_n}...")
+    print(f"Starting cell {n_cell}...")
     print()
 
-    dists = np.load(f"data/dists/dists_cell{cell_n}.npy", allow_pickle=True)
+    dists = np.load(f"data/dists/dists_cell{n_cell}.npy", allow_pickle=True)
 
-    with gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb") as f:
+    with gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}.gsd", "rb") as f:
 
         # pos_all = np.array([f[n].particles.position for n in range(len(f))])
 
@@ -82,7 +84,8 @@ def calc_contacts(cell_n):
 
 
 def chr_contact_ratios(contact_mat):
-    chr_lens = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{cell_n}.pkl").to_numpy()
+    # chr_lens = pd.read_pickle(f"data/lengths_jan/chr_lens_cell{n_cell}.pkl").to_numpy()
+    chr_lens = pd.read_pickle(f"data/chrom_lengths.pkl").to_numpy()
 
     chr_starts = np.insert(np.cumsum(chr_lens), 0, 0)
 
@@ -106,58 +109,67 @@ def chr_contact_ratios(contact_mat):
 
     return chr_contact_ratio
 
-    # chr_contact_ratios[cell_n] = chr_contact_ratio
+    # chr_contact_ratios[n_cell] = chr_contact_ratio
 
 
 # contact_mat = calc_contacts(1)
+for n_cell in range(1, 9):
+    print(f"Cell {n_cell}")
 
-contact_mat_sparse = scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{cell_n}.npz")
+    print()
 
-contact_mat = contact_mat_sparse.toarray()
+    contact_mat_sparse = scipy.sparse.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell}.npz")
 
-num_neighbour_contacts = 0
+    contact_mat = contact_mat_sparse.toarray()
 
-for i in np.arange(contact_mat.shape[0] - 1):
-    num_neighbour_contacts += contact_mat[i, i]
-    num_neighbour_contacts += contact_mat[i, i + 1]
-    num_neighbour_contacts += contact_mat[i + 1, i]
+    num_neighbour_contacts = 0
 
-num_neighbour_contacts += contact_mat[-1, -1]
+    for i in np.arange(contact_mat.shape[0] - 1):
+        num_neighbour_contacts += contact_mat[i, i]
+        num_neighbour_contacts += contact_mat[i, i + 1]
+        num_neighbour_contacts += contact_mat[i + 1, i]
 
-# count number of contacts, remove diagonal (self-contacts) and divide by two
-# since each contact is twice in the symmetric matrix
-N_all_contacts = (np.count_nonzero(contact_mat) - num_neighbour_contacts) // 2
+    num_neighbour_contacts += contact_mat[-1, -1]
 
-with gsd.hoomd.open(f"data/trajs/traj_cell{cell_n}.gsd", "rb") as f:
+    # count number of contacts, remove diagonal (self-contacts) and divide by two
+    # since each contact is twice in the symmetric matrix
+    # divide by 100 since sum over 100 frames
+    N_all_contacts = (np.sum(contact_mat) - num_neighbour_contacts) // 2 / 100
 
-    # pos_all = np.array([f[n].particles.position for n in range(len(f))])
+    with gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}.gsd", "rb") as f:
 
-    # pos = pos_all[-1]
+        # pos_all = np.array([f[n].particles.position for n in range(len(f))])
 
-    # snap = f[-1]
+        # pos = pos_all[-1]
 
-    all_bonds = f[0].bonds.group
-    typeid = f[0].bonds.typeid  # 0 -> bond; 1 -> contact
+        # snap = f[-1]
 
-    # bonds = all_bonds[typeid == 0]
-    contacts = all_bonds[typeid == 1]
+        all_bonds = f[0].bonds.group
+        typeid = f[0].bonds.typeid  # 0 -> bond; 1 -> contact
 
-N_contacts = len(contacts)
+        # bonds = all_bonds[typeid == 0]
+        contacts = all_bonds[typeid == 1]
 
-print(f"Percentage of contacts specified: {N_contacts / N_all_contacts * 100:.3} %")
+    N_contacts = len(contacts)
 
-print()
+    print(f"\tContacts prespecified: {N_contacts}")
 
-X = np.arange(contact_mat.shape[0], step=100)
+    print(f"\tContacts simulation: {N_all_contacts:.0f}")
 
-chrom_contact_mat = np.array(
-    [[np.sum(contact_mat[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)] for j in range(len(X) - 1)]
-)
+    print(f"\tPercentage of contacts specified: {N_contacts / N_all_contacts:.1%}")
 
-fig, ax = plt.subplots(figsize=(8, 6))
+    print()
 
-im = ax.imshow(chrom_contact_mat)
-plt.colorbar(im)
+# X = np.arange(contact_mat.shape[0], step=100)
+
+# chrom_contact_mat = np.array(
+#     [[np.sum(contact_mat[X[i] : X[i + 1], X[j] : X[j + 1]]) for i in range(len(X) - 1)] for j in range(len(X) - 1)]
+# )
+
+# fig, ax = plt.subplots(figsize=(8, 6))
+
+# im = ax.imshow(chrom_contact_mat)
+# plt.colorbar(im)
 
 # p = Pool()
 
@@ -180,10 +192,10 @@ plt.colorbar(im)
 # axes_flat[-1].set_frame_on(False)
 # axes_flat[-1].tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 
-# for cell_n in range(8):
-#     axes_flat[cell_n].imshow(chr_contact_ratios[cell_n], norm=norm, cmap="plasma")
+# for n_cell in range(8):
+#     axes_flat[n_cell].imshow(chr_contact_ratios[n_cell], norm=norm, cmap="plasma")
 
-#     # axes_flat[cell_n].tick_params(
+#     # axes_flat[n_cell].tick_params(
 #     #     left=False, bottom=False  # , labelleft=False, labelbottom=False
 #     # )
 

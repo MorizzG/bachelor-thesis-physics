@@ -14,7 +14,7 @@ from hoomd.md import _md
 
 
 class cgcmm(hoomd.md.force._force):
-    r""" CMM coarse-grain model pair potential.
+    r"""CMM coarse-grain model pair potential.
 
     Args:
         r_cut (float): Default cutoff radius (in distance units).

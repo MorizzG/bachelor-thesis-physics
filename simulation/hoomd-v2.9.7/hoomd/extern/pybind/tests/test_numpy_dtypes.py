@@ -224,7 +224,12 @@ def test_array_constructors():
 def test_string_array():
     arr = m.create_string_array(True)
     assert str(arr.dtype) == "[('a', 'S3'), ('b', 'S3')]"
-    assert m.print_string_array(arr) == ["a='',b=''", "a='a',b='a'", "a='ab',b='ab'", "a='abc',b='abc'"]
+    assert m.print_string_array(arr) == [
+        "a='',b=''",
+        "a='a',b='a'",
+        "a='ab',b='ab'",
+        "a='abc',b='abc'",
+    ]
     dtype = arr.dtype
     assert arr["a"].tolist() == [b"", b"a", b"ab", b"abc"]
     assert arr["b"].tolist() == [b"", b"a", b"ab", b"abc"]
@@ -250,7 +255,11 @@ def test_array_array():
         "a={{W,X,Y,Z},{G,H,I,J},{Q,R,S,T}},b={1000,1001}," + "c={10,11,12},d={{100,101},{110,111},{120,121},{130,131}}",
         "a={{S,T,U,V},{C,D,E,F},{M,N,O,P}},b={2000,2001}," + "c={20,21,22},d={{200,201},{210,211},{220,221},{230,231}}",
     ]
-    assert arr["a"].tolist() == [[b"ABCD", b"KLMN", b"UVWX"], [b"WXYZ", b"GHIJ", b"QRST"], [b"STUV", b"CDEF", b"MNOP"]]
+    assert arr["a"].tolist() == [
+        [b"ABCD", b"KLMN", b"UVWX"],
+        [b"WXYZ", b"GHIJ", b"QRST"],
+        [b"STUV", b"CDEF", b"MNOP"],
+    ]
     assert arr["b"].tolist() == [[0, 1], [1000, 1001], [2000, 2001]]
     assert m.create_array_array(0).dtype == arr.dtype
 
@@ -277,7 +286,11 @@ def test_complex_array():
     arr = m.create_complex_array(3)
     dtype = arr.dtype
     assert dtype == np.dtype([("cflt", e + "c8"), ("cdbl", e + "c16")])
-    assert m.print_complex_array(arr) == ["c:(0,0.25),(0.5,0.75)", "c:(1,1.25),(1.5,1.75)", "c:(2,2.25),(2.5,2.75)"]
+    assert m.print_complex_array(arr) == [
+        "c:(0,0.25),(0.5,0.75)",
+        "c:(1,1.25),(1.5,1.75)",
+        "c:(2,2.25),(2.5,2.75)",
+    ]
     assert arr["cflt"].tolist() == [0.0 + 0.25j, 1.0 + 1.25j, 2.0 + 2.25j]
     assert arr["cdbl"].tolist() == [0.5 + 0.75j, 1.5 + 1.75j, 2.5 + 2.75j]
     assert m.create_complex_array(0).dtype == dtype
@@ -289,7 +302,12 @@ def test_signature(doc):
 
 def test_scalar_conversion():
     n = 3
-    arrays = [m.create_rec_simple(n), m.create_rec_packed(n), m.create_rec_nested(n), m.create_enum_array(n)]
+    arrays = [
+        m.create_rec_simple(n),
+        m.create_rec_packed(n),
+        m.create_rec_nested(n),
+        m.create_enum_array(n),
+    ]
     funcs = [m.f_simple, m.f_packed, m.f_nested]
 
     for i, func in enumerate(funcs):

@@ -29,7 +29,7 @@ from . import _mpcd
 
 
 class _force(hoomd.meta._metadata):
-    r""" Base external force field.
+    r"""Base external force field.
 
     This base class does some basic initialization tests, and then constructs the
     polymorphic external field base class in C++. This base class is essentially a
@@ -153,7 +153,7 @@ class block(_force):
 
 
 class constant(_force):
-    r""" Constant force.
+    r"""Constant force.
 
     Args:
         F (tuple): 3d vector specifying the force per particle.
@@ -210,7 +210,7 @@ class constant(_force):
 
 
 class sine(_force):
-    r""" Sine force.
+    r"""Sine force.
 
     Args:
         F (float): Magnitude of the force in *x* per particle.

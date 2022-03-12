@@ -76,7 +76,7 @@ class dihedral_table_tests(unittest.TestCase):
     def test_harmonic_compare(self):
         harmonic_1 = md.dihedral.table(width=1000)
         harmonic_1.dihedral_coeff.set(
-            "dihedralA", func=lambda theta: (0.5 * 1 * (1 + math.cos(theta)), 0.5 * 1 * math.sin(theta)), coeff=dict()
+            "dihedralA", func=lambda theta: (0.5 * 1 * (1 + math.cos(theta)), 0.5 * 1 * math.sin(theta)), coeff=dict(),
         )
         harmonic_2 = md.dihedral.harmonic()
         harmonic_2.dihedral_coeff.set("dihedralA", k=1.0, d=1, n=1)
