@@ -1,4 +1,9 @@
 */*
-!*/*.tex
-!**/images/
+
+# include all tex files in /tex/ dierctories, but not aux files
+!**/tex/
+**/tex/*
 !**/tex/*.tex
+
+# include /images/ directories
+!**/images/
