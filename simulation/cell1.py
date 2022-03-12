@@ -20,8 +20,10 @@ ENERGY_CUTOFF = 1.495e7
 
 n_cell = 1
 
-df_log = pd.read_csv(f"data/logs/log_cell{n_cell}.log", sep="\t")
-f = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}.gsd")
+ext = ""
+
+df_log = pd.read_csv(f"data/logs/log_cell{n_cell}{ext}.log", sep="\t")
+f = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}{ext}.gsd")
 
 energies = df_log["potential_energy"].to_numpy()
 
@@ -34,8 +36,8 @@ fig, ax = new_fig()
 ax.plot(energies, "C0.")
 ax.axhline(ENERGY_CUTOFF, color="C1", label="Cutoff energy")
 
-ax.set_xlabel("Configuration")
-ax.set_ylabel("Energy")
+ax.set_xlabel("frame number")
+ax.set_ylabel("potential energy")
 
 ax.legend(loc=(0.65, 0.85))
 set_styling(ax)
@@ -61,7 +63,7 @@ ax.plot(rmsds, "C0-")
 
 ax.plot(low_energy_configs, rmsds[low_energy_configs], "C3o", markersize=3, label="Low energy configs")
 
-ax.set_xlabel("Configuration")
+ax.set_xlabel("frame number")
 ax.set_ylabel("RMSD")
 
 ax.legend(loc="upper right")

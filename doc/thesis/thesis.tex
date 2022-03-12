@@ -72,7 +72,7 @@
 }
 
 \captionsetup[figure]{labelfont=bf,format=plain,labelsep=newline} % ,labelsep=period ,margin=1cm
-\captionsetup[table]{labelfont=bf,format=hang,labelsep=space} % ,labelsep=period ,margin=1cm ,labelsep=newline
+\captionsetup[table]{labelfont=bf,format=plain,labelsep=newline} % ,labelsep=period ,margin=1cm ,labelsep=newline
 
 \renewcommand{\arraystretch}{1.2}
 
@@ -229,7 +229,7 @@ The root-mean-square deviation (RMSD) is a mathematical tools for comparing how 
   \text{RMSD} = \sqrt{ \frac{n} \sum_i \norm{x_i - y_i}^2 }
 \]
 
-
+While there are certain ready-made tools to calculate RMSDs of trajectories, for example in VMD's\cite{humphrey_vmd_1996} RMSD Trajectory tool, for this work a more custom approach was chosen in order to have more flexibility. The code for RMSD calculation can be found in the \verb|tools/rmsd.py| file, in particular in the \verb|rmsd(pos1, pos2| function, which calculates the RMSD between two point sets using scipy's\cite{virtanen_scipy_2020} \verb|scipy.spatial.procrustes| function.
 
 % section rmsd (end)
 
@@ -260,108 +260,14 @@ The root-mean-square deviation (RMSD) is a mathematical tools for comparing how 
 %_______________________________________________________________________________
 
 
+\include{tex/comparison_of_cells}
 
-\chapter{Comparison of Cells} % (fold)
-\label{cha:comparison_of_cells}
 
-\section{Definition of SCC} % (fold)
-\label{sec:definition_of_scc}
+%_______________________________________________________________________________
 
-HiCRep is a mathematical tool introduced in \cite{yang_hicrep_2017} for the explicit goal of comparing Hi-C data sets. It takes as input the contact matrices of two Hi-C data sets and outputs a correlation coefficient, that is a number between \(-1\) and \(1\), with higher numbers signifying a stronger similarity between the data sets and vice versa. This is done in a two-step process: first both contact matrices are smoothed to counter binning-associated problems and then a stratuma djusted correlation coefficient (SCC) is calculated between these smoothed contact matrices. The exact procedure will be explained in the following section
 
-\subsection{Smoothing} % (fold)
-\label{subsec:smoothing}
+\include{tex/individual_chromosomes}
 
-Both contact maps are first smoothed using a uniform filter of width \(2h+1\) for a chosen smoothing parameter \(h \geq 0\). This helps compensating a lack of coverage, that is the fact that not all actual contacts are contained in the contact matrices, something that is common for Hi-C data. Mathematically this filter is defined as
-
-\[
-  X_{ij} = \frac{ \sum_{k=i-h}^{i+h} \sum_{l=j-h}^{j+h} C_{kl} }{ 2h+1 }
-\]
-
-where \(C\) is the \(n \times n\) contact matrix and \(X\) is the \(n \times n\) smoothed matrix. \(C_{ij}\) is defined to be 0 for either \(i\) or \(j\) not in \(1 \dots n\).
-
-The uniform filter might seem like an unusual choice compared to other more sophisticated filters, but has the great advantage of having the representation \( X = L \cdot C \cdot R \), where \(X\) is the smoothed matrix, \(C\) is the contact matrix, and \(L\) and \(R\) are upper and lower trigangular matrices respectively. This comes in handy especially when using sparse representations of \(C\) and \(X\), which is very much recommended since contact matrices generally can be quite large and are largely empty.
-
-\(h\) is a parameter for the SCC algorithm and thus has to be chosen appropriately. The HiCRep package includes a function called \verb|htrain| (\verb|h_train| in the HiCRep.py python package) that tries to estimate an appropriate h-value heuristically. For our resolution of \(\SI{100}{kbp}\) an example value of \( h = 3 \) is given in the original HiCRep paper, which should be kept in mind as a refence later when trying to choose an h-value for our own data.
-
-% subsection smoothing (end)
-
-\subsection{SCC} % (fold)
-\label{subsec:scc}
-
-The stratum adjusted correlation coefficient aims to be a measure of correlation between two random variables \(X\) and \(Y\), stratified by a third variable into \(K\) strata \(X_1, \dots, X_K\) and \(Y_1, \dots, Y_K\) respectively. In each stratum we have the stratified random variables \((X_k, Y_k)\) with \(N_k\) observations \( (x_{k,1}, y_{k,1}), \dots, (x_{k,N_k}, y_{k,N_k}) \) each. The pearson correlation coefficient between \(X\) and \(Y\) for the k-th stratum is given by
-
-\[
-  \rho_k = \frac{ \mathrm{Cov}(X_k,Y_k) }{ \sqrt{ \mathrm{Var}(X_k) \mathrm{Var}(Y_k)} } = \frac{ \sum_{i=1}^{N_k} (x_{k,i} - \overbar{x}_k) (y_{k,i} - \overbar{y}_k) }{ \sqrt{ \sum_{i=1}^{N_k} x_{k,i} - \overbar{x}_k } \sqrt{ \sum_{i=1}^{N_k} y_{k,i} - \overbar{y}_k } }
-\]
-
-The SCC is the weighted average of the pearson correlation coefficients
-
-\[
-  \rho_s = \sum_{k=1}^{K} w_k \rho_k
-\]
-
-where the weights \(w_k\) are
-
-\[
-  w_k = \sqrt{ \mathrm{Var}\left( \frac{ \mathrm{Rank}(X_k) }{ N_k } \right) \mathrm{Var}\left( \frac{ \mathrm{Rank}(Y_k) }{ N_k } \right) }
-\]
-
-with \( \mathrm{Rank}(X_k) \) and \( \mathrm{Rank}(Y_k) \) being the ranked variables\footnote{\url{https://en.wikipedia.org/wiki/Ranking\#Ranking_in_statistics}}. For a thorough derivation of the SCC see the original HiCRep paper\cite{yang_hicrep_2017}, Section \enquote{Derivation of stratum-adjusted correlation coefficient (SCC)}.
-
-% section definition_of_scc (end)
-
-\section{SCC between cells} % (fold)
-\label{sec:scc_between_cells}
-
-The SCC for the Hi-C data of all cells can be seen in Table~\ref{tab:scc_hic}. It is immediately very clear that all SCC values except for those of a cell with itself are very low, especially compared to the values of \(0.7\) to \(1.0\) obtained in \cite{yang_hicrep_2017} for hESC (human embryonic stem cells) and IMR90 (human lung fibroblast cells) cell lines (see Figure~3A). This might very likely be related to the fact that each Hi-C data set captured only about \(5\%\) of all contacts, as detailed in Table~\ref{tab:contact_capture}, but regardless of the reasons, it sets the expectations for comparability between the cells quite low. The SCC for the simulated contact matrices can be seen in Table~\ref{tab:scc_sim} and, as expected, are similarly low.
-
-\begin{table}[ht]
-\centering
-  \sisetup{ table-alignment-mode=none }
-  \caption{\textcolor{red}{SCC between HiC contact matrices}}
-  \label{tab:scc_hic}
-  \begin{tabular}{S | S S S S S S S S}
-   & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
-  \midrule
-    {Cell 1} &  {-}  & 0.132 & 0.093 & 0.116 & 0.128 & 0.105 & 0.136 & 0.092 \\
-    {Cell 2} & 0.132 &  {-}  & 0.098 & 0.104 & 0.147 & 0.116 & 0.150 & 0.138 \\
-    {Cell 3} & 0.093 & 0.098 &  {-}  & 0.062 & 0.104 & 0.093 & 0.101 & 0.092 \\
-    {Cell 4} & 0.116 & 0.104 & 0.062 &  {-}  & 0.108 & 0.101 & 0.123 & 0.077 \\
-    {Cell 5} & 0.128 & 0.147 & 0.104 & 0.108 &  {-}  & 0.121 & 0.148 & 0.123 \\
-    {Cell 6} & 0.105 & 0.116 & 0.093 & 0.101 & 0.121 &  {-}  & 0.145 & 0.097 \\
-    {Cell 7} & 0.136 & 0.150 & 0.101 & 0.123 & 0.148 & 0.145 &  {-}  & 0.116 \\
-    {Cell 8} & 0.092 & 0.138 & 0.092 & 0.077 & 0.123 & 0.097 & 0.116 &  {-}  \\
-  \end{tabular}
-\end{table}
-
-\begin{table}[ht]
-\centering
-  \sisetup{ table-alignment-mode=none }
-  \caption{\textcolor{red}{SCC between simulated contact matrices}}
-  \label{tab:scc_sim}
-  \begin{tabular}{S | S S S S S S S S}
-   & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
-  \midrule
-    {Cell 1} &  {-}  & 0.171 & 0.149 & 0.114 & 0.173 & 0.141 & 0.178 & 0.104 \\
-    {Cell 2} & 0.171 &  {-}  & 0.164 & 0.141 & 0.183 & 0.184 & 0.215 & 0.184 \\
-    {Cell 3} & 0.149 & 0.164 &  {-}  & 0.109 & 0.161 & 0.124 & 0.145 & 0.122 \\
-    {Cell 4} & 0.114 & 0.141 & 0.109 &  {-}  & 0.135 & 0.105 & 0.140 & 0.098 \\
-    {Cell 5} & 0.173 & 0.183 & 0.161 & 0.135 &  {-}  & 0.148 & 0.194 & 0.143 \\
-    {Cell 6} & 0.141 & 0.184 & 0.124 & 0.105 & 0.148 &  {-}  & 0.191 & 0.116 \\
-    {Cell 7} & 0.178 & 0.215 & 0.145 & 0.140 & 0.194 & 0.191 &  {-}  & 0.157 \\
-    {Cell 8} & 0.104 & 0.184 & 0.122 & 0.098 & 0.143 & 0.116 & 0.157 &  {-}  \\
-  \end{tabular}
-\end{table}
-
-% section scc_between_cells (end)
-
-% chapter comparison_of_cells (end)
-
-\chapter{Individual Chromosomes} % (fold)
-\label{cha:individual_chromosomes}
-
-% chapter individual_chromosomes (end)
 
 %_______________________________________________________________________________
 \chapter{Conclusion} % (fold)
@@ -387,14 +293,6 @@ Arbeiten an der Aufgabenstellung.
 \chapter{Tables and Figures} % (fold)
 \label{cha:tables_and_figures}
 
-\textcolor{orange}{In der Regel sind die in Tabellen und Abbildungen enthalten Informationen 
-so wichtig, dass sie im Hauptteil der Arbeit erscheinen sollten. Unter 
-Umständen sind aber ergänzende Tabellen und Abbildungen gut in einem 
-Anhang aufgehoben. Wie im Hauptteil sollten Sie auch hier darauf achten, 
-dass die in Tabellen und Figuren (siehe Abb.\ ref{Abb:1}) dargestellte 
-Information im Text angesprochen wird und selbsterklärende Legenden}
-vorhanden sind.
-
 \medskip
 
 \begin{table}[H]
@@ -414,13 +312,15 @@ vorhanden sind.
 
 \begin{table}[ht]
 \centering
-  \caption{\textcolor{red}{MAKE CAPTION}}
+  \caption{Some statistics about each simulated cell. The pot(ential) energy \% deviation describes the standard deviation of the potential energy divided by the mean potential energy over all frames except for the first 5. For both bonds and contacts the mean and 99.73th percentile are of the distances between the \emph{predefined} bonds and contacts, i.e. only the ones we set as input before our simulation, not the ones arising in the simulation.}
   \label{tab:simulation_pe_dists}
   \sisetup{ table-alignment-mode=none }
   \begin{tabular}{S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S}
   \toprule
-     & & \multicolumn{2}{c}{bonds} & \multicolumn{2}{c}{contacts} \\
-    {Cell} & \parbox{3cm}{pot energy \\ \% deviation} & {mean} & \parbox{3cm}{99.73th \\ percentile} & {mean} & \parbox{3cm}{99.73th \\ percentile} \\
+     & & \multicolumn{2}{c}{bond lengths} & \multicolumn{2}{c}{contact lengths} \\
+   \cmidrule(r){3-4}
+   \cmidrule(r){5-6}
+    {Cell} & \parbox{3cm}{\centering pot energy \\ \% deviation} & {mean} & \parbox{3cm}{\centering 99.73th \\ percentile} & {mean} & \parbox{3cm}{\centering 99.73th \\ percentile} \\
   \midrule
     1 & 8.51\% & 1.13 & 1.98 & 1.62 & 2.72 \\
     2 & 0.27\% & 1.10 & 1.71 & 1.61 & 2.42 \\
@@ -454,6 +354,27 @@ vorhanden sind.
   \bottomrule
   \end{tabular}
 \end{table}
+
+\begin{figure}[ht]
+\centering
+  \includegraphics[width=\figwidth]{potential_energy_cell1_1.png}
+  \caption{Potential energies for the frames of the first repeat simulation of cell 1.}
+  \label{img:potential_energy_cell1_1}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+  \includegraphics[width=\figwidth]{potential_energy_cell1_2.png}
+  \caption{Potential energies for the frames of the second repeat simulation of cell 1.}
+  \label{img:potential_energy_cell1_2}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+  \includegraphics[width=\figwidth]{hic_vs_sim_scc.png}
+  \caption{SCCs between the original Hi-C contact matrices and the contact matrices of the simulated cell genomes.}
+  \label{img:hic_vs_sim_scc}
+\end{figure}
 
 % chapter tables_and_figures (end)
 

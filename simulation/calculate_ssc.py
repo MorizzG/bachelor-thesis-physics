@@ -280,47 +280,78 @@ chroms_lengths = pd.read_pickle("data/chrom_lengths.pkl").to_numpy()
 # plt.figure()
 
 # %%
+# print()
+
+# print("SCC values between Hi-C data")
+
+# print()
+
+# scc_mat = np.empty((8, 8))
+
+# hic_contact_mats = []
+
+# for i in range(8):
+#     hic_contact_mats += [make_hic_contact_matrix(i + 1)]
+
+# for i in range(8):
+#     for j in range(8):
+#         scc_mat[i, j] = scc.genome_scc(
+#             hic_contact_mats[i], hic_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7
+#         )
+
+# print(scc_mat)
+
+# # %%
+# print()
+
+# print("SCC values between simulation data")
+
+# print()
+
+# scc_mat = np.empty((8, 8))
+
+# sim_contact_mats = []
+
+# for i in range(8):
+#     sim_contact_mats += [load_sim_contact_matrix(i + 1)]
+
+# for i in range(8):
+#     for j in range(8):
+#         scc_mat[i, j] = scc.genome_scc(
+#             sim_contact_mats[i], sim_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7
+#         )
+
+# print(scc_mat)
+
+# %% Hi-C vs simulated data
+
+sccs = np.empty(8)
+
+for n, n_cell in enumerate(range(1, 9)):
+    sim_contact_mat = load_sim_contact_matrix(n_cell)
+
+    hic_contact_mat = make_hic_contact_matrix(n_cell)
+
+    s = scc.genome_scc(sim_contact_mat, hic_contact_mat, BIN_SIZE, chroms_lengths, MAX_DIST, h=7)
+
+    print(f"\tCell {n_cell}: {s:.3}")
+
+    sccs[n] = s
+
 print()
 
-print("SCC values between Hi-C data")
+print(f"Min: {sccs.min():.2}")
+print(f"Max: {sccs.max():.2}")
 
-print()
+# plt.figure()
 
-scc_mat = np.empty((8, 8))
+fig, ax = new_fig()
 
-hic_contact_mats = []
+ax.plot(range(1, 9), sccs, "C0o")
 
-for i in range(8):
-    hic_contact_mats += [make_hic_contact_matrix(i + 1)]
+ax.set_ylim(0, 1)
 
-for i in range(8):
-    for j in range(8):
-        scc_mat[i, j] = scc.genome_scc(
-            hic_contact_mats[i], hic_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7
-        )
+ax.set_xlabel("Cell number")
+ax.set_ylabel("SCC")
 
-print(scc_mat)
-
-# %%
-print()
-
-print("SCC values between simulation data")
-
-print()
-
-scc_mat = np.empty((8, 8))
-
-sim_contact_mats = []
-
-for i in range(8):
-    sim_contact_mats += [load_sim_contact_matrix(i + 1)]
-
-for i in range(8):
-    for j in range(8):
-        scc_mat[i, j] = scc.genome_scc(
-            sim_contact_mats[i], sim_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7
-        )
-
-print(scc_mat)
-
-# input()
+set_styling(ax, x_loc=1)

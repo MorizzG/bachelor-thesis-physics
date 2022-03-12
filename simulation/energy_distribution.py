@@ -31,12 +31,16 @@ from tools.mg_plot import new_fig, set_styling
 
 n_cell = 5
 
+n_chrom = 1
+
+ext = f"_chrom{n_chrom}"
+
 
 # %% Plot energy distribution
 
 for n_cell in range(1, 9):
 
-    df_log = pd.read_csv(f"data/logs/log_cell{n_cell}.log", sep="\t")  # _chrom5
+    df_log = pd.read_csv(f"data/logs/log_cell{n_cell}{ext}.log", sep="\t")  # _chrom5
 
     energies = df_log["potential_energy"]
 
