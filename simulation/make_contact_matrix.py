@@ -9,6 +9,7 @@ Created on Sat Jan 29 21:09:32 2022
 # %% Imports
 
 import argparse
+import sys
 from multiprocessing import Pool
 
 import gsd.hoomd
@@ -33,18 +34,26 @@ NUM_THREADS = 4
 
 parser = argparse.ArgumentParser(description="Calculate chromosome contactivity")
 
-arg_group = parser.add_argument(
-    "n_cell", action="store", nargs="?", type=int, default=1, help="Which cell to calculate",
+parser.add_argument(
+    "n_cell", action="store", type=int, help="Which cell to calculate",
+)
+
+parser.add_argument(
+    "n_chrom", action="store", nargs="?", type=int, default=None, help="Which cell to calculate",
 )
 
 args = parser.parse_args()
 
 n_cell = args.n_cell
 
+n_chrom = args.n_chrom
+
 
 # %% Read trajectory data
 
-f = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}.gsd", "rb")
+ext = f"_chrom{n_chrom}" if n_chrom else ""
+
+f = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}{ext}.gsd", "rb")
 
 pos_all = np.stack([snap.particles.position for snap in f[5:]], axis=0)
 
@@ -132,4 +141,4 @@ if __name__ == "__main__":
 
     num_contacts_sparse = scipy.sparse.bsr_matrix(num_contacts, dtype="uint8")
 
-    scipy.sparse.save_npz(f"data/contact_matrices/contact_matrix_cell{n_cell}", num_contacts_sparse)
+    scipy.sparse.save_npz(f"data/contact_matrices/contact_matrix_cell{n_cell}{ext}", num_contacts_sparse)

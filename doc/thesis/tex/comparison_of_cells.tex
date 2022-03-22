@@ -53,7 +53,7 @@ with \( \mathrm{Rank}(X_k) \) and \( \mathrm{Rank}(Y_k) \) being the ranked vari
 \section{SCC between cells} % (fold)
 \label{sec:scc_between_cells}
 
-In Figure~\ref{img:hic_vs_sim_scc} the SCC between the original Hi-C contact matrices and the contact matrices of the simulation can be seen for each cell. For all cells the SCC is between 0.68 and 0.80. This is sensible since on one hand, the SCC is expected to be high as the simulated data is based on the Hi-C data, on the other hand it is not surprising that the scores are not perfect since the Hi-C data doesn’t cover all contacts in the real genome whereas the simulation data includes all contacts in the simulated genome. Particularly interesting is that the SCCs for cell 1 and cell 5 are very much in line with those of the other cells, regardless of the problems that arised during the simulation and were discussed in \ref{ssub:cell_1} and \ref{ssub:cell_5} respectively. This could indicate either that regardless of the problems cell 1 and cell 5 replicated the contacts or their Hi-C data as well as the others or that replicated the Hi-C data badly so that there is no recognisable difference.
+In Figure~\ref{fig:hic_vs_sim_scc} the SCC between the original Hi-C contact matrices and the contact matrices of the simulation can be seen for each cell. For all cells the SCC is between 0.68 and 0.80. This is sensible since on one hand, the SCC is expected to be high as the simulated data is based on the Hi-C data, on the other hand it is not surprising that the scores are not perfect since the Hi-C data doesn’t cover all contacts in the real genome whereas the simulation data includes all contacts in the simulated genome. Particularly interesting is that the SCCs for cell 1 and cell 5 are very much in line with those of the other cells, regardless of the problems that arised during the simulation and were discussed in \ref{ssub:cell_1} and \ref{ssub:cell_5} respectively. This could indicate either that regardless of the problems cell 1 and cell 5 replicated the contacts or their Hi-C data as well as the others or that replicated the Hi-C data badly so that there is no recognisable difference.
 
 The SCC for the original Hi-C data of all cells can be seen in Table~\ref{tab:scc_hic}. It is immediately very clear that all SCC values (except for those of a cell with itself) are very low, especially compared to the values of \(0.7\) to \(1.0\) obtained in the original HicRep paper for hESC (human embryonic stem cells) and IMR90 (human lung fibroblast cells) cell lines (Figure~3A in \cite{yang_hicrep_2017}). This might very likely be related to the fact that each Hi-C data set captured only about \(5\%\) of all contacts, as detailed in Table~\ref{tab:contact_capture}, but regardless of the reasons, it sets the expectations for comparability between the cells quite low. The SCC for the simulated contact matrices can be seen in Table~\ref{tab:scc_sim} and, as expected, are similarly low. This stronly suggests that the simulated cells have very little relation with each other. This assumption is also backed by the rendered images in \ref{cha:renderings_of_simuated_cells} that show the simulated genomes can differ quite strongly in shape, e.g. with some being spherical and others being bean-shaped or obloid, or some of them having some rather big holes inside them making them basically hollow.
 
@@ -96,5 +96,36 @@ The SCC for the original Hi-C data of all cells can be seen in Table~\ref{tab:sc
 \end{table}
 
 % section scc_between_cells (end)
+
+\section{RMSD between cells} % (fold)
+\label{sec:rmsd_between_cells}
+
+Another way to compare the configurations between cells if to calculate the RMSD between the configurations of the cells. There are generally two direct approaches one can take when calculating the RMSDs between cells: firstly, one can choose a reference frame from each cell and calculate the RMSDs between these reference frames. While this approach is very straight-forward, it does very much depend on the choice of a (good) reference frame. The other approach would be to calculate an average trajectory from all (or atually only some) frames in a cell and then calculate the RMSDs between those frames. While this counteracts the statistical problems of using a reference frame, it has a problem of its own: it only makes sense to take the average of frames that represent the same configuration. In particular, this not the case for example for the simulation of cell 5, which contains, as discussed in \ref{sub:cell_5}, two configurations, one ground state configuration and one of higher energy, or similarly the simulation of cell 1. If we wish to calculate average trajectories, we need to ensure that the frames we are averaging over are sufficiently similar.
+
+ For cell 1 the same energy-filtering approach was chosen as in \ref{sub:cell_1} to select only those frames with ground state energy and for cell 5 only frames 39 and onward were included as those represent the ground state frames. For the other frames simply the first 5 frames were excluded to avoid the tune-in frames as discussed in \ref{sec:simulation_results}. The resulting RMSDs between each frame and both a reference frame, here the last frame of each simulation, and the average frame is shown in Figure~\ref{fig:rmsd_last_vs_avg}. There are two major things we can learn from Figure~\ref{fig:rmsd_last_vs_avg}: first, the RMSD to average is consistantly smaller than the RMSD to last, implying our averaging works as intended. Second, for all cells except cell 1 and cell 5 the mean of the RMSDs to the average is between \(0.9\) and \(1.9\), with standard deviations between \(0.8\) and \(0.23\), the only exception being cell 4 with a slightly higher standard deviation of  \(0.66\). For cell 1 and cell 5 these means and standard devations are significantly larger due to the presence of the \textcolor{red}{bad} frames, but after applying the same filtering as above the means drop to \(\num{0.68(10)}\) and \(\num{0.88(7)}\) respectively, although this isn't surprising as we filter precisely for those similar frames we build our average frame from. The major unexpected outlier here is cell 4 with a mean RMSDs to average of \(\num{1.55(66)}\) and several pronounced spikes in Figure~\ref{fig:rmsd_last_vs_avg}. Looking at the potential energies of the frames with spikes shows that those frames have a somewhat elevated potential energy compared to the other frames. Filtering out those spiked frames improves the mean RMSD to average of cell 4 to \(\num{1.36(19)}\), which especially for the standard deviation is significant enough to include this filtering from here.
+
+ Using the filterings described above to generate the average trajectory for each cell, the RMSD between each of them can be seen in Table~\ref{tab:rmsd_avg_between_cells}. Except for the self-RMSDs, they are all between \(18.4\) and \(25.0\), implying the trajectories for each cell are significantly different, supporting the same conclusion made in \ref{sec:scc_between_cells} using the genome level SCC.
+
+\begin{table}[ht]
+\centering
+  \caption{RMSDs between average trajectories of each cell. Each average trajectory is generated from the ground state frame of the simulations. RMSDs between each cell and itself are omitted as they are 0 by definiton.}
+  \label{tab:rmsd_avg_between_cells}
+  \begin{tabular}{S | S S S S S S S S}
+  % \toprule
+     & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
+  \midrule
+    {Cell 1} &  {-} & 19.4 & 19.8 & 18.4 & 19.2 & 19.6 & 23.7 & 24.3 \\
+    {Cell 2} & 19.4 &  {-} & 18.9 & 18.4 & 19.6 & 20.1 & 24.5 & 24.1 \\
+    {Cell 3} & 19.7 & 18.9 &  {-} & 18.4 & 19.5 & 19.9 & 22.1 & 23.9 \\
+    {Cell 4} & 18.4 & 18.4 & 18.4 &  {-} & 19.1 & 19.3 & 24.5 & 24.5 \\
+    {Cell 5} & 19.2 & 19.6 & 19.5 & 19.1 &  {-} & 19.6 & 25.0 & 23.4 \\
+    {Cell 6} & 19.7 & 20.1 & 19.9 & 19.3 & 19.6 &  {-} & 23.9 & 22.6 \\
+    {Cell 7} & 23.7 & 24.5 & 22.1 & 24.5 & 25.0 & 23.9 &  {-} & 24.4 \\
+    {Cell 8} & 24.3 & 24.1 & 23.9 & 24.5 & 23.4 & 22.6 & 24.4 &  {-} \\
+  % \bottomrule
+  \end{tabular}
+\end{table}
+
+% section rmsd_between_cells (end)
 
 % chapter comparison_of_cells (end)

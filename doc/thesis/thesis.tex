@@ -28,35 +28,36 @@
 % packages
 %_______________________________________________________________________________
 % \usepackage{german}
-\usepackage{babel}[uk-english]
+\usepackage{babel}[uk-english] % english hyphenation
 % \usepackage{textcomp}
-\usepackage{csquotes}
+\usepackage{csquotes} % defines \enquote for enquoting text
 
-\usepackage{mathtools}
-\usepackage{amssymb,amsfonts}
-\usepackage{physics}
-\usepackage[separate-uncertainty=true,per-mode=power,group-separator={,}]{siunitx} % ,per-mode=fraction 
-% \usepackage[version=4]{mhchem}
-% \usepackage{dsfont}
-% \usepackage{slashed}
+\usepackage{mathtools} % defines common math symbols and tools
+\usepackage{amssymb,amsfonts} % more math symbols and fonts
+\usepackage{physics} % all-purpose physics and math notation
+\usepackage[separate-uncertainty=true,per-mode=power,group-separator={,}]{siunitx} % numbers with units
+% \usepackage[version=4]{mhchem} % chemical equations
+% \usepackage{dsfont} % math font for double-stroked letters
+% \usepackage{slashed} % math font for slashed symbols
 
-\usepackage{graphicx}
-\usepackage{xcolor}
+\usepackage{graphicx} % \includegraphics and \textcolor
+\usepackage{xcolor} % define common colors
 % \usepackage{subfigure}
-\usepackage{float}
-\usepackage{caption}
-\usepackage{subcaption}
-\usepackage{enumitem}
+\usepackage{float} % 
+\usepackage{caption} % configure caption style for figures and tables
+\usepackage{subcaption} % subfigures
+\usepackage{placeins} % defines \FloatBarrier, which forces floats to be rendered before
+\usepackage{enumitem} % better lists
 
 % \usepackage{url}
 % \usepackage{enumerate}
 
-\usepackage{booktabs}
+\usepackage{booktabs} % prettier tables
 % \usepackage{multirow}
 
-% \usepackage{appendix}
+% \usepackage{appendix} % appendix section
 
-\usepackage{todonotes}
+\usepackage{todonotes} % insert TODO notes
 
 \usepackage[style=ieee]{biblatex} % ,sorting=none style=h-physrev3 defernumbers=true
 \bibliography{thesis}
@@ -64,7 +65,7 @@
 
 \graphicspath{ {./images/} }
 
-\usepackage[draft=false]{hyperref}
+\usepackage[draft=false]{hyperref} % links inside document
 \hypersetup{
   colorlinks=true,
   linkcolor=blue,
@@ -74,9 +75,9 @@
 \captionsetup[figure]{labelfont=bf,format=plain,labelsep=newline} % ,labelsep=period ,margin=1cm
 \captionsetup[table]{labelfont=bf,format=plain,labelsep=newline} % ,labelsep=period ,margin=1cm ,labelsep=newline
 
-\renewcommand{\arraystretch}{1.2}
+\renewcommand{\arraystretch}{1.2} % make distance between table rows a bit bigger
 
-\newcommand{\figwidth}{12cm}
+\newcommand{\figwidth}{12cm} % default width for all figures
 
 \parindent10mm
 
@@ -191,47 +192,39 @@ D-55099 Mainz\\
 \chapter{Introduction} % (fold)
 \label{cha:introduction}
 
-{\em Dieses Dokument richtet sich an Studierende am Fachbereich 08 im 
-Studiengang Bachelor of Science (Physik). Sie finden hier Beispiele 
-für eine mögliche Gliederung Ihrer Arbeit und Hinweise zur 
-Strukturierung des Inhalts. Selbstverständlich sollen Sie diese 
-Gliederung nach den Gegebenheiten Ihrer Bachelorarbeit anpassen. 
-Besprechen Sie rechtzeitig mit Ihrem Betreuer, ob Ihr Entwurf sinnvoll 
-ist. Holen Sie sich auch Anregungen zur Gestaltung von Abschlussarbeiten 
-aus der Literatur (siehe z.\ B.\ \verb|\cite{EbelBliefert}|).}
+\section{DNA and the genome} % (fold)
+\label{sec:dna_and_genome}
 
-\medskip
+DNA is the most important long-term information storage \textcolor{orange}{in biology}. It is so fundamental that it is a shared part of all known life, and even some non-living things like viruses\footnote{The question whether or not viruses are alive or not is somewhat dependent on the definition of life and has not been finally decided (and probably never will), but here they shall be considered non-living.}. In eukaryotes, most of the genome\footnote{The term \enquote{genome} typically includes all of the DNA in the cell, including e.g. mitochondrial and plastid DNA. For simplicity, in this work the genome shall include only the DNA in the nucleus, as it is the main and for this work only relevant part} is stored away in the cell's nucleus, a specialised compartment that is separated from the rest of the cell by the nuclear envelope. It is split up into multiple chromosomes, linear, i.e. non-circular, chains of DNA of varying length., the number of which is dependent on the particular species, for example humans have 23 chromosomes while mice, the primary subject of this work, have 20. Different species and cell types also vary in the number of copies of each chromosome they carry: haploid cells for example carry only a single copy of each chromosomes, while diploid cells have two copies of each chromosomes. To fit into the nucleus, the genome needs to be highly packaged: the length of the human genome for example is about \(\SI{2}{\metre}\), while the cell nucleus is merely \(5\)-\(8\) \(\si{\micro\metre}\) in diameter. This packaging occurs at different levels, like histones and the 30-nm fibre. This process of DNA packaging is a very important research topic, as it is involved in transcription initiation, the first step of making proteins from DNA information. \textcolor{orange}{By making certain regions of DNA more or less accessible, specific parts of the genome can either be activated or silenced, which is an important way to regulate gene expression}.
 
-\textcolor{orange}{In der Einleitung Ihrer Bachelorarbeit sollte das Thema der Arbeit 
-möglichst allgemeinverständlich eingeführt werden. Gehen Sie 
-dabei auch auf das weitere Umfeld der Arbeit ein und erläutern Sie, 
-warum Aufgabenstellung und Herangehensweise interessant sind. Auch 
-die weitere Gliederung kann angesprochen werden, um dem Leser einen 
-ersten überblick über den nachfolgenden Text zu geben.}
+\cite{uzman_essential_2010}
 
-\bigskip
+\section{Hi-C} % (fold)
+\label{sec:hi_c}
 
-The goal of this thesis is to explore the chromatin structure of DNA in the nucleus further, based mainly on previous the research in \cite{wettermann_minimal_2020}.
+Hi-C is a method of determining the three-dimensional structure of an entire genome utilising a combination of proximity-based ligation and DNA deep sequencing. It is a continuation of a number of previous chromosome conformation capture methods (3C, 4C, 5C) with the goal of moving from targeting specific genetic loci go obtaining a genome-wide map of interactions.
 
-DNA is in the nucleus. Structure of DNA is important. DNA structure is lost during mitosis and has to reestablished later. Structure is important for transcription and differentiation.
+First, the DNA is cross-linked using formaldehyde, making connections between two strands of DNA that are in close proximity. The DNA is then digested by a restriction endonuclease that leaves a 5' staggered end which is filled with biotin-marked residues and ligated under conditions that favour ligation of those cross-linked DNA fragments. The DNA is sheared and selected for the biotin-marked cross-linked DNA fragments. These fragments are then deep sequenced and mapped back onto the genome, giving a list of contacts between positions on the genome.\cite{lieberman-aiden_comprehensive_2009}.
 
-\bigskip
+% section hi_c (end)
 
-\section{Mathematical Tools} % (fold)
-\label{sec:mathematical_tools}
+% section dna_and_genome (end)
 
-\subsection{RMSD} % (fold)
-\label{sec:rmsd}
+% \section{Mathematical Tools} % (fold)
+% \label{sec:mathematical_tools}
 
-The root-mean-square deviation (RMSD) is a mathematical tools for comparing how similar two ordered sets of 3-dimensional points of equal length are and is given for the two sets \( \set{x_i} \) and \( \set{y_i} \) by the formula
+% \subsection{RMSD} % (fold)
+% \label{sec:rmsd}
 
-\[
-  \text{RMSD} = \sqrt{ \frac{n} \sum_i \norm{x_i - y_i}^2 }
-\]
+% The root-mean-square deviation (RMSD) is a mathematical tools for comparing how similar two ordered sets of 3-dimensional points of equal length are and is given for the two sets \( \set{x_i} \) and \( \set{y_i} \) by the formula
 
-While there are certain ready-made tools to calculate RMSDs of trajectories, for example in VMD's\cite{humphrey_vmd_1996} RMSD Trajectory tool, for this work a more custom approach was chosen in order to have more flexibility. The code for RMSD calculation can be found in the \verb|tools/rmsd.py| file, in particular in the \verb|rmsd(pos1, pos2| function, which calculates the RMSD between two point sets using scipy's\cite{virtanen_scipy_2020} \verb|scipy.spatial.procrustes| function.
+% \[
+%   \text{RMSD} = \sqrt{ \frac{n} \sum_i \norm{x_i - y_i}^2 }
+% \]
 
-% section rmsd (end)
+% While there are certain ready-made tools to calculate RMSDs of trajectories, for example in VMD's\cite{humphrey_vmd_1996} RMSD Trajectory tool, for this work a more custom approach was chosen in order to have more flexibility. The code for RMSD calculation can be found in the \verb|tools/rmsd.py| file, in particular in the \verb|rmsd(pos1, pos2| function, which calculates the RMSD between two point sets using scipy's\cite{virtanen_scipy_2020} \verb|scipy.spatial.procrustes| function.
+
+% % section rmsd (end)
 
 % section mathematical_tools (end)
 
@@ -315,11 +308,11 @@ Arbeiten an der Aufgabenstellung.
   \caption{Some statistics about each simulated cell. The pot(ential) energy \% deviation describes the standard deviation of the potential energy divided by the mean potential energy over all frames except for the first 5. For both bonds and contacts the mean and 99.73th percentile are of the distances between the \emph{predefined} bonds and contacts, i.e. only the ones we set as input before our simulation, not the ones arising in the simulation.}
   \label{tab:simulation_pe_dists}
   \sisetup{ table-alignment-mode=none }
-  \begin{tabular}{S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S}
+  \begin{tabular}{c @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S}
   \toprule
      & & \multicolumn{2}{c}{bond lengths} & \multicolumn{2}{c}{contact lengths} \\
-   \cmidrule(r){3-4}
-   \cmidrule(r){5-6}
+   \cmidrule(rl){3-4}
+   \cmidrule(rl){5-6}
     {Cell} & \parbox{3cm}{\centering pot energy \\ \% deviation} & {mean} & \parbox{3cm}{\centering 99.73th \\ percentile} & {mean} & \parbox{3cm}{\centering 99.73th \\ percentile} \\
   \midrule
     1 & 8.51\% & 1.13 & 1.98 & 1.62 & 2.72 \\
@@ -359,28 +352,31 @@ Arbeiten an der Aufgabenstellung.
 \centering
   \includegraphics[width=\figwidth]{potential_energy_cell1_1.png}
   \caption{Potential energies for the frames of the first repeat simulation of cell 1.}
-  \label{img:potential_energy_cell1_1}
+  \label{fig:potential_energy_cell1_1}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
   \includegraphics[width=\figwidth]{potential_energy_cell1_2.png}
   \caption{Potential energies for the frames of the second repeat simulation of cell 1.}
-  \label{img:potential_energy_cell1_2}
+  \label{fig:potential_energy_cell1_2}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
   \includegraphics[width=\figwidth]{hic_vs_sim_scc.png}
   \caption{SCCs between the original Hi-C contact matrices and the contact matrices of the simulated cell genomes.}
-  \label{img:hic_vs_sim_scc}
+  \label{fig:hic_vs_sim_scc}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+  \includegraphics[width=\textwidth+0.5cm]{rmsd_last_vs_avg.png}
+  \caption{\textcolor{red}{CAPTION}}
+  \label{fig:rmsd_last_vs_avg}
 \end{figure}
 
 % chapter tables_and_figures (end)
-
-\include{tex/renderings}
-
-% chapter renderings_of_simuated_cells (end)
 
 \chapter{Used Software} % (fold)
 \label{cha:used_software}
@@ -396,12 +392,12 @@ Figures were created using matplotlib\cite{j_d_hunter_matplotlib_2007} and seabo
     Package & Version & Package Source \\
   \midrule
     HOOMD-blue & 1.9.7 & built from source \\
-    numpy &  & arch repo \\
-    scipy &  & arch repo \\
-    pandas &  & arch repo \\
-    matplotlib &  & arch repo \\
-    gsd & & \\
-    vmd & & \\
+    numpy & 1.22.2 & arch repo \\
+    scipy & 1.8.0 & arch repo \\
+    pandas & 1.4.0 & arch repo \\
+    matplotlib & 3.5.1 & arch repo \\
+    gsd & 2.5.1 & pip \\
+    vmd & 1.9.3 & \url{https://www.ks.uiuc.edu/Research/vmd/} \\
   \midrule
     numpy & 1.20.3 & anaconda \\
     scipy & 1.7.1 & anaconda \\
@@ -418,27 +414,31 @@ Figures were created using matplotlib\cite{j_d_hunter_matplotlib_2007} and seabo
 
 % chapter used_software (end)
 
-%_______________________________________________________________________________
-\chapter{Weiterführende Details zur Arbeit} % (fold)
-\label{cha:weiterführende_details_zur_arbeit}
+\include{tex/renderings}
 
-Manch wichtiger Teil Ihrer tatsächlichen Arbeit ist zu technisch 
-und würde den Hauptteil des Textes unübersichtlich machen, 
-beispielsweise wenn es um die Details des Versuchsaufbaus in einer 
-experimentellen Arbeit oder um den für eine numerische Auswertung 
-verwendeten Algorithmus geht. Dennoch ist es sinnvoll, entsprechende 
-Beschreibungen in einem Anhang Ihrer Bachelorarbeit aufzunehmen. 
-Insbesondere für zukünftige Arbeiten, die an Ihre Bachelorarbeit 
-anschließen, sind dies manchmal hilfreiche Informationen.
-
-% chapter weiterführende_details_zur_arbeit (end)
+% chapter renderings_of_simuated_cells (end)
 
 %_______________________________________________________________________________
-\chapter{Thanking} % (fold)
-\label{cha:thanking}
+% \chapter{Weiterführende Details zur Arbeit} % (fold)
+% \label{cha:weiterführende_details_zur_arbeit}
 
-... an wen auch immer. Denken Sie an Ihre Freundinnen und Freunde, 
-Familie, Lehrer, Berater und Kollegen.
+% Manch wichtiger Teil Ihrer tatsächlichen Arbeit ist zu technisch 
+% und würde den Hauptteil des Textes unübersichtlich machen, 
+% beispielsweise wenn es um die Details des Versuchsaufbaus in einer 
+% experimentellen Arbeit oder um den für eine numerische Auswertung 
+% verwendeten Algorithmus geht. Dennoch ist es sinnvoll, entsprechende 
+% Beschreibungen in einem Anhang Ihrer Bachelorarbeit aufzunehmen. 
+% Insbesondere für zukünftige Arbeiten, die an Ihre Bachelorarbeit 
+% anschließen, sind dies manchmal hilfreiche Informationen.
+
+% % chapter weiterführende_details_zur_arbeit (end)
+
+%_______________________________________________________________________________
+% \chapter{Thanking} % (fold)
+% \label{cha:thanking}
+
+% ... an wen auch immer. Denken Sie an Ihre Freundinnen und Freunde, 
+% Familie, Lehrer, Berater und Kollegen.
 
 % chapter thanking (end)
 
