@@ -36,7 +36,7 @@ fig, ax = new_fig()
 ax.plot(energies, "C0.")
 ax.axhline(ENERGY_CUTOFF, color="C1", label="Cutoff energy")
 
-ax.set_xlabel("frame number")
+ax.set_xlabel("frame")
 ax.set_ylabel("potential energy")
 
 ax.legend(loc=(0.65, 0.85))
@@ -63,8 +63,10 @@ ax.plot(rmsds, "C0-")
 
 ax.plot(low_energy_configs, rmsds[low_energy_configs], "C3o", markersize=3, label="Low energy configs")
 
-ax.set_xlabel("frame number")
+ax.set_xlabel("frame")
 ax.set_ylabel("RMSD")
 
-ax.legend(loc="upper right")
+ax.set_ylim(top=11.0)
+
+ax.legend(loc=(0.60, 0.88))
 set_styling(ax)

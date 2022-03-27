@@ -21,14 +21,14 @@ where \(C\) is the \(n \times n\) contact matrix and \(X\) is the \(n \times n\)
 
 The uniform filter might seem like an unusual choice compared to other more sophisticated filters, but has the great advantage of having the representation \( X = L \cdot C \cdot R \), where \(X\) is the smoothed matrix, \(C\) is the contact matrix, and \(L\) and \(R\) are upper and lower trigangular matrices respectively. This comes in handy especially when using sparse representations of \(C\) and \(X\), which is very much recommended since contact matrices generally can be quite large and are largely empty.
 
-\(h\) is a parameter for the SCC algorithm and thus has to be chosen appropriately. The HiCRep package includes a function called \verb|htrain| (\verb|h_train| in the HiCRep.py python package) that tries to estimate an appropriate h-value heuristically. For our resolution of \(\SI{100}{kbp}\) an example value of \( h = 3 \) is given in the original HiCRep paper, which should be kept in mind as a refence later when trying to choose an h-value for our own data.
+\(h\) is a parameter for the SCC algorithm and thus has to be chosen appropriately. The HiCRep package includes a function called \verb|htrain| (\verb|h_train| in the HiCRep.py python package) that tries to estimate an appropriate h-value heuristically. For a resolution of \(\SI{100}{kbp}\) an example value of \( h = 3 \) is given in the original HiCRep paper, which should be kept in mind as a refence when trying to choose an h-value later.
 
 % subsection smoothing (end)
 
 \subsection{SCC} % (fold)
 \label{subsec:scc}
 
-The stratum adjusted correlation coefficient aims to be a measure of correlation between two random variables \(X\) and \(Y\), stratified by a third variable into \(K\) strata \(X_1, \dots, X_K\) and \(Y_1, \dots, Y_K\) respectively. In each stratum we have the stratified random variables \((X_k, Y_k)\) with \(N_k\) observations \( (x_{k,1}, y_{k,1}), \dots, (x_{k,N_k}, y_{k,N_k}) \) each. The pearson correlation coefficient between \(X\) and \(Y\) for the k-th stratum is given by
+The stratum adjusted correlation coefficient aims to be a measure of correlation between two random variables \(X\) and \(Y\), stratified by a third variable into \(K\) strata \(X_1, \dots, X_K\) and \(Y_1, \dots, Y_K\) respectively. In each stratum there are the stratified random variables \((X_k, Y_k)\) with \(N_k\) observations \( (x_{k,1}, y_{k,1}), \dots, (x_{k,N_k}, y_{k,N_k}) \) each. The pearson correlation coefficient between \(X\) and \(Y\) for the k-th stratum is given by
 
 \[
   \rho_k = \frac{ \mathrm{Cov}(X_k,Y_k) }{ \sqrt{ \mathrm{Var}(X_k) \mathrm{Var}(Y_k)} } = \frac{ \sum_{i=1}^{N_k} (x_{k,i} - \overbar{x}_k) (y_{k,i} - \overbar{y}_k) }{ \sqrt{ \sum_{i=1}^{N_k} x_{k,i} - \overbar{x}_k } \sqrt{ \sum_{i=1}^{N_k} y_{k,i} - \overbar{y}_k } }
@@ -53,14 +53,14 @@ with \( \mathrm{Rank}(X_k) \) and \( \mathrm{Rank}(Y_k) \) being the ranked vari
 \section{SCC between cells} % (fold)
 \label{sec:scc_between_cells}
 
-In Figure~\ref{fig:hic_vs_sim_scc} the SCC between the original Hi-C contact matrices and the contact matrices of the simulation can be seen for each cell. For all cells the SCC is between 0.68 and 0.80. This is sensible since on one hand, the SCC is expected to be high as the simulated data is based on the Hi-C data, on the other hand it is not surprising that the scores are not perfect since the Hi-C data doesn’t cover all contacts in the real genome whereas the simulation data includes all contacts in the simulated genome. Particularly interesting is that the SCCs for cell 1 and cell 5 are very much in line with those of the other cells, regardless of the problems that arised during the simulation and were discussed in \ref{ssub:cell_1} and \ref{ssub:cell_5} respectively. This could indicate either that regardless of the problems cell 1 and cell 5 replicated the contacts or their Hi-C data as well as the others or that replicated the Hi-C data badly so that there is no recognisable difference.
+In Figure~\ref{fig:hic_vs_sim_scc} the SCC between the original Hi-C contact matrices and the contact matrices of the simulation can be seen for each cell. For all cells the SCC is between 0.68 and 0.80. This is sensible since on one hand, the SCC is expected to be high as the simulated data is based on the Hi-C data, on the other hand it is not surprising that the scores are not perfect since the Hi-C data doesn’t cover all contacts in the real genome whereas the simulation data includes all contacts in the simulated genome. Particularly interesting is that the SCCs for cell 1 and cell 5 are very much in line with those of the other cells, regardless of the problems that arised during the simulation and were discussed in \ref{sub:cell_1} and \ref{sub:cell_5} respectively. This could indicate either that regardless of the problems cell 1 and cell 5 replicated the contacts or their Hi-C data as well as the others or that replicated the Hi-C data badly so that there is no recognisable difference.
 
-The SCC for the original Hi-C data of all cells can be seen in Table~\ref{tab:scc_hic}. It is immediately very clear that all SCC values (except for those of a cell with itself) are very low, especially compared to the values of \(0.7\) to \(1.0\) obtained in the original HicRep paper for hESC (human embryonic stem cells) and IMR90 (human lung fibroblast cells) cell lines (Figure~3A in \cite{yang_hicrep_2017}). This might very likely be related to the fact that each Hi-C data set captured only about \(5\%\) of all contacts, as detailed in Table~\ref{tab:contact_capture}, but regardless of the reasons, it sets the expectations for comparability between the cells quite low. The SCC for the simulated contact matrices can be seen in Table~\ref{tab:scc_sim} and, as expected, are similarly low. This stronly suggests that the simulated cells have very little relation with each other. This assumption is also backed by the rendered images in \ref{cha:renderings_of_simuated_cells} that show the simulated genomes can differ quite strongly in shape, e.g. with some being spherical and others being bean-shaped or obloid, or some of them having some rather big holes inside them making them basically hollow.
+The SCC between the original Hi-C data of all cells can be seen in Table~\ref{tab:scc_hic}. It is immediately very clear that all SCC values (except for those of a cell with itself) are very low, especially compared to the values of \(0.7\) to \(1.0\) obtained in the original HicRep paper for hESC (human embryonic stem cells) and IMR90 (human lung fibroblast cells) cell lines (Figure~3A in \cite{yang_hicrep_2017}). This might very likely be related to the fact that each of the Hi-C data sets captured only an estimated \(5\%\) of all physical contacts in the actual cell, as detailed in Table~\ref{tab:contact_capture}, but regardless of the reasons, it sets the expectations for similarity between the cells quite low. The SCC for the simulated contact matrices can be seen in Table~\ref{tab:scc_sim} and, as was expected, are similarly low to those of the initial Hi-C contact matrices. This strongly suggests that the structure of the simulated genomes have very little relation with each other. This assumption is also backed by the rendered images in \ref{cha:renderings_of_simuated_cells} that show the simulated genomes can differ quite strongly in shape, e.g. with some being spherical and others being bean-shaped or obloid, or some of them having some rather big holes inside them making them basically hollow.
 
 \begin{table}[ht]
 \centering
   \sisetup{ table-alignment-mode=none }
-  \caption{\textcolor{red}{SCC between HiC contact matrices. h = 7}}
+  \caption{SCC calculated pairwise between the contact matrices of the original Hi-C data. Contacts are binned to a size of \(\SI{100000}{bp}\) per bin. Multiple contacts between the same bins are only counted once. The smoothing parameter \(h\) is set to \(7\). The SCC between a cell and itself is always \(1\) and thus omitted.}
   \label{tab:scc_hic}
   \begin{tabular}{S | S S S S S S S S}
    & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
@@ -79,7 +79,7 @@ The SCC for the original Hi-C data of all cells can be seen in Table~\ref{tab:sc
 \begin{table}[ht]
 \centering
   \sisetup{ table-alignment-mode=none }
-  \caption{\textcolor{red}{SCC between simulated contact matrices. h = 7}}
+  \caption{SCC calculated pairwise between the contact matrices of the simulations. Two beads are defined to be in contact if their distance from the centre is less than 3. The smoothing parameter \(h\) is set to \(7\). The SCC between a cell and itself is always \(1\) and thus omitted.}
   \label{tab:scc_sim}
   \begin{tabular}{S | S S S S S S S S}
    & {Cell 1} & {Cell 2} & {Cell 3} & {Cell 4} & {Cell 5} & {Cell 6} & {Cell 7} & {Cell 8} \\
@@ -95,20 +95,36 @@ The SCC for the original Hi-C data of all cells can be seen in Table~\ref{tab:sc
   \end{tabular}
 \end{table}
 
+\todo{force flush tables?}
+
 % section scc_between_cells (end)
 
 \section{RMSD between cells} % (fold)
 \label{sec:rmsd_between_cells}
 
-Another way to compare the configurations between cells if to calculate the RMSD between the configurations of the cells. There are generally two direct approaches one can take when calculating the RMSDs between cells: firstly, one can choose a reference frame from each cell and calculate the RMSDs between these reference frames. While this approach is very straight-forward, it does very much depend on the choice of a (good) reference frame. The other approach would be to calculate an average trajectory from all (or atually only some) frames in a cell and then calculate the RMSDs between those frames. While this counteracts the statistical problems of using a reference frame, it has a problem of its own: it only makes sense to take the average of frames that represent the same configuration. In particular, this not the case for example for the simulation of cell 5, which contains, as discussed in \ref{sub:cell_5}, two configurations, one ground state configuration and one of higher energy, or similarly the simulation of cell 1. If we wish to calculate average trajectories, we need to ensure that the frames we are averaging over are sufficiently similar.
+Another way to compare the similarity of the configurations between cells is to calculate the RMSD between the configurations of the cells. There are generally two straightforward approaches one can take when calculating RMSDs between trajectories: firstly, one can choose a reference frame from each cell and calculate the RMSDs between these reference frames. While this approach is very direct, it does very much depend on the choice of a (good) reference frame and is generally much more susceptible to statistical variation between the different frames of a simulation run. The other approach would be to calculate an average trajectory from all (or, \textcolor{orange}{more sophisticated}, only some) frames in a cell and then calculate the RMSDs between those average trajectories. While this counteracts the statistical problems of using a reference frame, it has a problem of its own: it only makes sense to take the average of frames that represent the same configuration, e.g. are actually already similar to each other. In particular, this not the case for example for the simulation of cell 5, which contains, as discussed in \ref{sub:cell_5}, two configurations, one ground state configuration and one of higher energy, or similarly the simulation of cell 1. To calculate average trajectories, it needs to be ensured that the frames that are averaged over are sufficiently similar and all represent the ground configuration while filtering out the rest.
 
- For cell 1 the same energy-filtering approach was chosen as in \ref{sub:cell_1} to select only those frames with ground state energy and for cell 5 only frames 39 and onward were included as those represent the ground state frames. For the other frames simply the first 5 frames were excluded to avoid the tune-in frames as discussed in \ref{sec:simulation_results}. The resulting RMSDs between each frame and both a reference frame, here the last frame of each simulation, and the average frame is shown in Figure~\ref{fig:rmsd_last_vs_avg}. There are two major things we can learn from Figure~\ref{fig:rmsd_last_vs_avg}: first, the RMSD to average is consistantly smaller than the RMSD to last, implying our averaging works as intended. Second, for all cells except cell 1 and cell 5 the mean of the RMSDs to the average is between \(0.9\) and \(1.9\), with standard deviations between \(0.8\) and \(0.23\), the only exception being cell 4 with a slightly higher standard deviation of  \(0.66\). For cell 1 and cell 5 these means and standard devations are significantly larger due to the presence of the \textcolor{red}{bad} frames, but after applying the same filtering as above the means drop to \(\num{0.68(10)}\) and \(\num{0.88(7)}\) respectively, although this isn't surprising as we filter precisely for those similar frames we build our average frame from. The major unexpected outlier here is cell 4 with a mean RMSDs to average of \(\num{1.55(66)}\) and several pronounced spikes in Figure~\ref{fig:rmsd_last_vs_avg}. Looking at the potential energies of the frames with spikes shows that those frames have a somewhat elevated potential energy compared to the other frames. Filtering out those spiked frames improves the mean RMSD to average of cell 4 to \(\num{1.36(19)}\), which especially for the standard deviation is significant enough to include this filtering from here.
+ For cell 1 the same energy-filtering approach was chosen as in \ref{sub:cell_1} to select only those frames with ground state energy and for cell 5 only frames 39 and onward were included as those represent the ground state frames. For the other cells simply the first 5 frames were excluded to avoid the tune-in period as discussed in \ref{sec:simulation_results}. The resulting RMSDs between each frame and both a reference frame, here the last frame of each simulation, and the average frame is shown in Figure~\ref{fig:rmsd_last_vs_avg}. There are two major things than can be learned from Figure~\ref{fig:rmsd_last_vs_avg}: first, the RMSD to average is quite consistently smaller than the RMSD to last, implying the averaged trajectories fulfil their purpose as representations of the ground state. Second, for all cells except cell 1 and cell 5 the mean of the RMSDs to the average as seen in Table~\ref{tab:mean_std_rmsd_to_avg} is between \(0.9\) and \(1.9\), with standard deviations mostly between \(0.8\) and \(0.23\), with the only exception being cell 4 with a slightly higher standard deviation of  \(0.66\). For cell 1 and cell 5 the raw means and standard devations are significantly larger due to the presence of the non ground configuration frames, but after applying the filtering from above the means drop to \(\num{0.68(10)}\) and \(\num{0.88(7)}\) respectively, although this isn't surprising as those are precisely the similar frames that were filtered for when building the averaged trajectory. The major unexpected outlier here is cell 4 with a mean RMSDs to average of \(\num{1.55(66)}\) and several pronounced spikes seen in Figure~\ref{fig:rmsd_last_vs_avg}. Looking at the potential energies of the frames with spikes shows that those frames have somewhat elevated potential energy compared to the other frames. Filtering out the nine most promiment spiked frames improves the mean RMSD to average of cell 4 to \(\num{1.36(19)}\), which especially for the standard deviation is significant enough to include this filtering from here on.
+
+\begin{table}[ht]
+\centering
+  \caption{Mean and standard deviation of the RMSDs from the averaged trajectory to each frame for each cell simulation.}
+  \label{tab:mean_std_rmsd_to_avg}
+  \begin{tabular}{l S S S S S S S S}
+  \toprule
+    Cell & {1} & {2} & {3} & {4} & {5} & {6} & {7} & {8} \\
+  \midrule
+    RMSD Mean & 3.54 & 0.90 & 0.95 & 1.55 & 5.07 & 1.37 & 1.88 & 1.78 \\
+    RMSD Std & 2.46 & 0.16 & 0.23 & 0.66 & 2.58 & 0.21 & 0.12 & 0.08 \\
+  \bottomrule
+  \end{tabular}
+\end{table}
 
  Using the filterings described above to generate the average trajectory for each cell, the RMSD between each of them can be seen in Table~\ref{tab:rmsd_avg_between_cells}. Except for the self-RMSDs, they are all between \(18.4\) and \(25.0\), implying the trajectories for each cell are significantly different, supporting the same conclusion made in \ref{sec:scc_between_cells} using the genome level SCC.
 
 \begin{table}[ht]
 \centering
-  \caption{RMSDs between average trajectories of each cell. Each average trajectory is generated from the ground state frame of the simulations. RMSDs between each cell and itself are omitted as they are 0 by definiton.}
+  \caption{RMSDs between average trajectories of each cell. Each average trajectory is generated from the ground state frames of the simulations. The RMSD between a cell and itself is always \(0\) and thus omitted.}
   \label{tab:rmsd_avg_between_cells}
   \begin{tabular}{S | S S S S S S S S}
   % \toprule
@@ -123,6 +139,25 @@ Another way to compare the configurations between cells if to calculate the RMSD
     {Cell 7} & 23.7 & 24.5 & 22.1 & 24.5 & 25.0 & 23.9 &  {-} & 24.4 \\
     {Cell 8} & 24.3 & 24.1 & 23.9 & 24.5 & 23.4 & 22.6 & 24.4 &  {-} \\
   % \bottomrule
+  \end{tabular}
+\end{table}
+
+Furthermore, the comparison of cells can be made on the chromosome level instead of the entire genome level. The results can be seen in Table~\ref{tab:mean_chrom_cross_rmsd}. While the mean RMSDs are significantly smaller than for the entire-genome case, they are still high enough to suggest no real similarity between the chromosomes across all cells, and the decrease can be explained simply by the smaller constraints in aligning the two trajectories. Considering even the minimum RMSD of each chromosome if never smaller than \(4.7\), it can be concluded that very likely the structures of the individual chromosomes have quite low similarity across the different cell simulations.
+
+\begin{table}[ht]
+\centering
+  \caption{Mean and minimum of RMSDs of a particular chromosome pairwise between the averaged trajectories of all cells, excluding self-comparisons.}
+  \label{tab:mean_chrom_cross_rmsd}
+  \begin{tabular}{l @{\phantom{abc}} S S S S S S S S S S}
+  \toprule
+    Chrom & {1} & {2} & {3} & {4} & {5} & {6} & {7} & {8} & {9} & {10} \\
+    Mean RMSD & 9.6 & 8.1 & 8.4 & 8.3 & 8.1 & 7.5 & 8.3 & 8.0 & 8.1 & 7.9 \\
+    Min RMSD  & 6.8 & 6.5 & 5.6 & 5.3 & 6.1 & 5.9 & 5.9 & 6.0 & 6.3 & 4.9 \\
+  \midrule
+    Chrom & {11} & {12} & {13} & {14} & {15} & {16} & {17} & {18} & {19} & {X} \\
+    Mean RMSD & 7.8 & 8.2 & 8.6 & 8.4 & 7.1 & 7.4 & 7.3 & 6.9 & 7.0 & 8.7 \\
+    Min RMSD  & 6.6 & 5.6 & 5.6 & 5.6 & 5.4 & 5.3 & 5.5 & 5.0 & 4.7 & 6.7 \\
+  \bottomrule
   \end{tabular}
 \end{table}
 

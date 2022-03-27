@@ -29,12 +29,12 @@ from tools.mg_plot import new_fig, set_styling
 
 # n_cell = args.n_cell
 
-n_cell = 3
+n_cell = 8
 
 n_chrom = 1
 
 ext = ""
-ext = f"_chrom{n_chrom}"
+# ext = f"_chrom{n_chrom}"
 
 
 # %% Plot energy distribution
@@ -60,10 +60,13 @@ ax.plot(energies, "C0.")
 # idxs = np.array([ 2,  6, 22, 49, 64, 74, 85, 90, 96])
 # ax.plot(idxs, energies[idxs], "C3o", markersize=3)
 
-ax.set_xlabel("configuration number")
+ax.set_xlabel("frame")
 ax.set_ylabel("potential energy")
 
 # ax.xaxis.set_major_formatter(FormatStrFormatter('% 1.2f'))
 # ax.ticklabel_format(axis="y", style="plain")
 
 set_styling(ax)  # , y_loc=(2e5, 1e5)
+
+
+print(f"Lowest energy frame: {energies.argmin()}")

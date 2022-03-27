@@ -21,7 +21,7 @@ ax.plot(range(0, 105), energies1, "C0.", label="First simulation")
 ax.plot(range(0, 105), energies2, "C1.", label="Second simulation")
 ax.plot(range(0, 105), energies3, "C2.", label="Third simulation")
 
-ax.set_xlabel("frame number")
+ax.set_xlabel("frame")
 ax.set_ylabel("potential energy")
 
 # ax.xaxis.set_major_formatter(FormatStrFormatter('% 1.2f'))
@@ -84,7 +84,7 @@ ax.plot(range(210, 315), rmsds[210:315], "C2-", label="Simulation 3")
 
 ax.legend()
 
-ax.set_xlabel("frame number")
+ax.set_xlabel("frame")
 ax.set_ylabel("RMSD")
 
 set_styling(ax)

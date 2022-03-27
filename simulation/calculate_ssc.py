@@ -282,24 +282,24 @@ chroms_lengths = pd.read_pickle("data/chrom_lengths.pkl").to_numpy()
 # %%
 # print()
 
-# print("SCC values between Hi-C data")
+print("SCC values between Hi-C data")
 
-# print()
+print()
 
-# scc_mat = np.empty((8, 8))
+scc_mat = np.empty((8, 8))
 
-# hic_contact_mats = []
+hic_contact_mats = []
 
-# for i in range(8):
-#     hic_contact_mats += [make_hic_contact_matrix(i + 1)]
+for i in range(8):
+    hic_contact_mats += [make_hic_contact_matrix(i + 1)]
 
-# for i in range(8):
-#     for j in range(8):
-#         scc_mat[i, j] = scc.genome_scc(
-#             hic_contact_mats[i], hic_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7
-#         )
+for i in range(8):
+    for j in range(8):
+        scc_mat[i, j] = scc.genome_scc(
+            hic_contact_mats[i], hic_contact_mats[j], BIN_SIZE, chroms_lengths, MAX_DIST, h=7
+        )
 
-# print(scc_mat)
+print(scc_mat)
 
 # # %%
 # print()

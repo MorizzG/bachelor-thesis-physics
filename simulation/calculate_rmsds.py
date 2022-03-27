@@ -39,44 +39,44 @@ np.set_printoptions(precision=3)
 
 # %% Plot RMSD for trajectory
 
-# n_cell = 3
+n_cell = 3
 
-# n_chrom = 1
+n_chrom = 1
 
-# # ext = f"_chrom{n_chrom}"
+ext = f"_chrom{n_chrom}"
 
 # ext = ""
 
 # for n_cell in range(1, 9):
 
-#     traj = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}{ext}.gsd")
+traj = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}{ext}.gsd")
 
-#     pos_all = np.stack([snap.particles.position for snap in traj])
+pos_all = np.stack([snap.particles.position for snap in traj])
 
-#     pos_avg = rmsd.average_trajectory(pos_all)
+# pos_avg = rmsd.average_trajectory(pos_all)
 
-#     rmsds = np.empty(pos_all.shape[0])
+rmsds = np.empty(pos_all.shape[0])
 
-#     ref_idx = 22
+ref_idx = 22
 
-#     for n_frame in range(pos_all.shape[0]):
-#         rmsds[n_frame] = rmsd.rmsd(pos_all[n_frame, :, :], pos_avg)
-#         # rmsds[n_frame] = rmsd.rmsd(pos_all[n_frame,:,:], pos_all[ref_idx,:,:])
+for n_frame in range(pos_all.shape[0]):
+    # rmsds[n_frame] = rmsd.rmsd(pos_all[n_frame, :, :], pos_avg)
+    rmsds[n_frame] = rmsd.rmsd(pos_all[n_frame,:,:], pos_all[ref_idx,:,:])
 
-#     # rmsds[ref_idx] = 0
+rmsds[ref_idx] = 0
 
-#     # fig, ax = new_fig()
+fig, ax = new_fig()
 
-#     # ax.plot(rmsds)
+ax.plot(rmsds)
 
-#     # ax.set_xlabel("frame number")
-#     # ax.set_ylabel("RMSD")
+ax.set_xlabel("frame")
+ax.set_ylabel("RMSD")
 
-#     # set_styling(ax)
+set_styling(ax)
 
-#     print()
+print()
 
-#     print(f"Cell {n_cell} mean RMSD: {rmsds.mean():.1f} +/- {rmsds.std():.1f}")
+print(f"Cell {n_cell} mean RMSD: {rmsds.mean():.1f} +/- {rmsds.std():.1f}")
 
 
 # %% Plot RMSD to last config for all cells
@@ -243,7 +243,7 @@ np.set_printoptions(precision=3)
 # # ax.legend(loc=(0.6, 0.75))
 # ax.legend()
 
-# %% Cell 5 2 Configurations
+# %% Cell 5 both Configurations
 
 # print("RMSD of both configurations in cell 5")
 # print()

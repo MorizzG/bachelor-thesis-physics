@@ -1,0 +1,10 @@
+%!TEX root = ../thesis
+
+\chapter{Conclusion} % (fold)
+\label{cha:conclusion}
+
+Using the protocol defined in Wettermann et al.\cite{wettermann_minimal_2020}, a total of eight cells were simulated using a molecular dynamics with a number of predefined bonds and contacts. Both the potential energies on the distance distribution of the predefined bonds and contacts show high agreement with \cite{wettermann_minimal_2020} and suggest that in most cases the simulation reaches a stable ground configuration. The two major exceptions, cell 1 and cell 5, were analysed and at least in the case of cell 5 the \textcolor{orange}{unusual} features of the simulation could be resolved to be merely an artifact of that particular simulation run, with reruns of the simulation of that particular cell falling very much in line with the results of the other cells. As for cell 1, while it was shown that a ground configuration still existed, even though it was not stable, the instability of the configuration was consistently observable across multiple simulation runs. A deeper reason for why this effect arises only in cell 1 and not the other cells could not be given, and might \textcolor{orange}{be an issue for further research}.
+
+The simulation results from the different cells were compared pairwise for whole-genome similarity using both SCC and RMSD as similarity measures. The SCC between the initial Hi-C contact matrices and the contact matrices of the simulations showed moderate correspondence, but considering the fact the Hi-C data set contains only an estimated \(5\%\) of all the contacts in the physical cells, \textcolor{orange}{a non-perfect score is still reasonable}. On the other hand, the SCC scores of between \(0.06\) and \(0.15\) between the initial Hi-C contact matrices of the different cells set the expectation 
+
+% chapter conclusion (end)

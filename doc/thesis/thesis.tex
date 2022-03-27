@@ -59,7 +59,7 @@
 
 \usepackage{todonotes} % insert TODO notes
 
-\usepackage[style=ieee]{biblatex} % ,sorting=none style=h-physrev3 defernumbers=true
+\usepackage[style=ieee]{biblatex} % ,sorting=none defernumbers=true style=h-physrev3/ieee
 \bibliography{thesis}
 
 
@@ -77,7 +77,7 @@
 
 \renewcommand{\arraystretch}{1.2} % make distance between table rows a bit bigger
 
-\newcommand{\figwidth}{12cm} % default width for all figures
+\newcommand{\figwidth}{11.5cm} % default width for all figures
 
 \parindent10mm
 
@@ -136,7 +136,7 @@
 \begin{titlepage}
   \vspace*{6mm}
   \begin{center}
-     {\afont Comparison of 3-dimensional chromatin structures based on single cell Hi-C data}
+     {\afont Comparison of 3-dimensional genome structures based on single cell Hi-C data}
      \\[3.5cm]
      {\large von}
      \\[3.5cm]
@@ -163,9 +163,10 @@
 Ich versichere, dass ich die Arbeit selbstständig verfasst und keine 
 anderen als die angegebenen Quellen und Hilfsmittel benutzt sowie 
 Zitate kenntlich gemacht habe.
-\\
-\\[3.5cm] 
-Mainz, den \today
+\\[1cm]
+\includegraphics[height=1.5cm]{Unterschrift.png} \\
+% \vspace{-1cm} \\
+Moritz Gmeiner \hfill Mainz, \today
 \vfill
 \noindent 
 Moritz Gmeiner\\
@@ -195,20 +196,25 @@ D-55099 Mainz\\
 \section{DNA and the genome} % (fold)
 \label{sec:dna_and_genome}
 
-DNA is the most important long-term information storage \textcolor{orange}{in biology}. It is so fundamental that it is a shared part of all known life, and even some non-living things like viruses\footnote{The question whether or not viruses are alive or not is somewhat dependent on the definition of life and has not been finally decided (and probably never will), but here they shall be considered non-living.}. In eukaryotes, most of the genome\footnote{The term \enquote{genome} typically includes all of the DNA in the cell, including e.g. mitochondrial and plastid DNA. For simplicity, in this work the genome shall include only the DNA in the nucleus, as it is the main and for this work only relevant part} is stored away in the cell's nucleus, a specialised compartment that is separated from the rest of the cell by the nuclear envelope. It is split up into multiple chromosomes, linear, i.e. non-circular, chains of DNA of varying length., the number of which is dependent on the particular species, for example humans have 23 chromosomes while mice, the primary subject of this work, have 20. Different species and cell types also vary in the number of copies of each chromosome they carry: haploid cells for example carry only a single copy of each chromosomes, while diploid cells have two copies of each chromosomes. To fit into the nucleus, the genome needs to be highly packaged: the length of the human genome for example is about \(\SI{2}{\metre}\), while the cell nucleus is merely \(5\)-\(8\) \(\si{\micro\metre}\) in diameter. This packaging occurs at different levels, like histones and the 30-nm fibre. This process of DNA packaging is a very important research topic, as it is involved in transcription initiation, the first step of making proteins from DNA information. \textcolor{orange}{By making certain regions of DNA more or less accessible, specific parts of the genome can either be activated or silenced, which is an important way to regulate gene expression}.
+DNA is the most important long-term information storage in biological systems. It is so fundamental that it is a shared property of all known life and even some non-living objects like viruses\footnote{The question whether or not viruses are alive or not is somewhat dependent on the definition of life and has not been finally decided (and probably never will), but here they shall be considered non-living.}. In eukaryotes, most of the genome\footnote{The term \enquote{genome} typically refers to the entirety all of the DNA in the cell, including e.g. mitochondrial and plastid DNA. For simplicity, in this work the term genome will include only the DNA in the nucleus, as it is the main and for this work only relevant part} is stored away in the cell's nucleus, a specialized compartment that is separated from the rest of the cell by the nuclear envelope. It is split up into multiple chromosomes, linear, i.e. non-circular, chains of DNA of varying length. The number of of different chromosomes in each cell is dependent on the particular species, for example humans have 23 different chromosomes while mice, the primary subject of this work, have 20. Different species and cell types also vary in the number of copies of each chromosome they carry: haploid cells for example carry only a single copy of each chromosome, while diploid cells have two copies of each chromosome. To fit into the nucleus, the genome needs to be highly packaged: the length of the human genome for example is about \(\SI{2}{\metre}\), while the cell nucleus is merely \(5\)-\(8\) \(\si{\micro\metre}\) in diameter. This packaging occurs at different levels, like histones and the 30-nm fibre. The process of how exactly DNA is being packaged is a very important research topic, as it is involved in transcription initiation, the first step of making proteins from DNA information: By making certain regions of DNA more or less accessible, specific parts of the genome can either be activated or silenced, which is an important way of regulating gene expression. \cite{uzman_essential_2010}
 
-\cite{uzman_essential_2010}
+% section dna_and_genome (end)
 
 \section{Hi-C} % (fold)
 \label{sec:hi_c}
 
-Hi-C is a method of determining the three-dimensional structure of an entire genome utilising a combination of proximity-based ligation and DNA deep sequencing. It is a continuation of a number of previous chromosome conformation capture methods (3C, 4C, 5C) with the goal of moving from targeting specific genetic loci go obtaining a genome-wide map of interactions.
+Hi-C is a method of determining the three-dimensional structure of an entire genome utilising a combination of proximity-based ligation and DNA deep sequencing. It is a continuation of a number of previous chromosome conformation capture methods (3C, 4C, 5C) with the explicit goal of moving from targeting only specific genetic loci to obtaining a genome-wide map of interactions.
 
 First, the DNA is cross-linked using formaldehyde, making connections between two strands of DNA that are in close proximity. The DNA is then digested by a restriction endonuclease that leaves a 5' staggered end which is filled with biotin-marked residues and ligated under conditions that favour ligation of those cross-linked DNA fragments. The DNA is sheared and selected for the biotin-marked cross-linked DNA fragments. These fragments are then deep sequenced and mapped back onto the genome, giving a list of contacts between positions on the genome.\cite{lieberman-aiden_comprehensive_2009}.
 
 % section hi_c (end)
 
-% section dna_and_genome (end)
+\section{Simulation of genome structure} % (fold)
+\label{sec:simulation_of_genome_structure}
+
+After obtaining a contact map of a particular genome using Hi-C, it can then be used to try to reconstuct the three-dimensional structure of the genome in the original physical cell that was mapped. Various approaches have been used for this task, including simulated annealing\cite{stevens_3d_2017} or polymeric Gō-models\cite{wettermann_minimal_2020}. One specific area of interest is the comparability of these reconstructed genomes structures across different cells of the same cell line, both as a measure of how well the model can reconstuct the original structure as well as to determine similarities and differences in the genome structure between the actual physical cells. In particular finding certain features that are shared across multiple cells might provide further insight in how exactly the folded structure of the genome influences transcription and, in reverse, how nature might utilise the structure of the genome as a mechanism to influence transcription. To this end, Hi-C data sets extracted from eight haploid mouse embryonic stem cells, obtained from (Stevens et al.\cite{stevens_3d_2017}), were used to reconstruct the genome structure using a generic polymer model and then compared on both the genome level as well as the chromosomal level. For this first an analysis of the simulation results of each cell for itself will be made and compared to the results of (Wettermann et al.\cite{wettermann_minimal_2020}). Then various statistical tools will used to compare the obtained structures of the different cells, first on an entire genome level and then on an individual chromosome level.
+
+% section simulation_of_genome_structure (end)
 
 % \section{Mathematical Tools} % (fold)
 % \label{sec:mathematical_tools}
@@ -263,21 +269,16 @@ First, the DNA is cross-linked using formaldehyde, making connections between tw
 
 
 %_______________________________________________________________________________
-\chapter{Conclusion} % (fold)
-\label{cha:conclusion}
 
-In der Zusammenfassung sollten Sie in knapper Form die Aufgabenstellung 
-und die wichtigsten Ergebnisse rekapitulieren. Es ist für die 
-Gutachter hilfreich, wenn Sie ausdrücklich beschreiben, worin 
-Ihre eigenen Beiträge liegen. Scheuen Sie sich auch nicht davor 
-auszusprechen, welche Untersuchungen durch die Zeitbegrenzung der 
-Bachelorarbeit nicht möglich waren und nutzen Sie dies als 
-überleitung zu einem Ausblick auf mögliche weitergehende 
-Arbeiten an der Aufgabenstellung.
 
-% chapter conclusion (end)
+\include{tex/conclusion}
+
+
+%_______________________________________________________________________________
+
 
 \printbibliography
+
 
 %_______________________________________________________________________________
 \appendix
@@ -305,7 +306,7 @@ Arbeiten an der Aufgabenstellung.
 
 \begin{table}[ht]
 \centering
-  \caption{Some statistics about each simulated cell. The pot(ential) energy \% deviation describes the standard deviation of the potential energy divided by the mean potential energy over all frames except for the first 5. For both bonds and contacts the mean and 99.73th percentile are of the distances between the \emph{predefined} bonds and contacts, i.e. only the ones we set as input before our simulation, not the ones arising in the simulation.}
+  \caption{Some statistics about each simulated cell. The pot(ential) energy \% deviation describes the standard deviation of the potential energy divided by the mean potential energy over all frames except for the first 5. For both bonds and contacts the mean and 99.73th percentile are of the distances between the \emph{predefined} bonds and contacts, i.e. only the ones were set as input before the simulation, not the ones arising in the simulation.}
   \label{tab:simulation_pe_dists}
   \sisetup{ table-alignment-mode=none }
   \begin{tabular}{c @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S}
@@ -332,9 +333,9 @@ Arbeiten an der Aufgabenstellung.
   \caption{caption}
   \label{tab:contact_capture}
   \sisetup{ table-alignment-mode=none }
-  \begin{tabular}{S S S S}
+  \begin{tabular}{c S S S}
   \toprule
-    {Cell} & \parbox{3cm}{\centering contacts specified} & \parbox{3cm}{\centering contacts after simulation} & \parbox{3cm}{\centering \% of contacts specified} \\
+    Cell & \parbox{3cm}{\centering contacts prespecified} & \parbox{3cm}{\centering contacts after simulation} & \parbox{3cm}{\centering \% of contacts specified} \\
   \midrule
     1 & 48962 & 932831 & 5.2\% \\
     2 & 32243 & 558981 & 5.8\% \\
@@ -372,7 +373,7 @@ Arbeiten an der Aufgabenstellung.
 \begin{figure}[ht]
 \centering
   \includegraphics[width=\textwidth+0.5cm]{rmsd_last_vs_avg.png}
-  \caption{\textcolor{red}{CAPTION}}
+  \caption{RMSD of each frame to both the last frame of the simulation and the average trajectory of the cell for each cell. The average trajectories were generated from a subset of frames from each cell that represents the ground state configuration of that cell in the simulation and is described in more detail in section~\ref{sec:rmsd_between_cells}.}
   \label{fig:rmsd_last_vs_avg}
 \end{figure}
 
@@ -387,7 +388,7 @@ Figures were created using matplotlib\cite{j_d_hunter_matplotlib_2007} and seabo
 \centering
 \label{tab:used_software}
 \caption{Software used for simulation and data analysis. Two systems were used, the top one a Manjaro Linux (based on Arch Linux) system and the bottom one a Microsoft Windows system with Anaconda}
-  \begin{tabular}{c @{\phantom{abc}} c @{\phantom{abc}} c}
+  \begin{tabular}{l @{\phantom{abc}} l @{\phantom{abc}} l}
   \toprule
     Package & Version & Package Source \\
   \midrule
