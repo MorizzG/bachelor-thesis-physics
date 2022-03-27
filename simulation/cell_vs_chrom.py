@@ -20,13 +20,13 @@ np.set_printoptions(precision=3)
 
 # %% Loading data
 
-n_cell = 8
+n_cell = 2
 n_chrom = 1
 
 mean_rmsds_to_cell = np.empty(8)
 int_contacts = np.empty(8)
 
-for n_cell in range(1, 9):
+for n_chrom in range(1, 7):
 
     f_cell = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}.gsd")
     f_chrom = gsd.hoomd.open(f"data/trajs/traj_cell{n_cell}_chrom{n_chrom}.gsd")
@@ -140,9 +140,9 @@ for n_cell in range(1, 9):
 
     print(f"Cell {n_cell}")
 
-    # print(f"\tAverage chrom RMSD:         {rmsds_chrom.mean():.1f} +/- {rmsds_chrom.std():.1f}")
+    print(f"\tAverage chrom RMSD:         {rmsds_chrom.mean():.1f} +/- {rmsds_chrom.std():.1f}")
 
-    # print(f"\tAverage cell vs chrom RMSD: {cross_rmsds.mean():.1f} +/- {cross_rmsds.std():.1f}")
+    print(f"\tAverage cell vs chrom RMSD: {cross_rmsds.mean():.1f} +/- {cross_rmsds.std():.1f}")
 
     mean_rmsds_to_cell[n_cell - 1] = rmsds_chrom.mean()
 
@@ -176,36 +176,36 @@ for n_cell in range(1, 9):
 
     # %% Internal vs external contacts in Hi-C
 
-    df_contact_pairs = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")
+    # df_contact_pairs = pd.read_pickle(f"data/contact_pairs/contact_pairs_cell{n_cell}.pkl")
 
-    df_int = df_contact_pairs[(df_contact_pairs["chr_A"] == n_chrom) & (df_contact_pairs["chr_B"] == n_chrom)]
-    num_int_contacts = np.unique(df_int.to_numpy(), axis=0).shape[0]
+    # df_int = df_contact_pairs[(df_contact_pairs["chr_A"] == n_chrom) & (df_contact_pairs["chr_B"] == n_chrom)]
+    # num_int_contacts = np.unique(df_int.to_numpy(), axis=0).shape[0]
 
-    df_ext = df_contact_pairs[(df_contact_pairs["chr_A"] == n_chrom) & (df_contact_pairs["chr_B"] != n_chrom)]
-    num_ext_contacts = np.unique(df_ext.to_numpy(), axis=0).shape[0]
+    # df_ext = df_contact_pairs[(df_contact_pairs["chr_A"] == n_chrom) & (df_contact_pairs["chr_B"] != n_chrom)]
+    # num_ext_contacts = np.unique(df_ext.to_numpy(), axis=0).shape[0]
 
-    df_ext = df_contact_pairs[(df_contact_pairs["chr_A"] != n_chrom) & (df_contact_pairs["chr_B"] == n_chrom)]
-    num_ext_contacts += np.unique(df_ext.to_numpy(), axis=0).shape[0]
+    # df_ext = df_contact_pairs[(df_contact_pairs["chr_A"] != n_chrom) & (df_contact_pairs["chr_B"] == n_chrom)]
+    # num_ext_contacts += np.unique(df_ext.to_numpy(), axis=0).shape[0]
 
-    print(f"\tInternal contacts: {num_int_contacts}")
-    print(f"\tExternal contacts: {num_ext_contacts}")
-    print(f"\tPercentage internal contacts: {num_int_contacts / (num_int_contacts + num_ext_contacts):.0%}")
+    # print(f"\tInternal contacts: {num_int_contacts}")
+    # print(f"\tExternal contacts: {num_ext_contacts}")
+    # print(f"\tPercentage internal contacts: {num_int_contacts / (num_int_contacts + num_ext_contacts):.0%}")
 
-    print()
+    # print()
 
-    int_contacts[n_cell - 1] = num_int_contacts
+    # int_contacts[n_cell - 1] = num_int_contacts
 
-fig, ax = new_fig()
+# fig, ax = new_fig()
 
-ax.plot(int_contacts, mean_rmsds_to_cell, "C0o")
+# ax.plot(int_contacts, mean_rmsds_to_cell, "C0o")
 
-for n_cell, (x, y) in enumerate(zip(int_contacts, mean_rmsds_to_cell)):
-    ax.text(x, y, f"Cell {n_cell+1}")
+# for n_cell, (x, y) in enumerate(zip(int_contacts, mean_rmsds_to_cell)):
+#     ax.text(x, y, f"Cell {n_cell+1}")
 
-ax.set_xlabel("Number of internal contacts")
-ax.set_ylabel("Mean RMSD of invididual chromosome")
+# ax.set_xlabel("Number of internal contacts")
+# ax.set_ylabel("Mean RMSD of invididual chromosome")
 
-print(f"Pearson R^2: {ss.pearsonr(int_contacts, mean_rmsds_to_cell)[0]:.2f}")
+# print(f"Pearson R^2: {ss.pearsonr(int_contacts, mean_rmsds_to_cell)[0]:.2f}")
 
 
 # %% RMSD between chroms
@@ -214,33 +214,33 @@ print(f"Pearson R^2: {ss.pearsonr(int_contacts, mean_rmsds_to_cell)[0]:.2f}")
 # %% SCC between chroms
 
 
-def load_sim_contact_matrix(n_cell, n_chrom) -> sp.csr_matrix:
-    mat = sp.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell}_chrom{n_chrom}.npz").tocsr().astype(np.single)
+# def load_sim_contact_matrix(n_cell, n_chrom) -> sp.csr_matrix:
+#     mat = sp.load_npz(f"data/contact_matrices/contact_matrix_cell{n_cell}_chrom{n_chrom}.npz").tocsr().astype(np.single)
 
-    return mat / mat.max()
+#     return mat / mat.max()
 
 
-print("SCC values between simulation data")
+# print("SCC values between simulation data")
 
-print()
+# print()
 
-scc_mat = np.empty((8, 8))
+# scc_mat = np.empty((8, 8))
 
-h = 7
-max_bins = int(5e6) // int(1e5)
+# h = 7
+# max_bins = int(5e6) // int(1e5)
 
-sim_contact_mats = []
+# sim_contact_mats = []
 
-for n_cell in range(1, 9):
-    chrom = load_sim_contact_matrix(n_cell, n_chrom)
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=sp.SparseEfficiencyWarning)
-        chrom = mat_process.diag_trim(chrom.todia(), max_bins + h).tocoo()
-    chrom = mat_process.smooth(chrom, h)
-    sim_contact_mats += [chrom]
+# for n_cell in range(1, 9):
+#     chrom = load_sim_contact_matrix(n_cell, n_chrom)
+#     with warnings.catch_warnings():
+#         warnings.filterwarnings("ignore", category=sp.SparseEfficiencyWarning)
+#         chrom = mat_process.diag_trim(chrom.todia(), max_bins + h).tocoo()
+#     chrom = mat_process.smooth(chrom, h)
+#     sim_contact_mats += [chrom]
 
-for i in range(8):
-    for j in range(8):
-        scc_mat[i, j] = scc.get_scc(sim_contact_mats[i], sim_contact_mats[j], max_bins)
+# for i in range(8):
+#     for j in range(8):
+#         scc_mat[i, j] = scc.get_scc(sim_contact_mats[i], sim_contact_mats[j], max_bins)
 
-print(scc_mat)
+# print(scc_mat)

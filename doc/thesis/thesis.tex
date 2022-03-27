@@ -2,7 +2,7 @@
 %class
 %_______________________________________________________________________________
 %\documentclass[a4paper,11pt,onecolumn,final,german,openbib]{scrbook}
-\documentclass[a4paper,11pt,oneside,final,english,toc=bib,draft]{scrbook}
+\documentclass[a4paper,11pt,oneside,final,english,toc=bib]{scrbook}
 
 % fonts
 
@@ -71,13 +71,18 @@
   linkcolor=blue,
   citecolor=teal
 }
+% \hypersetup{
+%   colorlinks=black,
+%   linkcolor=black,
+%   citecolor=black
+% }
 
 \captionsetup[figure]{labelfont=bf,format=plain,labelsep=newline} % ,labelsep=period ,margin=1cm
 \captionsetup[table]{labelfont=bf,format=plain,labelsep=newline} % ,labelsep=period ,margin=1cm ,labelsep=newline
 
 \renewcommand{\arraystretch}{1.2} % make distance between table rows a bit bigger
 
-\newcommand{\figwidth}{11.5cm} % default width for all figures
+\newcommand{\figwidth}{12.0cm} % default width for all figures
 
 \parindent10mm
 
@@ -212,7 +217,7 @@ First, the DNA is cross-linked using formaldehyde, making connections between tw
 \section{Simulation of genome structure} % (fold)
 \label{sec:simulation_of_genome_structure}
 
-After obtaining a contact map of a particular genome using Hi-C, it can then be used to try to reconstuct the three-dimensional structure of the genome in the original physical cell that was mapped. Various approaches have been used for this task, including simulated annealing\cite{stevens_3d_2017} or polymeric Gō-models\cite{wettermann_minimal_2020}. One specific area of interest is the comparability of these reconstructed genomes structures across different cells of the same cell line, both as a measure of how well the model can reconstuct the original structure as well as to determine similarities and differences in the genome structure between the actual physical cells. In particular finding certain features that are shared across multiple cells might provide further insight in how exactly the folded structure of the genome influences transcription and, in reverse, how nature might utilise the structure of the genome as a mechanism to influence transcription. To this end, Hi-C data sets extracted from eight haploid mouse embryonic stem cells, obtained from (Stevens et al.\cite{stevens_3d_2017}), were used to reconstruct the genome structure using a generic polymer model and then compared on both the genome level as well as the chromosomal level. For this first an analysis of the simulation results of each cell for itself will be made and compared to the results of (Wettermann et al.\cite{wettermann_minimal_2020}). Then various statistical tools will used to compare the obtained structures of the different cells, first on an entire genome level and then on an individual chromosome level.
+After obtaining a contact map of a particular genome using Hi-C, it can then be used to try to reconstuct the three-dimensional structure of the genome in the original physical cell that was mapped. Various approaches have been used for this task, including simulated annealing\cite{stevens_3d_2017} or polymeric Gō-models\cite{wettermann_minimal_2020}. One specific area of interest is the comparability of these reconstructed genomes structures across different cells of the same cell line, both as a measure of how well the model can reconstuct the original structure as well as to determine similarities and differences in the genome structure between the actual physical cells. In particular finding certain features that are shared across multiple cells might provide further insight in how exactly the folded structure of the genome influences transcription and, in reverse, how nature might utilise the structure of the genome as a mechanism to influence transcription. To this end, Hi-C data sets extracted from eight haploid mouse embryonic stem cells, obtained from (Stevens et al.\cite{stevens_3d_2017}), were used to reconstruct the genome structure using a generic polymer model and then compared on both the genome level as well as the chromosomal level. For this first an analysis of the simulation results of each cell for itself will be made and compared to the results of (Wettermann et al.\cite{wettermann_minimal_2020}). Then various statistical tools will used to compare the obtained structures of the different cells, first on an entire genome level and then on an individual chromosome level. The source code used for the analysis can be found at \url{https://github.com/Lego1120/chromatin-structure}.
 
 % section simulation_of_genome_structure (end)
 
@@ -306,7 +311,7 @@ After obtaining a contact map of a particular genome using Hi-C, it can then be 
 
 \begin{table}[ht]
 \centering
-  \caption{Some statistics about each simulated cell. The pot(ential) energy \% deviation describes the standard deviation of the potential energy divided by the mean potential energy over all frames except for the first 5. For both bonds and contacts the mean and 99.73th percentile are of the distances between the \emph{predefined} bonds and contacts, i.e. only the ones were set as input before the simulation, not the ones arising in the simulation.}
+  \caption{Statistics about the quality each cell simulation. The pot(ential) energy coefficient of variation (CV) is the standard deviation of the potential energy divided by the mean potential energy. Mean and 99.73th percentile are calculated for both bonds and predefined contacts, i.e. the harmonic potentials that were set as part of the simulatin protocol.}
   \label{tab:simulation_pe_dists}
   \sisetup{ table-alignment-mode=none }
   \begin{tabular}{c @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S @{\phantom{abc}} S}
@@ -314,7 +319,7 @@ After obtaining a contact map of a particular genome using Hi-C, it can then be 
      & & \multicolumn{2}{c}{bond lengths} & \multicolumn{2}{c}{contact lengths} \\
    \cmidrule(rl){3-4}
    \cmidrule(rl){5-6}
-    {Cell} & \parbox{3cm}{\centering pot energy \\ \% deviation} & {mean} & \parbox{3cm}{\centering 99.73th \\ percentile} & {mean} & \parbox{3cm}{\centering 99.73th \\ percentile} \\
+    {Cell} & \parbox{3cm}{\centering pot energy \\ CV} & {mean} & \parbox{3cm}{\centering 99.73th \\ percentile} & {mean} & \parbox{3cm}{\centering 99.73th \\ percentile} \\
   \midrule
     1 & 8.51\% & 1.13 & 1.98 & 1.62 & 2.72 \\
     2 & 0.27\% & 1.10 & 1.71 & 1.61 & 2.42 \\
@@ -330,7 +335,7 @@ After obtaining a contact map of a particular genome using Hi-C, it can then be 
 
 \begin{table}[ht]
 \centering
-  \caption{caption}
+  \caption{Number of contacts prespecified before the simulation by the Hi-C data set and seen in the resulting structure after the simulation for each cell, as well an estimation of the number of actual contacts captured by the Hi-C procedure by the ratio of the two.}
   \label{tab:contact_capture}
   \sisetup{ table-alignment-mode=none }
   \begin{tabular}{c S S S}

@@ -3,12 +3,39 @@
 \chapter{Individual Chromosomes} % (fold)
 \label{cha:individual_chromosomes}
 
-Instead of simulating the entire genome, only individual chromosomes can be simulated in isolation. This can show how much of the structure of each chromosome is dependent on intrinsic interactions in the chromosome itself opposed to extrensic interactions with other chromosomes.
+\section{RMSDs between individual chromosomes} % (fold)
+\label{sec:rmsds_between_individual_chromosomes}
 
-\section{Chromosome 1} % (fold)
-\label{sec:chromosome_1}
+The comparison of the simulated structure between cells can be made on the chromosome level instead of the entire genome level. The results can be seen in Table~\ref{tab:mean_chrom_cross_rmsd}. While the mean RMSDs are significantly smaller than for the entire-genome case, they are still high enough to suggest no real similarity between the chromosomes across all cells, and the decrease can be explained simply by the smaller number of constraints when aligning the two trajectories. Considering even the minimum RMSD of each chromosome is never smaller than \(4.7\), it can be concluded that very likely there is no significant similarity between each chromosome across the different cells.
 
-In Figure~\ref{fig:potential_energy_cell3_chrom1} the potential energy for the simulation of chromosome 1 of cell 3 is displayed. Compared to the potential energy of cell 2 in Figure~\ref{fig:potential_energy_cell2} the potential energies for the invdividual chromosome look a lot more spread out and unstable, but the potential energy \% deviation of \(1.24 \%\) is actually quite low compared to the deviations of the cells as seen in Table~\ref{tab:simulation_pe_dists}. 
+\begin{table}[ht]
+\centering
+  \caption{Mean and minimum of RMSDs of a particular chromosome pairwise between the averaged trajectories of all cells, excluding self-comparisons.}
+  \label{tab:mean_chrom_cross_rmsd}
+  \begin{tabular}{l @{\phantom{abc}} S S S S S S S S S S}
+  \toprule
+    Chrom & {1} & {2} & {3} & {4} & {5} & {6} & {7} & {8} & {9} & {10} \\
+    Mean RMSD & 9.6 & 8.1 & 8.4 & 8.3 & 8.1 & 7.5 & 8.3 & 8.0 & 8.1 & 7.9 \\
+    Min RMSD  & 6.8 & 6.5 & 5.6 & 5.3 & 6.1 & 5.9 & 5.9 & 6.0 & 6.3 & 4.9 \\
+  \midrule
+    Chrom & {11} & {12} & {13} & {14} & {15} & {16} & {17} & {18} & {19} & {X} \\
+    Mean RMSD & 7.8 & 8.2 & 8.6 & 8.4 & 7.1 & 7.4 & 7.3 & 6.9 & 7.0 & 8.7 \\
+    Min RMSD  & 6.6 & 5.6 & 5.6 & 5.6 & 5.4 & 5.3 & 5.5 & 5.0 & 4.7 & 6.7 \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
+% section rmsds_between_individual_chromosomes (end)
+
+\section{Simulation of individual chromosomes} % (fold)
+\label{sec:simulation_of_individual_chromosomes}
+
+Instead of simulating the entire genome, only individual chromosomes can be simulated in isolation. This can show how much of the structure of each chromosome is dependent on intrinsic interactions in the chromosome itself opposed to extrensic interactions with other chromosomes. Simulations were carried out for chromosome 1 and chromosome 19, as those are the largest and smallest chromosome respectively.
+
+\subsection{Chromosome 1} % (fold)
+\label{ssec:chromosome_1}
+
+In Figure~\ref{fig:potential_energy_cell3_chrom1} the potential energy for the simulation of chromosome 1 of cell 3 is displayed. Compared to the potential energy of cell 2 in Figure~\ref{fig:potential_energy_cell2} the potential energies for the invdividual chromosome look a lot more spread out and unstable, but the coefficient of variation of the potential energy of \(1.24 \%\) is actually comparably low in reference to the coefficients of variation of the cell simulations as seen in Table~\ref{tab:simulation_pe_dists}. 
 
 \begin{figure}[ht]
 \centering
@@ -17,7 +44,7 @@ In Figure~\ref{fig:potential_energy_cell3_chrom1} the potential energy for the s
 	\label{fig:potential_energy_cell3_chrom1}
 \end{figure}
 
-Looking at the RMSD of the same chromsome simulation though, seen in Figure~\ref{fig:potential_energy_cell3_chrom1}, the mean RMSD relative to frame 22, which is the lowest potential energy frame, is quite high at \(\num{4.6(10)}\), suggesting this simulation does not reach a stable ground state. The mean RMSDs for chromosome 1 for all cells in Table~\ref{tab:chrom1_mean_rmsds} show that this is the case for all simulations of chromosome 1. Unsurprisingly, when comparing these individually simulated chromosomes with their respective counterparts in the simulation of the entire cell, by calculating the RMSD to the chromosome in the average trajectory, the results are similarly \textcolor{orange}{bad}. This implies that the structure of chromosome 1 when simulated individually is quite dissimilar to the structure when simulated in the context of the entire cell.
+Looking at the RMSDs of the chromsome simulation though, seen in Figure~\ref{fig:potential_energy_cell3_chrom1}, the mean RMSD from frame 22, which is the lowest potential energy frame, is quite high at \(\num{4.6(10)}\). Even worse, even though frame 1 and frame 71 have a similarly low energy compared to frame 22, their respective RMSDs from frame 22 are still larger than \(3.0\), implying that neither of these frames represents a true ground state. The mean RMSDs from the respective lowest energy frame for the simulations of chromosome 1 for all cells in Table~\ref{tab:chrom1_mean_rmsds} show that this is the case for all cells. Unsurprisingly, when comparing these individually simulated chromosomes with their respective counterparts in the simulations of the entire genome, by calculating the RMSD from the chromosome in the average trajectory, the results are similarly bad. This implies that the structure of chromosome 1 when simulated individually is quite dissimilar to the structure when simulated in the context of the entire cell.
 
 \begin{figure}[ht]
 \centering
@@ -25,14 +52,6 @@ Looking at the RMSD of the same chromsome simulation though, seen in Figure~\ref
 	\caption{RMSD of each frame of the simulation of chromosome 1 of cell 3 with the lowest-energy frame, frame 22.}
 	\label{fig:rmsd_cell3_chrom1}
 \end{figure}
-
-% section chromosome_1 (end)
-
-
-\section{Chromosome 19} % (fold)
-\label{sec:chromosome_19}
-
-The same analysis has be repeated for chromosome 19, which is the shortest chromosome with only 584 beads compared to chromosome 1 with 1924 beads. The results can be seen in Table~\ref{tab:chrom19_mean_rmsds}. While most of the RMSDs are similarly high, especially for cell 1 and cell 4 the mean RMSD to the average simulated cell drops to \(2.3\) and \(1.5\) respectively, which is indicative of significant resemblance. Nevertheless, generally the difference between the individually simulated chromosomes and the chromosomes in the cell is quite high, implying the stabilising effect of other chromosomes is a non-neglegible factor for determining a chromosomes structure.
 
 \begin{table}[ht]
 \centering
@@ -53,6 +72,22 @@ The same analysis has be repeated for chromosome 19, which is the shortest chrom
   \end{tabular}
 \end{table}
 
+% subsection chromosome_1 (end)
+
+\FloatBarrier
+
+\subsection{Chromosome 19} % (fold)
+\label{ssec:chromosome_19}
+
+The same analysis has been repeated for chromosome 19, which is the shortest chromosome with only 584 beads compared to chromosome 1 with 1924 beads. For the RMSDs from the minimum energy frame, displayed in \ref{fig:rmsd_cell3_chrom19}, we see the same pattern as already for chromosome 1, with the RMSD being both very high and unstable. In particular no stable ground state configuration is reached again. The RMSDs to the average trajectory from the entire genome simulation can be seen in Table~\ref{tab:chrom19_mean_rmsds}. While most of the RMSDs are similarly high, for cell 1 and cell 4 the mean RMSD to the average simulated cell drops to \(2.3\) and \(1.5\) respectively, which is indicative of decent resemblance. Nevertheless, generally the difference between the individually simulated chromosomes and the chromosomes in the cell is still quite high, suggesting that the results of cell 1 and cell 4 are merely the exception from the rule and that the stabilising effect of other chromosomes is a non-neglegible factor for determining a chromosome's structure.
+
+\begin{figure}[ht]
+\centering
+  \includegraphics[width=\figwidth]{rmsd_cell3_chrom19.png}
+  \caption{RMSD of each frame of the simulation of chromosome 19 of cell 3 with the lowest-energy frame, frame 73.}
+  \label{fig:rmsd_cell3_chrom19}
+\end{figure}
+
 \begin{table}[ht]
 \centering
   \caption{Mean of RMSDs between each frame of chrosomome 19 simulation to lowest energy frame of this simulation and to chromosome 19 in the average trajectory of the entire cell simulation for each cell.}
@@ -72,7 +107,9 @@ The same analysis has be repeated for chromosome 19, which is the shortest chrom
   \end{tabular}
 \end{table}
 
-% section chromosome_19 (end)
+% subsection chromosome_19 (end)
+
+% section simulation_of_individual_chromosomes (end)
 
 % One possible explanation for the dissimililarity betwen the chrosomosome structure in the cell and individually could be that the chromosome structure gets stabilised by its contacts with other chromosomes. To examine the strength of this effect the number of Hi-C contacts of the chromosome both with itself and and with other contacts and then calculate the ratio of internal contacts.
 

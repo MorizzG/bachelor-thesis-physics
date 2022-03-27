@@ -29,12 +29,12 @@ from tools.mg_plot import new_fig, set_styling
 
 # n_cell = args.n_cell
 
-n_cell = 8
+n_cell = 3
 
-n_chrom = 1
+n_chrom = 19
 
 ext = ""
-# ext = f"_chrom{n_chrom}"
+ext = f"_chrom{n_chrom}"
 
 
 # %% Plot energy distribution
