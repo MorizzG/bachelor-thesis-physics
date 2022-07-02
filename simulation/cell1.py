@@ -33,7 +33,7 @@ low_energy_configs = np.nonzero(energies < ENERGY_CUTOFF)[0]
 
 fig, ax = new_fig()
 
-ax.plot(energies, "C0.")
+ax.plot(energies, "C0o", markersize=4.0)
 ax.axhline(ENERGY_CUTOFF, color="C1", label="Cutoff energy")
 
 ax.set_xlabel("frame")
@@ -41,6 +41,8 @@ ax.set_ylabel("potential energy")
 
 ax.legend(loc=(0.65, 0.85))
 set_styling(ax)
+
+fig.show()
 
 # %% RMSD
 
@@ -70,3 +72,5 @@ ax.set_ylim(top=11.0)
 
 ax.legend(loc=(0.60, 0.88))
 set_styling(ax)
+
+fig.show()

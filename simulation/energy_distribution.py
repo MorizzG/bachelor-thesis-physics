@@ -29,12 +29,12 @@ from tools.mg_plot import new_fig, set_styling
 
 # n_cell = args.n_cell
 
-n_cell = 3
+n_cell = 2
 
 n_chrom = 19
 
 ext = ""
-ext = f"_chrom{n_chrom}"
+# ext = f"_chrom{n_chrom}"
 
 
 # %% Plot energy distribution
@@ -55,7 +55,7 @@ print()
 
 fig, ax = new_fig()
 
-ax.plot(energies, "C0.")
+ax.plot(energies, "C0o-", markersize=4.0)
 
 # idxs = np.array([ 2,  6, 22, 49, 64, 74, 85, 90, 96])
 # ax.plot(idxs, energies[idxs], "C3o", markersize=3)

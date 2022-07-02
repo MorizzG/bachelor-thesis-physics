@@ -7,3 +7,4 @@ simulation/build/*
 
 # pycache
 __pycache__/
+.idea/

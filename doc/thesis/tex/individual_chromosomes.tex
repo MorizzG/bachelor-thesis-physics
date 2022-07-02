@@ -3,8 +3,8 @@
 \chapter{Individual Chromosomes} % (fold)
 \label{cha:individual_chromosomes}
 
-\section{RMSDs between individual chromosomes} % (fold)
-\label{sec:rmsds_between_individual_chromosomes}
+\section{Comparison of chromosomes in the entire genome simulations} % (fold)
+\label{sec:comparison_of_chromosomes_in_the_entire_genome_simulations}
 
 The comparison of the simulated structure between cells can be made on the chromosome level instead of the entire genome level. The results can be seen in Table~\ref{tab:mean_chrom_cross_rmsd}. While the mean RMSDs are significantly smaller than for the entire-genome case, they are still high enough to suggest no real similarity between the chromosomes across all cells, and the decrease can be explained simply by the smaller number of constraints when aligning the two trajectories. Considering even the minimum RMSD of each chromosome is never smaller than \(4.7\), it can be concluded that very likely there is no significant similarity between each chromosome across the different cells.
 
@@ -25,7 +25,9 @@ The comparison of the simulated structure between cells can be made on the chrom
   \end{tabular}
 \end{table}
 
-% section rmsds_between_individual_chromosomes (end)
+An analysis that is somewhat complementary to the above is to study the relative chromsome interaction strengths in each cells, that is how strongly each pair of chromosomes interacts with each other. A naive way to calculate this interaction strength is to simply count the number of beads between each pair of chromosomes that are in contact and divide by the length of both chromosomes involved. The result is displayed in Figure~\ref{fig:chrom_contacts}. While a deeper comparison of these interaction strengths between cells is beyond the scope of this work, a simple visual analysis yielded no obvious relationships between the interaction strengths of the different cells. On a positive note, a certain resemblence can be seen to the same kind of image in (Stevens et al.\cite{stevens_3d_2017}) in Figure~1b, although a more detailed comparison could not be made due to a lack of the data from (Stevens et al.).
+
+% section comparison_of_chromosomes_in_the_entire_genome_simulations (end)
 
 \section{Simulation of individual chromosomes} % (fold)
 \label{sec:simulation_of_individual_chromosomes}

@@ -175,7 +175,7 @@ for n_cell in range(1, 9):
 plt.subplots_adjust(left=0.1, right=0.8, bottom=0.05, top=0.95, wspace=0.0, hspace=0.0)
 
 axes[6].set_xlabel("Chr 0..19, X")
-axes[0].set_ylabel("Chr 0..19, X")
+axes[0].set_ylabel("Chr X, 19..1")
 
 cax = plt.axes([0.82, 0.05, 0.05, 0.9])
 

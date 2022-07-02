@@ -12,10 +12,11 @@ import matplotlib.pyplot as plt
 # mpl.rcParams["font.family"] = "Avenir LT Std"
 plt.rcParams["font.size"] = 12
 plt.rcParams["axes.linewidth"] = 1.5
+plt.rcParams["figure.figsize"] = (8, 6)
 
 
-def new_fig(*args, figsize=(8, 6), **kw_args):
-    return plt.subplots(*args, figsize=figsize, **kw_args)
+def new_fig(*args, **kw_args):
+    return plt.subplots(*args, **kw_args)
 
 
 def set_styling(ax_or_axes, x_loc=None, y_loc=None, grid=False):
